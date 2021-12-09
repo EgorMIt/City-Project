@@ -1,17 +1,17 @@
 <template>
-  <v-card width="40%" height="100%" color="orange darken-1">
-    <div style="margin-top: 15%">
-<!--      <v-img/>-->
-    <v-text class="font-weight-medium" style="font-size: 30pt; margin-left: 20%;">
-      City Project
-    </v-text>
+  <v-card color="orange darken-1" height="100%">
+    <!--      <v-img/>-->
+    <v-card-text class="font-weight-medium" style="font-size: 30pt;">
+      <div style="margin-top: 10%; margin-left: 15%">
+        City Project
+      </div>
+    </v-card-text>
     <v-img src="../assets/city.jpg"
            class="ml-auto mr-auto"
-           width="60%"
-           height="70%"
-           style="border-radius:40px; margin-top: 20px  "
+           width="70%"
+           height="80%"
+           style="border-radius:40px; margin-top: 5% "
     />
-    </div>
   </v-card>
 </template>
 

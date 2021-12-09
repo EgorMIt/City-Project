@@ -12,8 +12,8 @@ const routes = [
     {
         path: '/',
         name: 'Auth',
-        component: () => import(/* webpackChunkName: "about" */ '../views/Auth.vue')
-    }
+        component: () => import('../views/Auth.vue')
+    },
 ]
 
 const router = new VueRouter({
