@@ -5,12 +5,9 @@
         <v-card-text class="mt-12">
           <h1
               class="text-center display-2"
-              style="color: black; font-weight: bold"
-          >Добро пожаловать!</h1>
+              style="color: black; font-weight: bold; margin-bottom: 40px"
+          >Создайте аккаунт</h1>
 
-          <div class="font-center" style="font-size: 20pt;  margin: 20px 20px 50px;text-align: center">
-            Введите данные для входа
-          </div>
 
           <v-form
               style="margin-bottom: 20px"
@@ -23,6 +20,22 @@
 
             <v-textarea
                 label="Введите имя пользователя"
+                name="Login"
+                type="text"
+                color="black"
+                auto-grow
+                outlined
+                rows="1"
+                row-height="15"
+                style="border-radius: 10px"
+            />
+
+            <div class="font-center" style="font-size: 14pt; margin-bottom: 5px; text-align: left">
+              E-mail
+            </div>
+
+            <v-textarea
+                label="Введите e-mail"
                 name="Login"
                 type="text"
                 color="black"
@@ -53,16 +66,12 @@
           </v-form>
 
           <v-row style="margin: auto">
-            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark>
-              Войти в систему
+            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark
+                   to="/">
+              Зарегистрироваться и вернуться ко входу
             </v-btn>
           </v-row>
-          <v-row style="margin-top: 20px">
-            <v-btn x-large color=#F58E43 width="96.5%"
-                   style="margin-left: 11px; box-shadow: none !important; border-radius: 10px" dark to="/register">
-              Зарегистрироваться
-            </v-btn>
-          </v-row>
+
         </v-card-text>
       </v-col>
     </v-row>
@@ -71,7 +80,7 @@
 
 <script>
 export default {
-  name: "AuthForm"
+  name: "RegisterForm"
 }
 </script>
 

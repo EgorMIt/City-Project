@@ -1,0 +1,20 @@
+<template>
+  <v-row>
+    <v-col md="4" >
+      <LeftPanelAuth/>
+    </v-col>
+    <v-col>
+      <RegisterForm/>
+    </v-col>
+  </v-row>
+</template>
+
+<script>
+import LeftPanelAuth from "../components/LeftPanelAuth";
+import RegisterForm from "@/components/RegisterForm";
+
+export default {
+  name: "Register",
+  components: {RegisterForm, LeftPanelAuth}
+}
+</script>
