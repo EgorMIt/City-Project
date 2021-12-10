@@ -87,6 +87,7 @@
 
           <v-text-field
               light
+              v-model="BuildingName"
               label="Название здания"
               name="BuildingName"
               type="text"
@@ -96,6 +97,7 @@
               style="border-radius: 10px;"
           />
           <v-text-field
+              v-model="BuildingType"
               light
               label="Тип"
               name="BuildingType"
@@ -107,6 +109,7 @@
           />
           <v-text-field
               light
+              v-model="BuildingFloors"
               label="Этажность"
               name="BuildingFloors"
               type="number"
@@ -124,6 +127,7 @@
           </v-btn>
 
           <v-select
+              v-model="BuildingStreet"
               light
               :items="Streets"
               :rules="rules.building"
@@ -136,9 +140,10 @@
 
           <v-select
               light
+              v-model="BuildingComitet"
               :items="Comitets"
               :rules="rules.building"
-              name="BuildingKomitet"
+              name="BuildingComitet"
               color=#F58E43
               label="Выберете комитет"
               required
@@ -146,6 +151,7 @@
 
           <v-select
               light
+              v-model="BuildingBrigada"
               :items="Brigada"
               :rules="rules.building"
               color=#F58E43
@@ -177,7 +183,6 @@
           style="background-color: #F7FAFC"
       >
         <v-card-text class="font-weight-medium" style="font-size: 20pt; ">
-
           <div style="margin-top: 5%; color: black; text-align: center">
             Создать новый квартал
           </div>
@@ -191,6 +196,7 @@
 
           <v-text-field
               light
+              v-model="KvartalName"
               label="Название квартала"
               name="KvartalName"
               type="text"
@@ -199,16 +205,26 @@
               outlined
               style="border-radius: 10px;"
           />
-          <v-text-field
-              light
+          <v-select
+              v-model="KvartalToKvartal"
+              :items="Kvartals"
               label="Соседние кварталы"
-              name="KvartalToKvartal"
-              type="text"
+              multiple
               color=#F58E43
-              background-color=#EDF2F7
-              outlined
-              style="border-radius: 10px;"
-          />
+              clearable
+              light
+          >
+            <template v-slot:selection="{ item, index }">
+
+              <span v-if="index === 0">{{ item }}</span>
+              <span
+                  v-if="index === 1"
+                  class="grey--text text-caption"
+              >
+                  (+{{ StreetToStreet.length - 1 }} others)
+                </span>
+            </template>
+          </v-select>
 
         </v-card-text>
 
@@ -247,6 +263,7 @@
 
           <v-text-field
               light
+              v-model="StreetName"
               label="Название улицы"
               name="StreetName"
               type="text"
@@ -255,23 +272,15 @@
               outlined
               style="border-radius: 10px;"
           />
-          <!--          <v-text-field-->
-          <!--              light-->
-          <!--              label="Пересекаемые улицы"-->
-          <!--              name="StreetToStreet"-->
-          <!--              type="text"-->
-          <!--              color=#F58E43-->
-          <!--              background-color=#EDF2F7-->
-          <!--              outlined-->
-          <!--              style="border-radius: 10px;"-->
-          <!--          />-->
+
           <v-select
               v-model="StreetToStreet"
               :items="Streets"
-              label="Sources"
+              label="Пересекаемые улицы"
               multiple
               clearable
               light
+              color=#F58E43
           >
             <template v-slot:selection="{ item, index }">
 
@@ -288,9 +297,10 @@
 
           <v-select
               light
+              v-model="StreetKvartal"
               :items="Kvartals"
               :rules="rules.building"
-              name="KvartalStreet"
+              name="StreetKvartal"
               color=#F58E43
               label="Выберете квартал"
               required
@@ -301,7 +311,7 @@
         <v-btn style="margin-left: 28%; position: absolute; bottom: 5%"
                color=#F58E43
                outlined
-               @click="closeAndLog()"
+               @click="overlayStreet = false"
         >
           Добавить и закрыть
         </v-btn>
@@ -378,6 +388,7 @@
           </div>
           <v-text-field
               light
+              v-model="DostavkaName"
               label="Название"
               name="DostavkaName"
               type="text"
@@ -389,6 +400,7 @@
 
           <v-text-field
               light
+              v-model="DostavkaPrice"
               label="Тариф за доставку"
               name="DostavkaPrice"
               type="number"
@@ -400,6 +412,7 @@
 
           <v-select
               light
+              v-model="DostavkaMaterial"
               :items="Materials"
               :rules="rules.building"
               name="DostavkaMaterial"
@@ -443,8 +456,9 @@
           </div>
           <v-text-field
               light
+              v-model="SluzbaType"
               label="Тип службы"
-              name="SvluzbaType"
+              name="SluzbaType"
               type="text"
               color=#F58E43
               background-color=#EDF2F7
@@ -454,8 +468,9 @@
 
           <v-text-field
               light
+              v-model="SluzbaPrice"
               label="Цена"
-              name="SvluzbaPrice"
+              name="SluzbaPrice"
               type="number"
               color=#F58E43
               background-color=#EDF2F7
@@ -498,6 +513,7 @@
           </div>
           <v-text-field
               light
+              v-model="ObslugaPrice"
               label="Тариф за обслуживание"
               name="ObslugaPrice"
               type="text"
@@ -509,6 +525,7 @@
 
           <v-select
               light
+              v-model="ObslugaKvartal"
               :items="Kvartals"
               :rules="rules.building"
               name="ObslugaKvartal"
@@ -519,6 +536,7 @@
 
           <v-select
               light
+              v-model="ObslugaSluzba"
               :items="Sluzba"
               :rules="rules.building"
               name="ObslugaSluzba"
@@ -563,6 +581,7 @@
 
           <v-select
               light
+              v-model="BuildingMaterial"
               :items="Materials"
               :rules="rules.building"
               name="BuildingMaterial"
@@ -573,6 +592,7 @@
 
           <v-text-field
               light
+              v-model="BuildingMaterialCount"
               label="Количество стройматериала"
               name="BuildingMaterialCount"
               type="number"
@@ -610,7 +630,37 @@ export default {
     overlaySluzba: false,
     overlayObsluga: false,
     overlayMaterialForBuilding: false,
+
+    BuildingName: '',
+    BuildingType: '',
+    BuildingFloors: '',
+    BuildingStreet: '',
+    BuildingComitet: '',
+    BuildingBrigada: '',
+
+    StreetName: '',
     StreetToStreet: [],
+    StreetKvartal: '',
+
+    KvartalName: '',
+    KvartalToKvartal: [],
+
+    BrigadaPeople: '',
+
+    DostavkaName: '',
+    DostavkaPrice: '',
+    DostavkaMaterial: '',
+
+    SluzbaType: '',
+    SluzbaPrice: '',
+
+    ObslugaPrice: '',
+    ObslugaKvartal: '',
+    ObslugaSluzba: '',
+
+    BuildingMaterial: '',
+    BuildingMaterialCount: '',
+
     rules: {
       building: [val => (val || '').length > 0 || 'Это поле обязательно'],
     },
@@ -623,10 +673,7 @@ export default {
 
   }),
   methods: {
-    closeAndLog() {
-      console.log(this.StreetToStreet);
-      this.overlayStreet = false
-    }
+
   }
 }
 </script>
