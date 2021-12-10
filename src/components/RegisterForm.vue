@@ -14,7 +14,7 @@
               ref="form"
               lazy-validation>
 
-            <div class="font-center" style="font-size: 14pt; margin-bottom: 5px; text-align: left">
+            <div class="font-center" style="font-size: 14pt; margin-bottom: 10px; text-align: left">
               Имя пользователя
             </div>
 
@@ -30,7 +30,7 @@
                 style="border-radius: 10px"
             />
 
-            <div class="font-center" style="font-size: 14pt; margin-bottom: 5px; text-align: left">
+            <div class="font-center" style="font-size: 14pt; margin-bottom: 10px; text-align: left">
               E-mail
             </div>
 
@@ -46,7 +46,7 @@
                 style="border-radius: 10px"
             />
 
-            <div class="font-center" style="font-size: 14pt; margin-bottom: 5px; text-align: left">
+            <div class="font-center" style="font-size: 14pt; margin-bottom: 10px; text-align: left">
               Пароль
             </div>
 

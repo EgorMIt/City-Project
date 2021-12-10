@@ -17,7 +17,7 @@
               ref="form"
               lazy-validation>
 
-            <div class="font-center" style="font-size: 14pt; margin-bottom: 5px; text-align: left">
+            <div class="font-center" style="font-size: 14pt; margin-bottom: 10px; text-align: left">
               Имя пользователя
             </div>
 
@@ -29,31 +29,33 @@
                 auto-grow
                 outlined
                 rows="1"
-                row-height="15"
                 style="border-radius: 10px"
             />
 
-            <div class="font-center" style="font-size: 14pt; margin-bottom: 5px; text-align: left">
+            <div class="font-center" style="font-size: 14pt; margin-bottom: 10px; text-align: left">
               Пароль
             </div>
 
             <v-textarea
+                :append-icon="show3 ? 'mdi-eye' : 'mdi-eye-off'"
+                :rules="[rules.required, rules.min]"
+                :type="show3 ? 'text' : 'password'"
+                hint="At least 8 characters"
+                @click:append="show3 = !show3"
                 id="password"
                 label="Введите пароль"
                 name="password"
-                type="password"
                 color="black"
                 required
                 auto-grow
                 outlined
                 rows="1"
-                row-height="15"
                 style="border-radius: 10px"
             />
           </v-form>
 
           <v-row style="margin: auto">
-            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark>
+            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark to="/main">
               Войти в систему
             </v-btn>
           </v-row>
@@ -70,8 +72,20 @@
 </template>
 
 <script>
+
 export default {
-  name: "AuthForm"
+  name: "AuthForm",
+  el: '#password',
+  data() {
+    return {
+      show3: false,
+      password: 'Password',
+      rules: {
+        required: value => !!value || 'Введите пароль',
+        min: v => v.length >= 8 || 'Минимум 8 символов',
+      },
+    }
+  },
 }
 </script>
 
