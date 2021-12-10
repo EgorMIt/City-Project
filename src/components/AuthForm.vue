@@ -26,6 +26,7 @@
                 name="Login"
                 type="text"
                 color="black"
+                v-model="login"
                 auto-grow
                 outlined
                 rows="1"
@@ -36,17 +37,16 @@
               Пароль
             </div>
 
-            <v-textarea
+            <v-text-field
                 :append-icon="show3 ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.min]"
                 :type="show3 ? 'text' : 'password'"
-                hint="At least 8 characters"
+                hint="Минимум 8 символов"
                 @click:append="show3 = !show3"
                 id="password"
                 label="Введите пароль"
-                name="password"
                 color="black"
-                required
+                v-model="password"
                 auto-grow
                 outlined
                 rows="1"
@@ -75,11 +75,11 @@
 
 export default {
   name: "AuthForm",
-  el: '#password',
   data() {
     return {
+      login: '',
+      password: '',
       show3: false,
-      password: 'Password',
       rules: {
         required: value => !!value || 'Введите пароль',
         min: v => v.length >= 8 || 'Минимум 8 символов',

@@ -23,22 +23,7 @@
                 name="Login"
                 type="text"
                 color="black"
-                auto-grow
-                outlined
-                rows="1"
-                row-height="15"
-                style="border-radius: 10px"
-            />
-
-            <div class="font-center" style="font-size: 14pt; margin-bottom: 10px; text-align: left">
-              E-mail
-            </div>
-
-            <v-textarea
-                label="Введите e-mail"
-                name="Login"
-                type="text"
-                color="black"
+                v-model="login"
                 auto-grow
                 outlined
                 rows="1"
@@ -50,17 +35,19 @@
               Пароль
             </div>
 
-            <v-textarea
+            <v-text-field
+                :append-icon="show3 ? 'mdi-eye' : 'mdi-eye-off'"
+                :rules="[rules.required, rules.min]"
+                :type="show3 ? 'text' : 'password'"
+                hint="Минимум 8 символов"
+                @click:append="show3 = !show3"
                 id="password"
                 label="Введите пароль"
-                name="password"
-                type="password"
                 color="black"
-                required
+                v-model="password"
                 auto-grow
                 outlined
                 rows="1"
-                row-height="15"
                 style="border-radius: 10px"
             />
           </v-form>
@@ -80,7 +67,19 @@
 
 <script>
 export default {
-  name: "RegisterForm"
+  name: "RegisterForm",
+
+  data() {
+    return {
+      login: '',
+      password: '',
+      show3: false,
+      rules: {
+        required: value => !!value || 'Введите пароль',
+        min: v => v.length >= 8 || 'Минимум 8 символов',
+      },
+    }
+  },
 }
 </script>
 

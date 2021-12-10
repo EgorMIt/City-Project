@@ -4,4 +4,5 @@
   </v-app>
 </template>
 
+<notifications/>
 

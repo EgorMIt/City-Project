@@ -21,34 +21,39 @@
           </div>
 
           <v-btn @click="overlayBuilding = !overlayBuilding"
-                 style="border-radius: 10px; margin-bottom: 20px; color: #A0AEC0"
+                 style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0"
                  outlined>
             Здание
           </v-btn>
           <v-btn @click="overlayKvartal = !overlayKvartal"
-                 style="border-radius: 10px; margin-bottom: 20px; color: #A0AEC0" outlined>
+                 style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
             Квартал
           </v-btn>
-          <v-btn @click="overlayStreet = !overlayStreet" style="border-radius: 10px; margin-bottom: 20px; color: #A0AEC0" outlined>
+          <v-btn @click="overlayStreet = !overlayStreet"
+                 style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
             Улица
           </v-btn>
-          <v-btn @click="overlayBrigada = !overlayBrigada" style="border-radius: 10px; margin-bottom: 20px; color: #A0AEC0" outlined>
+          <v-btn @click="overlayBrigada = !overlayBrigada"
+                 style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
             Бригада
           </v-btn>
-          <v-btn @click="overlayDostavka = !overlayDostavka" style="border-radius: 10px; margin-bottom: 20px; color: #A0AEC0" outlined>
+          <v-btn @click="overlayDostavka = !overlayDostavka"
+                 style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
             Команда доставки
           </v-btn>
-          <v-btn @click="overlaySluzba = !overlaySluzba" style="border-radius: 10px; margin-bottom: 20px; color: #A0AEC0" outlined>
+          <v-btn @click="overlaySluzba = !overlaySluzba"
+                 style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
             Городская служба
           </v-btn>
-          <v-btn @click="overlayObsluga = !overlayObsluga" style="border-radius: 10px; margin-bottom: 20px; color: #A0AEC0" outlined>
+          <v-btn @click="overlayObsluga = !overlayObsluga"
+                 style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
             Обслуж. команда
           </v-btn>
         </div>
         <template v-slot:append>
           <v-row style="margin: auto">
-            <v-btn small block dark to="/" color=#F58E43
-                   style="border-radius: 10px; box-shadow: none !important; margin-left: 5px; margin-bottom: 20px">
+            <v-btn dark to="/" color=#F58E43 class="mx-auto"
+                   style="border-radius: 10px; box-shadow: none !important; margin-left: 5px; margin-bottom: 20px; width: 200px">
               Выйти
             </v-btn>
           </v-row>
@@ -63,7 +68,7 @@
         :value="overlayBuilding"
     >
       <v-card
-          height="700px"
+          height="750px"
           width="500px"
           style="background-color: #F7FAFC"
       >
@@ -76,11 +81,12 @@
 
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
 
-          <div style="margin-top: 5px; margin-left: 5%; margin-bottom: 15px; color: black; font-weight: lighter">
+          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
           </div>
 
           <v-text-field
+              light
               label="Название здания"
               name="BuildingName"
               type="text"
@@ -90,6 +96,7 @@
               style="border-radius: 10px;"
           />
           <v-text-field
+              light
               label="Тип"
               name="BuildingType"
               type="text"
@@ -99,6 +106,7 @@
               style="border-radius: 10px;"
           />
           <v-text-field
+              light
               label="Этажность"
               name="BuildingFloors"
               type="number"
@@ -107,17 +115,27 @@
               outlined
               style="border-radius: 10px;"
           />
+          <v-btn style="margin-left: 20%; position: absolute"
+                 color=#F58E43
+                 outlined
+                 @click="overlayMaterialForBuilding = !overlayMaterialForBuilding"
+          >
+            Добавить стройматериал
+          </v-btn>
 
           <v-select
+              light
               :items="Streets"
               :rules="rules.building"
               name="BuildingStreet"
               color=#F58E43
               label="Выберете улицу"
               required
+              style="margin-top: 50px"
           ></v-select>
 
           <v-select
+              light
               :items="Comitets"
               :rules="rules.building"
               name="BuildingKomitet"
@@ -127,6 +145,7 @@
           ></v-select>
 
           <v-select
+              light
               :items="Brigada"
               :rules="rules.building"
               color=#F58E43
@@ -166,11 +185,12 @@
 
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
 
-          <div style="margin-top: 5px; margin-left: 5%; margin-bottom: 15px; color: black; font-weight: lighter">
+          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
           </div>
 
           <v-text-field
+              light
               label="Название квартала"
               name="KvartalName"
               type="text"
@@ -180,6 +200,7 @@
               style="border-radius: 10px;"
           />
           <v-text-field
+              light
               label="Соседние кварталы"
               name="KvartalToKvartal"
               type="text"
@@ -207,7 +228,7 @@
         :value="overlayStreet"
     >
       <v-card
-          height="400px"
+          height="500px"
           width="500px"
           style="background-color: #F7FAFC"
       >
@@ -220,11 +241,12 @@
 
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
 
-          <div style="margin-top: 5px; margin-left: 5%; margin-bottom: 15px; color: black; font-weight: lighter">
+          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
           </div>
 
           <v-text-field
+              light
               label="Название улицы"
               name="StreetName"
               type="text"
@@ -234,6 +256,7 @@
               style="border-radius: 10px;"
           />
           <v-text-field
+              light
               label="Пересекаемые улицы"
               name="StreetToStreet"
               type="text"
@@ -242,6 +265,16 @@
               outlined
               style="border-radius: 10px;"
           />
+
+          <v-select
+              light
+              :items="Kvartals"
+              :rules="rules.building"
+              name="KvartalStreet"
+              color=#F58E43
+              label="Выберете квартал"
+              required
+          ></v-select>
 
         </v-card-text>
 
@@ -274,11 +307,12 @@
 
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
 
-          <div style="margin-top: 5px; margin-left: 5%; margin-bottom: 15px; color: black; font-weight: lighter">
+          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
           </div>
 
           <v-text-field
+              light
               label="Количество людей в бригаде"
               name="BrigadaPeople"
               type="number"
@@ -319,10 +353,11 @@
 
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
 
-          <div style="margin-top: 5px; margin-left: 5%; margin-bottom: 15px; color: black; font-weight: lighter">
+          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
           </div>
           <v-text-field
+              light
               label="Название"
               name="DostavkaName"
               type="text"
@@ -333,6 +368,7 @@
           />
 
           <v-text-field
+              light
               label="Тариф за доставку"
               name="DostavkaPrice"
               type="number"
@@ -343,6 +379,7 @@
           />
 
           <v-select
+              light
               :items="Materials"
               :rules="rules.building"
               name="DostavkaMaterial"
@@ -381,10 +418,11 @@
 
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
 
-          <div style="margin-top: 5px; margin-left: 5%; margin-bottom: 15px; color: black; font-weight: lighter">
+          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
           </div>
           <v-text-field
+              light
               label="Тип службы"
               name="SvluzbaType"
               type="text"
@@ -395,6 +433,7 @@
           />
 
           <v-text-field
+              light
               label="Цена"
               name="SvluzbaPrice"
               type="number"
@@ -434,10 +473,11 @@
 
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
 
-          <div style="margin-top: 5px; margin-left: 5%; margin-bottom: 15px; color: black; font-weight: lighter">
+          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
           </div>
           <v-text-field
+              light
               label="Тариф за обслуживание"
               name="ObslugaPrice"
               type="text"
@@ -448,6 +488,7 @@
           />
 
           <v-select
+              light
               :items="Kvartals"
               :rules="rules.building"
               name="ObslugaKvartal"
@@ -457,6 +498,7 @@
           ></v-select>
 
           <v-select
+              light
               :items="Sluzba"
               :rules="rules.building"
               name="ObslugaSluzba"
@@ -476,6 +518,62 @@
         </v-btn>
       </v-card>
     </v-overlay>
+
+    <!-- Оверлей материала для здания -->
+    <v-overlay
+        :absolute="absolute"
+        :value="overlayMaterialForBuilding"
+    >
+      <v-card
+          height="400px"
+          width="500px"
+          style="background-color: #F7FAFC"
+      >
+        <v-card-text class="font-weight-medium" style="font-size: 20pt; ">
+
+          <div style="margin-top: 5%; color: black; text-align: center">
+            Добавить стройметариал для здания
+          </div>
+        </v-card-text>
+
+        <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
+
+          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
+            Заполните необходимые поля
+          </div>
+
+          <v-select
+              light
+              :items="Materials"
+              :rules="rules.building"
+              name="BuildingMaterial"
+              color=#F58E43
+              label="Выберете стройматериал"
+              required
+          ></v-select>
+
+          <v-text-field
+              light
+              label="Количество стройматериала"
+              name="BuildingMaterialCount"
+              type="number"
+              color=#F58E43
+              background-color=#EDF2F7
+              outlined
+              style="border-radius: 10px; margin-top: 20px"
+          />
+
+        </v-card-text>
+
+        <v-btn style="margin-left: 25%; position: absolute; bottom: 5%"
+               color=#F58E43
+               outlined
+               @click="overlayMaterialForBuilding = false"
+        >
+          Добавить стройматериал
+        </v-btn>
+      </v-card>
+    </v-overlay>
   </div>
 </template>
 
@@ -492,6 +590,7 @@ export default {
     overlayDostavka: false,
     overlaySluzba: false,
     overlayObsluga: false,
+    overlayMaterialForBuilding: false,
 
     rules: {
       building: [val => (val || '').length > 0 || 'Это поле обязательно'],
@@ -502,6 +601,7 @@ export default {
     Materials: ['Material 1', 'Material 2', 'Material 3', 'Material 4', 'Material 5'],
     Kvartals: ['Kvartal 1', 'Kvartal 2', 'Kvartal 3', 'Kvartal 4', 'Kvartal 5'],
     Sluzba: ['Sluzba 1', 'Sluzba 2', 'Sluzba 3', 'Sluzba 4', 'Sluzba 5'],
+
   }),
 
 }
