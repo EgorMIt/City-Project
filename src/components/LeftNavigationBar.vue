@@ -255,16 +255,36 @@
               outlined
               style="border-radius: 10px;"
           />
-          <v-text-field
+          <!--          <v-text-field-->
+          <!--              light-->
+          <!--              label="Пересекаемые улицы"-->
+          <!--              name="StreetToStreet"-->
+          <!--              type="text"-->
+          <!--              color=#F58E43-->
+          <!--              background-color=#EDF2F7-->
+          <!--              outlined-->
+          <!--              style="border-radius: 10px;"-->
+          <!--          />-->
+          <v-select
+              v-model="StreetToStreet"
+              :items="Streets"
+              label="Sources"
+              multiple
+              clearable
               light
-              label="Пересекаемые улицы"
-              name="StreetToStreet"
-              type="text"
-              color=#F58E43
-              background-color=#EDF2F7
-              outlined
-              style="border-radius: 10px;"
-          />
+          >
+            <template v-slot:selection="{ item, index }">
+
+              <span v-if="index === 0">{{ item }}</span>
+              <span
+                  v-if="index === 1"
+                  class="grey--text text-caption"
+              >
+                  (+{{ StreetToStreet.length - 1 }} others)
+                </span>
+            </template>
+          </v-select>
+
 
           <v-select
               light
@@ -281,7 +301,7 @@
         <v-btn style="margin-left: 28%; position: absolute; bottom: 5%"
                color=#F58E43
                outlined
-               @click="overlayStreet = false"
+               @click="closeAndLog()"
         >
           Добавить и закрыть
         </v-btn>
@@ -512,7 +532,6 @@
                color=#F58E43
                outlined
                @click="overlayObsluga = false"
-               @keydown.esc="overlayObsluga = false"
         >
           Добавить и закрыть
         </v-btn>
@@ -591,7 +610,7 @@ export default {
     overlaySluzba: false,
     overlayObsluga: false,
     overlayMaterialForBuilding: false,
-
+    StreetToStreet: [],
     rules: {
       building: [val => (val || '').length > 0 || 'Это поле обязательно'],
     },
@@ -603,7 +622,12 @@ export default {
     Sluzba: ['Sluzba 1', 'Sluzba 2', 'Sluzba 3', 'Sluzba 4', 'Sluzba 5'],
 
   }),
-
+  methods: {
+    closeAndLog() {
+      console.log(this.StreetToStreet);
+      this.overlayStreet = false
+    }
+  }
 }
 </script>
 
