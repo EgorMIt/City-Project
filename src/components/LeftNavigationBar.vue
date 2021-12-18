@@ -3,10 +3,10 @@
     <v-card
         class="mx-0"
         height="100%"
-        width="250px"
     >
       <v-navigation-drawer
           class=EDF2F7
+          width="100%"
           permanent
       >
         <div

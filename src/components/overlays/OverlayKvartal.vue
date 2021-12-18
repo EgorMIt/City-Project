@@ -69,7 +69,9 @@ import router from "@/router";
 export default {
   name: "OverlayBuilding",
 
-
+  props: {
+    indexInArray: Number,
+  },
   data: () => ({
     absolute: true,
     valid: true,
@@ -97,6 +99,7 @@ export default {
         let data = {
           KvartalName: this.KvartalName,
           KvartalToKvartal: this.KvartalToKvartal,
+          indexInArray: this.indexInArray,
         }
         axios.create({
           baseURL: this.hostname
