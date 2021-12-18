@@ -1,6 +1,11 @@
 <template>
-  <v-row>
-    <LeftNavigationBar/>
+  <v-row >
+    <v-col cols="4">
+      <LeftNavigationBar/>
+    </v-col>
+    <v-col cols="max">
+
+    </v-col>
   </v-row>
 </template>
 

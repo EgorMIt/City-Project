@@ -22,6 +22,9 @@
             </div>
 
             <v-textarea
+                @input="$v.login.$touch()"
+                @blur="$v.login.$touch()"
+                :error-messages="loginErrors"
                 label="Введите имя пользователя"
                 name="Login"
                 type="text"
@@ -38,11 +41,13 @@
             </div>
 
             <v-text-field
-                :append-icon="show3 ? 'mdi-eye' : 'mdi-eye-off'"
-                :rules="[rules.required, rules.min]"
-                :type="show3 ? 'text' : 'password'"
+                @input="$v.password.$touch()"
+                @blur="$v.password.$touch()"
+                :error-messages="passwordErrors"
+                :append-icon="eyeFlag ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="eyeFlag ? 'text' : 'password'"
                 hint="Минимум 8 символов"
-                @click:append="show3 = !show3"
+                @click:append="eyeFlag = !eyeFlag"
                 id="password"
                 label="Введите пароль"
                 color="black"
@@ -55,7 +60,8 @@
           </v-form>
 
           <v-row style="margin: auto">
-            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark to="/main">
+            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark
+                   @click="submit()" to="/main">
               Войти в систему
             </v-btn>
           </v-row>
@@ -72,20 +78,67 @@
 </template>
 
 <script>
+import VueCookies from "vue-cookies";
+import axios from "axios";
+import router from "../router";
+import {validationMixin} from "vuelidate";
+import {required} from "vuelidate/lib/validators";
+
 
 export default {
   name: "AuthForm",
-  data() {
-    return {
-      login: '',
-      password: '',
-      show3: false,
-      rules: {
-        required: value => !!value || 'Введите пароль',
-        min: v => v.length >= 8 || 'Минимум 8 символов',
-      },
-    }
+
+  mixins: [validationMixin],
+  validations: {
+    password: {required},
+    login: {required},
   },
+  data: () => ({
+    eyeFlag: false,
+    password: '',
+    login: '',
+    valid: false,
+    errorFlag: false,
+    errorText: ''
+  }),
+  computed: {
+    loginErrors() {
+      const errors = []
+      if (!this.$v.login.$dirty) return errors
+      !this.$v.login.required && errors.push('Поле не может быть пустым')
+      return errors
+    },
+    passwordErrors() {
+      const errors = []
+      if (!this.$v.password.$dirty) return errors
+      !this.$v.password.required && errors.push('Поле не может быть пустым')
+      return errors
+    },
+  },
+  methods: {
+    submit() {
+      this.$v.$touch()
+      if (this.valid) {
+        let data = {
+          username: this.login,
+          password: this.password
+        }
+        axios.create({
+          baseURL: this.hostname
+        }).post('/api/auth/signin', data)
+            .then(resp => {
+              console.log(resp.data.token)
+              this.errorFlag = false;
+              VueCookies.set('token', resp.data.token ? resp.data.token.toString() : '', "10h")
+              router.push({path: '/main'})
+            }).catch(err => {
+          this.errorFlag = true;
+          this.errorText = err.response.data.message
+        })
+      }
+    },
+  }
+
 }
 </script>
 
