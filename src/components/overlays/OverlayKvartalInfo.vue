@@ -10,11 +10,50 @@
             <br>{{ this.KvartalNameDone }}
           </div>
 
+          <v-row style="margin-left: 3%; margin-bottom: 10px">
+            <v-col>
+              <v-dialog width="500px" v-model="dialog">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn style=""
+                         color=#F58E43
+                         outlined
+                         @click="openWind='OverlayBuilding'"
+                         v-bind="attrs" v-on="on"
+                  >
+                    Добавить здание
+                  </v-btn>
+                </template>
+
+                <OverlayBuilding :KvartalName="this.KvartalNameDone" :isChangeable="false"
+                                 v-if="openWind === 'OverlayBuilding'"
+                                 @updateParent="updateDialog"/>
+              </v-dialog>
+
+            </v-col>
+            <v-col>
+              <v-dialog width="500px" v-model="dialog">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn style=""
+                         color=#F58E43
+                         outlined
+                         @click="openWind='OverlayStreet'"
+                         v-bind="attrs" v-on="on"
+                  >
+                    Добавить улицу
+                  </v-btn>
+                </template>
+
+                <OverlayStreet v-if="openWind === 'OverlayStreet'"
+                               @updateParent="updateDialog"/>
+              </v-dialog>
+            </v-col>
+          </v-row>
+
           <v-text-field
               light
               v-model="KvartalName"
-              :label=this.KvartalNameDone
               placeholder="Введите новое название"
+              label="Название квартала"
               name="BuildingName"
               type="text"
               :rules="rules.clearFieldValid"
@@ -28,19 +67,16 @@
               v-model="ChooseStreetForBuilding"
               light
               :items="Streets"
-              :rules="rules.clearFieldValid"
               name="BuildingStreet"
               color=#F58E43
               label="Выберете улицу"
               required
-              style="margin-top: 20px"
           ></v-select>
 
           <v-select
               v-model="ChooseBuilding"
               light
               :items="Streets"
-              :rules="rules.clearFieldValid"
               name="BuildingStreet"
               color=#F58E43
               label="Выберете здание"
@@ -48,93 +84,30 @@
               style="margin-top: 10px"
           ></v-select>
 
-          <v-btn style="margin-left: 16%; margin-bottom: 5%"
-                 color=#F58E43
-                 outlined
-                 @click="getInfo"
-          >
-            Показать информацию о доме
-          </v-btn>
+          <v-dialog width="500px" v-model="dialog">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn style="margin-left: 16%; margin-bottom: 5%" @click="openWind='OverlayBuilding2'"
+                     v-bind="attrs" v-on="on"
+                     color=#F58E43
+                     outlined
+              >
+                Показать информацию о доме
+              </v-btn>
+            </template>
+            <OverlayBuilding2 :KvartalName="this.KvartalNameDone" :isChangeable="true" :BuildingNameDone="'ПримерДома1'"
+                             v-if="openWind === 'OverlayBuilding2'"
+                             @updateParent="updateDialog"/>
+          </v-dialog>
           <v-divider style="margin-bottom: 10px"></v-divider>
 
-          <v-text-field
-              light
-              v-model="BuildingName"
-              label="Название здания"
-              name="BuildingName"
-              type="text"
-              :rules="rules.clearFieldValid"
-              color=#F58E43
-              background-color=#EDF2F7
-              outlined
-              style="border-radius: 10px;"
-          />
-          <v-text-field
-              v-model="BuildingType"
-              light
-              label="Тип"
-              name="BuildingType"
-              type="text"
-              :rules="rules.clearFieldValid"
-              color=#F58E43
-              background-color=#EDF2F7
-              outlined
-              style="border-radius: 10px;"
-          />
-          <v-text-field
-              light
-              v-model="BuildingFloors"
-              label="Этажность"
-              name="BuildingFloors"
-              type="number"
-              color=#F58E43
-              background-color=#EDF2F7
-              outlined
-              :rules="rules.numberValid"
-              style="border-radius: 10px;"
-          />
-
-          <v-select
-              v-model="BuildingStreet"
-              light
-              :items="Streets"
-              :rules="rules.clearFieldValid"
-              name="BuildingStreet"
-              color=#F58E43
-              label="Выберете улицу"
-              required
-              style="margin-top: 20px"
-          ></v-select>
-
-          <v-select
-              light
-              v-model="BuildingComitet"
-              :items="Comitets"
-              :rules="rules.clearFieldValid"
-              name="BuildingComitet"
-              color=#F58E43
-              label="Выберете комитет"
-              required
-          ></v-select>
-
-          <v-select
-              light
-              v-model="BuildingBrigada"
-              :items="Brigada"
-              :rules="rules.clearFieldValid"
-              color=#F58E43
-              name="BuildingBrigada"
-              label="Выберете бригаду"
-              required
-          ></v-select>
         </v-card-text>
 
-        <v-btn style="margin-left: 28%; margin-bottom: 5%"
+        <v-btn style="margin-left: 27%; margin-bottom: 5%"
                color=#F58E43
                outlined
                @click="submit"
         >
-          Добавить и закрыть
+          Сохранить и закрыть
         </v-btn>
       </v-card>
     </div>
@@ -144,9 +117,13 @@
 <script>
 import axios from "axios";
 import router from "@/router";
+import OverlayBuilding from "@/components/overlays/OverlayBuilding";
+import OverlayStreet from "@/components/overlays/OverlayStreet";
+import OverlayBuilding2 from "@/components/overlays/OverlayBuilding";
 
 export default {
-  name: "OverlayBuilding",
+  name: "OverlayKvartalInfo",
+  components: {OverlayBuilding, OverlayStreet, OverlayBuilding2},
 
   props: {
     indexInArray: Number,
@@ -154,6 +131,8 @@ export default {
   },
   data: () => ({
     valid: true,
+    dialog: false,
+    openWind: '',
 
     absolute: true,
 
@@ -188,6 +167,9 @@ export default {
         dialog: false,
       })
     },
+    updateDialog(data) {
+      this.dialog = data.dialog
+    },
     submit() {
       if (this.$refs.form.validate()) {
         console.log("123213123")
@@ -210,10 +192,11 @@ export default {
             })
       }
     },
-    getInfo() {
+  },
+  beforeMount() {
+    this.KvartalName = this.KvartalNameDone
 
-    }
-  }
+  },
 }
 </script>
 

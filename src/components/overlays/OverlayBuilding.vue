@@ -6,18 +6,27 @@
           color="#F7FAFC"
       >
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-          <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
+          <div v-if="isChangeable===false" style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
             <br>Создать новое здание
           </div>
 
-          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
+          <div v-if="isChangeable===true" style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
+            <br>Информация о существующем здании
+          </div>
+
+          <div v-if="isChangeable===false" style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
+          </div>
+
+          <div v-if="isChangeable===true" style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
+            При необходимости вы можете изменить поля
           </div>
 
           <v-text-field
               light
               v-model="BuildingName"
-              label="Название здания"
+              label="Название"
+              placeholder="Введите новое название"
               name="BuildingName"
               type="text"
               :rules="rules.clearFieldValid"
@@ -30,6 +39,7 @@
               v-model="BuildingType"
               light
               label="Тип"
+              placeholder="Введите новый тип"
               name="BuildingType"
               type="text"
               :rules="rules.clearFieldValid"
@@ -42,6 +52,7 @@
               light
               v-model="BuildingFloors"
               label="Этажность"
+              placeholder="Введите новое значение этажности"
               name="BuildingFloors"
               type="number"
               color=#F58E43
@@ -50,7 +61,7 @@
               :rules="rules.numberValid"
               style="border-radius: 10px;"
           />
-          <v-btn style="margin-left: 20%; position: absolute"
+          <v-btn v-if="this.isChangeable === false" style="margin-left: 20%; position: absolute"
                  color=#F58E43
                  outlined
                  @click="overlayMaterialForBuilding = !overlayMaterialForBuilding"
@@ -130,7 +141,7 @@
                 light
                 v-model="BuildingMaterial"
                 :items="Materials"
-                :rules="rules.building"
+                :rules="rules.clearFieldValid"
                 name="BuildingMaterial"
                 color=#F58E43
                 label="Выберете стройматериал"
@@ -143,6 +154,7 @@
                 label="Количество стройматериала"
                 name="BuildingMaterialCount"
                 type="number"
+                :rules="rules.numberValid"
                 color=#F58E43
                 background-color=#EDF2F7
                 outlined
@@ -170,6 +182,18 @@ import router from "@/router";
 
 export default {
   name: "OverlayBuilding",
+
+  props: {
+    isChangeable: Boolean,
+    KvartalNameDone: String,
+
+    BuildingNameDone: String,
+    BuildingTypeDone: String,
+    BuildingFloorsDone: Number,
+    BuildingStreetDone: String,
+    BuildingComitetDone: String,
+    BuildingBrigadaDone: String,
+  },
 
   data: () => ({
     overlayMaterialForBuilding: false,
@@ -212,6 +236,7 @@ export default {
       if (this.$refs.form.validate()) {
         console.log("123213123")
         let data = {
+          isChangeable: this.isChangeable,
           BuildingName: this.BuildingName,
           BuildingType: this.BuildingType,
           BuildingFloors: this.BuildingFloors,
@@ -228,7 +253,27 @@ export default {
             })
       }
     },
-  }
+    getListStreet() {
+      axios.create({
+        baseURL: 'http://localhost:10520/api/v1'
+      }).get('/get/list')
+          .then(resp => {
+            console.log(resp.data)
+            for( let i =0;i<resp.data.length;i++) {
+              this.Streets.push(resp.data[i].name)
+            }
+          })
+    },
+  },
+  beforeMount() {
+    //this.getListStreet()
+    this.BuildingName = this.BuildingNameDone
+    this.BuildingType = this.BuildingTypeDone
+    this.BuildingFloors = this.BuildingFloorsDone
+    this.BuildingStreet = this.BuildingStreetDone
+    this.BuildingComitet = this.BuildingComitetDone
+    this.BuildingBrigada = this.BuildingBrigadaDone
+  },
 }
 </script>
 

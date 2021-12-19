@@ -3,7 +3,7 @@
     <v-row style="background-color: white">
       <v-col
           v-for="(n, index) in arr"
-          :key="n"
+          :key="index"
       >
         <ButtonActive :obj="n" :count="index"/>
 
