@@ -20,12 +20,11 @@ export default {
   components: {ButtonActive},
 
   data: () => ({
-    arr: [null, null, null, null, { KvartalName: 'Квартал один'},
-      { KvartalName: 'Квартал два'}, null],
+    arr: [null, null, null, null, {KvartalName: 'Квартал один'},
+      {KvartalName: 'Квартал два'}, null],
   }),
 
-  methods: {
-  },
+  methods: {},
 }
 </script>
 

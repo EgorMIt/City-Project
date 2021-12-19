@@ -95,8 +95,8 @@
               </v-btn>
             </template>
             <OverlayBuilding2 :KvartalName="this.KvartalNameDone" :isChangeable="true" :BuildingNameDone="'ПримерДома1'"
-                             v-if="openWind === 'OverlayBuilding2'"
-                             @updateParent="updateDialog"/>
+                              v-if="openWind === 'OverlayBuilding2'"
+                              @updateParent="updateDialog"/>
           </v-dialog>
           <v-divider style="margin-bottom: 10px"></v-divider>
 

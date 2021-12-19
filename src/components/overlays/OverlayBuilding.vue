@@ -14,11 +14,13 @@
             <br>Информация о существующем здании
           </div>
 
-          <div v-if="isChangeable===false" style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
+          <div v-if="isChangeable===false"
+               style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             Заполните необходимые поля
           </div>
 
-          <div v-if="isChangeable===true" style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
+          <div v-if="isChangeable===true"
+               style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
             При необходимости вы можете изменить поля
           </div>
 
@@ -253,20 +255,20 @@ export default {
             })
       }
     },
-    getListStreet() {
+    getListOfStreets() {
       axios.create({
         baseURL: 'http://localhost:10520/api/v1'
       }).get('/get/list')
           .then(resp => {
             console.log(resp.data)
-            for( let i =0;i<resp.data.length;i++) {
+            for (let i = 0; i < resp.data.length; i++) {
               this.Streets.push(resp.data[i].name)
             }
           })
     },
   },
   beforeMount() {
-    //this.getListStreet()
+    //this.getListOfStreets()
     this.BuildingName = this.BuildingNameDone
     this.BuildingType = this.BuildingTypeDone
     this.BuildingFloors = this.BuildingFloorsDone

@@ -16,16 +16,16 @@
         </div>
         <v-select
             light
-            v-model="ObslugaName"
+            v-model="ObslugaNameList"
             :items="Obsluga"
             :rules="rules.clearFieldValid"
             name="ObslugaName"
             color=#F58E43
             required
-            @blur="updateElements"
+            v-on:change="updateElements"
         ></v-select>
 
-        <div style="margin-top: 20px; margin-bottom: 20px; color: black; font-weight: lighter">
+        <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
         </div>
 
@@ -83,12 +83,11 @@ import router from "@/router";
 export default {
   name: "OverlayObsluga",
 
-
   data: () => ({
     absolute: true,
     valid: true,
 
-    ObslugaName: '',
+    ObslugaNameList: '',
 
     ObslugaPrice: '',
     ObslugaKvartal: '',
@@ -109,11 +108,6 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     submit() {
       if (this.$refs.form.validate()) {
         console.log("123213123")
@@ -133,12 +127,11 @@ export default {
       }
     },
     updateElements() {
-      if (this.ObslugaName !== this.Obsluga[0]) {
+      if (this.ObslugaNameList !== this.Obsluga[0]) {
         this.ObslugaPrice = "123"
         this.ObslugaKvartal = this.Kvartals[0]
         this.ObslugaSluzba = this.Sluzba[0]
-      }
-      else if (this.ObslugaName === this.Obsluga[0]) {
+      } else if (this.ObslugaNameList === this.Obsluga[0]) {
         this.ObslugaPrice = ''
         this.ObslugaKvartal = ''
         this.ObslugaSluzba = ''
@@ -146,7 +139,7 @@ export default {
     },
   },
   beforeMount() {
-    this.ObslugaName = this.Obsluga[0]
+    this.ObslugaNameList = this.Obsluga[0]
   },
 }
 </script>

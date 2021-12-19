@@ -5,14 +5,27 @@
         color="#F7FAFC"
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-        <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
-          <br>Создать новую городскую службу
+        <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
+          <br>Создать или изменить городскую службу
         </div>
       </v-card-text>
 
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-
         <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
+          Выберете элемент или создайте новый
+        </div>
+        <v-select
+            light
+            v-model="SluzbaNameList"
+            :items="Sluzba"
+            :rules="rules.clearFieldValid"
+            name="SluzbaName"
+            color=#F58E43
+            required
+            v-on:change="updateElements"
+        ></v-select>
+
+        <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
         </div>
 
@@ -66,8 +79,11 @@ export default {
     absolute: true,
     valid: true,
 
+    SluzbaNameList: '',
     SluzbaType: '',
     SluzbaPrice: '',
+
+    Sluzba: ['Добавить новый элемент', 'Sluzba 1', 'Sluzba 2', 'Sluzba 3', 'Sluzba 4', 'Sluzba 5'],
 
     rules: {
       clearFieldValid: [
@@ -102,7 +118,19 @@ export default {
 
       }
     },
-  }
+    updateElements() {
+      if (this.SluzbaNameList !== this.Sluzba[0]) {
+        this.SluzbaType = "Текст"
+        this.SluzbaPrice = "123"
+      } else if (this.SluzbaNameList === this.Sluzba[0]) {
+        this.SluzbaType = ''
+        this.SluzbaPrice = ''
+      }
+    },
+  },
+  beforeMount() {
+    this.SluzbaNameList = this.Sluzba[0]
+  },
 }
 </script>
 

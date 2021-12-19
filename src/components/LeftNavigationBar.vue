@@ -14,56 +14,84 @@
           City Project
         </div>
 
-        <div style="margin-top: 50%; margin-left: 30px; margin-right: 20px">
-          <v-divider style="margin-top: 20%"></v-divider>
-          <div
-              style="margin-top: 5%; color: black; font-size: 20px; text-align: left;  margin-bottom: 15px">
-            Создание объектов:
+
+        <div style="margin-top: 60%; margin-left: 30px; margin-right: 20px">
+          <v-switch
+              v-model="modeSwitch"
+              inset
+              :label="modeSwitch ? 'Элементы' : 'Функции'"
+              color="#F58E43"
+              style="margin-left: 14%"
+          ></v-switch>
+
+          <v-divider></v-divider>
+          <div v-if="modeSwitch === true">
+            <div
+                style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
+              Создание и редактирование объектов:
+            </div>
+
+            <v-dialog width="500px" v-model="dialog">
+              <template v-slot:activator="{ on, attrs }">
+
+                <v-btn @click="openWind='OverlayBrigada'" v-bind="attrs" v-on="on" width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Бригада
+                </v-btn>
+                <v-btn @click="openWind='OverlayDostavka'" v-bind="attrs" v-on="on" width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Команда доставки
+                </v-btn>
+                <v-btn @click="openWind='OverlaySluzba'" v-bind="attrs" v-on="on" width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Городская служба
+                </v-btn>
+                <v-btn @click="openWind='OverlayObsluga'" v-bind="attrs" v-on="on" width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Обслуж. команда
+                </v-btn>
+
+              </template>
+              <OverlayBuilding v-if="openWind === 'overlayBuilding'" @updateParent="updateDialog"/>
+              <OverlayStreet v-if="openWind === 'OverlayStreet'" @updateParent="updateDialog"/>
+              <OverlayKvartal v-if="openWind === 'OverlayKvartal'" @updateParent="updateDialog"/>
+              <OverlayBrigada v-if="openWind === 'OverlayBrigada'" @updateParent="updateDialog"/>
+              <OverlayDostavka v-if="openWind === 'OverlayDostavka'" @updateParent="updateDialog"/>
+              <OverlaySluzba v-if="openWind === 'OverlaySluzba'" @updateParent="updateDialog"/>
+              <OverlayObsluga v-if="openWind === 'OverlayObsluga'" @updateParent="updateDialog"/>
+            </v-dialog>
           </div>
 
-          <v-dialog width="500px" v-model="dialog">
-            <template v-slot:activator="{ on, attrs }">
+          <div v-if="modeSwitch === false">
+            <div
+                style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
+              Доступные функции:
+            </div>
 
-              <v-btn @click="openWind='overlayBuilding'" v-bind="attrs" v-on="on" width="95%"
-                     style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0"
-                     outlined>
-                Здание
-              </v-btn>
-              <v-btn @click="openWind='OverlayKvartal'" v-bind="attrs" v-on="on" width="95%"
-                     style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                Квартал
-              </v-btn>
-              <v-btn @click="openWind='OverlayStreet'" v-bind="attrs" v-on="on" width="95%"
-                     style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                Улица
-              </v-btn>
-              <v-btn @click="openWind='OverlayBrigada'" v-bind="attrs" v-on="on" width="95%"
-                     style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                Бригада
-              </v-btn>
-              <v-btn @click="openWind='OverlayDostavka'" v-bind="attrs" v-on="on" width="95%"
-                     style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                Команда доставки
-              </v-btn>
-              <v-btn @click="openWind='OverlaySluzba'" v-bind="attrs" v-on="on" width="95%"
-                     style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                Городская служба
-              </v-btn>
-              <v-btn @click="openWind='OverlayObsluga'" v-bind="attrs" v-on="on" width="95%"
-                     style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                Обслуж. команда
-              </v-btn>
+            <v-dialog width="500px" v-model="dialog">
+              <template>
 
-            </template>
-            <OverlayBuilding v-if="openWind === 'overlayBuilding'" @updateParent="updateDialog"/>
-            <OverlayStreet v-if="openWind === 'OverlayStreet'" @updateParent="updateDialog"/>
-            <OverlayKvartal v-if="openWind === 'OverlayKvartal'" @updateParent="updateDialog"/>
-            <OverlayBrigada v-if="openWind === 'OverlayBrigada'" @updateParent="updateDialog"/>
-            <OverlayDostavka v-if="openWind === 'OverlayDostavka'" @updateParent="updateDialog"/>
-            <OverlaySluzba v-if="openWind === 'OverlaySluzba'" @updateParent="updateDialog"/>
-            <OverlayObsluga v-if="openWind === 'OverlayObsluga'" @updateParent="updateDialog"/>
-          </v-dialog>
+                <v-btn width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Функция 1
+                </v-btn>
+                <v-btn width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Функция 2
+                </v-btn>
+                <v-btn width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Функция 3
+                </v-btn>
+                <v-btn width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Функция 4
+                </v-btn>
+              </template>
+            </v-dialog>
+          </div>
           <v-divider style="margin-top: 5%"></v-divider>
+
         </div>
         <template v-slot:append>
           <v-row style="margin: auto">
@@ -89,6 +117,7 @@ import OverlayObsluga from "./overlays/OverlayObsluga";
 
 export default {
   name: "LeftNavigationBar",
+
   components: {
     OverlayBuilding,
     OverlayStreet,
@@ -101,6 +130,7 @@ export default {
   data: () => ({
     dialog: false,
     openWind: '',
+    modeSwitch: true,
   }),
   methods: {
     updateDialog(data) {

@@ -5,20 +5,34 @@
         color="#F7FAFC"
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-        <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
-          <br>Создать новую строительную бригаду
+        <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
+          <br>Создать или изменить строительную бригаду
         </div>
       </v-card-text>
 
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-
         <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
+          Выберете элемент или создайте новый
+        </div>
+        <v-select
+            light
+            v-model="BrigadaNameList"
+            :items="Brigada"
+            :rules="rules.clearFieldValid"
+            name="BrigadaNameList"
+            color=#F58E43
+            required
+            v-on:change="updateElements"
+        ></v-select>
+
+        <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
         </div>
 
         <v-text-field
             light
             label="Количество людей в бригаде"
+            v-model="BrigadaPeople"
             name="BrigadaPeople"
             type="number"
             :rules="rules.numberValid"
@@ -53,9 +67,16 @@ export default {
     absolute: true,
     valid: true,
 
+    BrigadaNameList: '',
+
     BrigadaPeople: '',
 
+    Brigada: ['Добавить новый элемент', 'Brigada 1', 'Brigada 2', 'Brigada 3', 'Brigada 4', 'Brigada 5'],
+
     rules: {
+      clearFieldValid: [
+        v => !!v || 'Поле не может быть пустым'
+      ],
       numberValid: [
         v => !!v || 'Поле не может быть пустым',
         v => !!/^\d*$/.test(v) || 'Допустимы только числа',
@@ -84,7 +105,17 @@ export default {
 
       }
     },
-  }
+    updateElements() {
+      if (this.BrigadaNameList !== this.Brigada[0]) {
+        this.BrigadaPeople = "123"
+      } else if (this.BrigadaNameList === this.Brigada[0]) {
+        this.BrigadaPeople = ''
+      }
+    },
+  },
+  beforeMount() {
+    this.BrigadaNameList = this.Brigada[0]
+  },
 }
 </script>
 

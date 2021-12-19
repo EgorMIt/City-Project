@@ -20,7 +20,8 @@
         </v-btn>
       </template>
 
-      <OverlayKvartalInfo :indexInArray="count" :KvartalNameDone="obj.KvartalName" v-if="openWind === 'OverlayKvartalInfo'"
+      <OverlayKvartalInfo :indexInArray="count" :KvartalNameDone="obj.KvartalName"
+                          v-if="openWind === 'OverlayKvartalInfo'"
                           @updateParent="updateDialog"/>
     </v-dialog>
   </div>
