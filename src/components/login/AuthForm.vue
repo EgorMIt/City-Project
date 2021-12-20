@@ -5,8 +5,12 @@
         <v-card-text class="mt-12">
           <h1
               class="text-center display-2"
-              style="color: black; font-weight: bold; margin-bottom: 40px"
-          >Создайте аккаунт</h1>
+              style="color: black; font-weight: bold"
+          >Добро пожаловать!</h1>
+
+          <div class="font-center" style="font-size: 20pt;  margin: 20px 20px 50px;text-align: center">
+            Введите данные для входа
+          </div>
 
           <v-form
               style="margin-bottom: 20px"
@@ -29,7 +33,6 @@
                 auto-grow
                 outlined
                 rows="1"
-                row-height="15"
                 style="border-radius: 10px"
             />
 
@@ -40,10 +43,10 @@
             <v-text-field
                 @input="$v.password.$touch()"
                 @blur="$v.password.$touch()"
+                :error-messages="passwordErrors"
                 :append-icon="eyeFlag ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="eyeFlag ? 'text' : 'password'"
                 hint="Минимум 8 символов"
-                :error-messages="passwordErrors"
                 @click:append="eyeFlag = !eyeFlag"
                 id="password"
                 label="Введите пароль"
@@ -58,14 +61,15 @@
 
           <v-row style="margin: auto">
             <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark
-                   @click="submit()">
-              Зарегистрироваться и вернуться ко входу
+                   @click="submit()" to="/main">
+              Войти в систему
             </v-btn>
           </v-row>
-          <v-row>
-            <v-alert v-if="errorFlag" type="error">
-              {{ errorText }}
-            </v-alert>
+          <v-row style="margin-top: 20px">
+            <v-btn x-large color=#F58E43 width="96.5%"
+                   style="margin-left: 11px; box-shadow: none !important; border-radius: 10px" dark to="/register">
+              Зарегистрироваться
+            </v-btn>
           </v-row>
         </v-card-text>
       </v-col>
@@ -74,13 +78,15 @@
 </template>
 
 <script>
+import VueCookies from "vue-cookies";
 import axios from "axios";
-import router from "../router";
-import {validationMixin} from 'vuelidate'
-import {required} from 'vuelidate/lib/validators'
+import router from "../../router";
+import {validationMixin} from "vuelidate";
+import {required} from "vuelidate/lib/validators";
+
 
 export default {
-  name: "RegisterForm",
+  name: "AuthForm",
 
   mixins: [validationMixin],
   validations: {
@@ -109,7 +115,6 @@ export default {
       return errors
     },
   },
-
   methods: {
     submit() {
       this.$v.$touch()
@@ -120,11 +125,12 @@ export default {
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/api/auth/signup', data)
+        }).post('/api/auth/signin', data)
             .then(resp => {
               console.log(resp.data.token)
               this.errorFlag = false;
-              router.push({path: '/'})
+              VueCookies.set('token', resp.data.token ? resp.data.token.toString() : '', "10h")
+              router.push({path: '/main'})
             }).catch(err => {
           this.errorFlag = true;
           this.errorText = err.response.data.message
@@ -132,6 +138,7 @@ export default {
       }
     },
   }
+
 }
 </script>
 

@@ -168,7 +168,7 @@
           <v-btn style="margin-left: 25%; position: absolute; bottom: 5%"
                  color=#F58E43
                  outlined
-                 @click="overlayMaterialForBuilding = false"
+                 @click="addMaterial"
           >
             Добавить стройматериал
           </v-btn>
@@ -213,6 +213,7 @@ export default {
     BuildingMaterial: '',
     BuildingMaterialCount: '',
 
+    addedMaterials: [],
     Streets: ['Street 1', 'Street 2', 'Street 3', 'Street 4', 'Street 5'],
     Comitets: ['Comitet 1', 'Comitet 2', 'Comitet 3', 'Comitet 4', 'Comitet 5'],
     Brigada: ['Brigada 1', 'Brigada 2', 'Brigada 3', 'Brigada 4', 'Brigada 5'],
@@ -236,7 +237,6 @@ export default {
     },
     submit() {
       if (this.$refs.form.validate()) {
-        console.log("123213123")
         let data = {
           isChangeable: this.isChangeable,
           BuildingName: this.BuildingName,
@@ -245,6 +245,7 @@ export default {
           BuildingStreet: this.BuildingStreet,
           BuildingComitet: this.BuildingComitet,
           BuildingBrigada: this.BuildingBrigada,
+          addedMaterials: this.addedMaterials,
         }
         axios.create({
           baseURL: this.hostname
@@ -255,6 +256,14 @@ export default {
             })
       }
     },
+    addMaterial() {
+      this.overlayMaterialForBuilding = false;
+      this.addedMaterials.push({
+        BuildingMaterial: this.BuildingMaterial,
+        BuildingMaterialCount: this.BuildingMaterialCount
+      })
+    },
+
     getListOfStreets() {
       axios.create({
         baseURL: 'http://localhost:10520/api/v1'

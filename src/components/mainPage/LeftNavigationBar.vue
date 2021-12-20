@@ -9,6 +9,7 @@
           width="100%"
           permanent
       >
+
         <div
             style="margin-top: 20%; color: black; font-size: 30px; font-weight: bold; text-align: center">
           City Project
@@ -91,13 +92,15 @@
             </v-dialog>
           </div>
           <v-divider style="margin-top: 5%"></v-divider>
-
         </div>
+
+
         <template v-slot:append>
+          <v-divider style="margin-bottom: 20px"></v-divider>
           <v-row style="margin: auto">
             <v-btn dark to="/" color=#F58E43 class="mx-auto"
-                   style="border-radius: 10px; box-shadow: none !important; margin-left: 5px; margin-bottom: 20px; width: 200px">
-              Выйти
+                   style="border-radius: 10px; box-shadow: none !important; margin-left: 5px; margin-bottom: 20px; width: 80%">
+              Выйти из системы
             </v-btn>
           </v-row>
         </template>

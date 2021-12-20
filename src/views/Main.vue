@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import LeftNavigationBar from "@/components/LeftNavigationBar";
-import CityComponent from "@/components/CityComponent";
+import LeftNavigationBar from "@/components/mainPage/LeftNavigationBar";
+import CityComponent from "@/components/mainPage/CityComponent";
 export default {
   name: "Main",
   components: {LeftNavigationBar, CityComponent}

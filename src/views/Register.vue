@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import LeftPanelAuth from "../components/LeftPanelAuth";
-import RegisterForm from "@/components/RegisterForm";
+import LeftPanelAuth from "../components/login/LeftPanelAuth";
+import RegisterForm from "@/components/login/RegisterForm";
 
 export default {
   name: "Register",

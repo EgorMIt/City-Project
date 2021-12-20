@@ -7,7 +7,7 @@
         City Project
       </div>
     </v-card-text>
-    <v-img src="../assets/city.jpg"
+    <v-img src="../../assets/city.jpg"
            class="ml-auto mr-auto"
            width="70%"
            height="70%"

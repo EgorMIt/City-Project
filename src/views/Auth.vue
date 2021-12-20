@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import LeftPanelAuth from "../components/LeftPanelAuth";
-import AuthForm from "../components/AuthForm";
+import LeftPanelAuth from "../components/login/LeftPanelAuth";
+import AuthForm from "../components/login/AuthForm";
 
 export default {
   name: "Auth",

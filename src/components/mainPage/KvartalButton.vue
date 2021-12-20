@@ -29,10 +29,10 @@
 
 <script>
 import OverlayKvartal from "./overlays/OverlayKvartal";
-import OverlayKvartalInfo from "@/components/overlays/OverlayKvartalInfo";
+import OverlayKvartalInfo from "@/components/mainPage/overlays/OverlayKvartalInfo";
 
 export default {
-  name: "Buttons",
+  name: "KvartalButton",
   components: {OverlayKvartal, OverlayKvartalInfo},
 
   props: {

@@ -117,9 +117,9 @@
 <script>
 import axios from "axios";
 import router from "@/router";
-import OverlayBuilding from "@/components/overlays/OverlayBuilding";
-import OverlayStreet from "@/components/overlays/OverlayStreet";
-import OverlayBuilding2 from "@/components/overlays/OverlayBuilding";
+import OverlayBuilding from "@/components/mainPage/overlays/OverlayBuilding";
+import OverlayStreet from "@/components/mainPage/overlays/OverlayStreet";
+import OverlayBuilding2 from "@/components/mainPage/overlays/OverlayBuilding";
 
 export default {
   name: "OverlayKvartalInfo",
