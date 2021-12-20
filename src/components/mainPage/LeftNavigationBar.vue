@@ -51,6 +51,10 @@
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
                   Обслуж. команда
                 </v-btn>
+                <v-btn @click="openWind='OverlayRoute'" v-bind="attrs" v-on="on" width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Транспортный маршрут
+                </v-btn>
 
               </template>
               <OverlayBuilding v-if="openWind === 'overlayBuilding'" @updateParent="updateDialog"/>
@@ -60,6 +64,7 @@
               <OverlayDostavka v-if="openWind === 'OverlayDostavka'" @updateParent="updateDialog"/>
               <OverlaySluzba v-if="openWind === 'OverlaySluzba'" @updateParent="updateDialog"/>
               <OverlayObsluga v-if="openWind === 'OverlayObsluga'" @updateParent="updateDialog"/>
+              <OverlayRoute v-if="openWind === 'OverlayRoute'" @updateParent="updateDialog"/>
             </v-dialog>
           </div>
 
@@ -117,6 +122,7 @@ import OverlayBrigada from "./overlays/OverlayBrigada";
 import OverlayDostavka from "./overlays/OverlayDostavka";
 import OverlaySluzba from "./overlays/OverlaySluzba";
 import OverlayObsluga from "./overlays/OverlayObsluga";
+import OverlayRoute from "@/components/mainPage/overlays/OverlayRoute";
 
 export default {
   name: "LeftNavigationBar",
@@ -128,7 +134,8 @@ export default {
     OverlayBrigada,
     OverlayDostavka,
     OverlaySluzba,
-    OverlayObsluga
+    OverlayObsluga,
+    OverlayRoute
   },
   data: () => ({
     dialog: false,

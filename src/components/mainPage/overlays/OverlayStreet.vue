@@ -50,17 +50,6 @@
             </template>
           </v-select>
 
-
-          <v-select
-              light
-              v-model="StreetKvartal"
-              :items="Kvartals"
-              :rules="rules.clearFieldValid"
-              name="StreetKvartal"
-              color=#F58E43
-              label="Выберете квартал"
-              required
-          ></v-select>
         </v-card-text>
 
         <v-btn style="margin-left: 28%; margin-bottom: 5%"
@@ -81,7 +70,9 @@ import router from "@/router";
 export default {
   name: "OverlayStreet",
 
-
+  props: {
+    KvartalNameDone: String,
+  },
   data: () => ({
     absolute: true,
     valid: true,
@@ -90,7 +81,6 @@ export default {
     StreetToStreet: [],
     StreetKvartal: '',
 
-    Kvartals: ['Kvartal 1', 'Kvartal 2', 'Kvartal 3', 'Kvartal 4', 'Kvartal 5'],
     Streets: ['Street 1', 'Street 2', 'Street 3', 'Street 4', 'Street 5'],
 
     rules: {

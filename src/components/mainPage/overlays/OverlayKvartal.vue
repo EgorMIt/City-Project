@@ -28,26 +28,6 @@
             outlined
             style="border-radius: 10px;"
         />
-        <v-select
-            v-model="KvartalToKvartal"
-            :items="Kvartals"
-            label="Соседние кварталы"
-            multiple
-            color=#F58E43
-            clearable
-            light
-        >
-          <template v-slot:selection="{ item, index }">
-
-            <span v-if="index === 0">{{ item }}</span>
-            <span
-                v-if="index === 1"
-                class="grey--text text-caption"
-            >
-                  (+{{ KvartalToKvartal.length - 1 }} others)
-                </span>
-          </template>
-        </v-select>
 
       </v-card-text>
 
@@ -77,9 +57,6 @@ export default {
     valid: true,
 
     KvartalName: '',
-    KvartalToKvartal: [],
-
-    Kvartals: ['Kvartal 1', 'Kvartal 2', 'Kvartal 3', 'Kvartal 4', 'Kvartal 5'],
 
     rules: {
       clearFieldValid: [
@@ -98,7 +75,6 @@ export default {
         console.log("123213123")
         let data = {
           KvartalName: this.KvartalName,
-          KvartalToKvartal: this.KvartalToKvartal,
           indexInArray: this.indexInArray,
         }
         axios.create({
