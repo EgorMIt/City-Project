@@ -63,7 +63,7 @@
               :rules="rules.numberValid"
               style="border-radius: 10px;"
           />
-          <v-btn v-if="this.isChangeable === false" style="margin-left: 20%; position: absolute"
+          <v-btn v-if="this.isChangeable === false" style="margin-left: 20%; position: absolute;"
                  color=#F58E43
                  outlined
                  @click="overlayMaterialForBuilding = !overlayMaterialForBuilding"
@@ -71,7 +71,7 @@
             Добавить стройматериал
           </v-btn>
 
-          <v-select
+          <v-overflow-btn
               v-model="BuildingStreet"
               light
               :items="Streets"
@@ -80,10 +80,12 @@
               color=#F58E43
               label="Выберете улицу"
               required
+              editable
+              segmented
               style="margin-top: 50px"
-          ></v-select>
+          ></v-overflow-btn>
 
-          <v-select
+          <v-overflow-btn
               light
               v-model="BuildingComitet"
               :items="Comitets"
@@ -92,9 +94,11 @@
               color=#F58E43
               label="Выберете комитет"
               required
-          ></v-select>
+              editable
+              segmented
+          ></v-overflow-btn>
 
-          <v-select
+          <v-overflow-btn
               light
               v-model="BuildingBrigada"
               :items="Brigada"
@@ -103,7 +107,9 @@
               name="BuildingBrigada"
               label="Выберете бригаду"
               required
-          ></v-select>
+              editable
+              segmented
+          ></v-overflow-btn>
 
         </v-card-text>
 
@@ -139,7 +145,7 @@
               Заполните необходимые поля
             </div>
 
-            <v-select
+            <v-overflow-btn
                 light
                 v-model="BuildingMaterial"
                 :items="Materials"
@@ -147,8 +153,10 @@
                 name="BuildingMaterial"
                 color=#F58E43
                 label="Выберете стройматериал"
+                editable
+                segmented
                 required
-            ></v-select>
+            ></v-overflow-btn>
 
             <v-text-field
                 light

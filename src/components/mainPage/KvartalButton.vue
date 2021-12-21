@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import OverlayKvartal from "./overlays/OverlayKvartal";
-import OverlayKvartalInfo from "@/components/mainPage/overlays/OverlayKvartalInfo";
+import OverlayKvartal from "./elementsOverlays/OverlayKvartal";
+import OverlayKvartalInfo from "@/components/mainPage/elementsOverlays/OverlayKvartalInfo";
 
 export default {
   name: "KvartalButton",

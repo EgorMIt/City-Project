@@ -14,7 +14,7 @@
         <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
           Выберете элемент или создайте новый
         </div>
-        <v-select
+        <v-overflow-btn
             light
             v-model="RouteNameList"
             :items="Routes"
@@ -22,8 +22,10 @@
             name="RouteNameList"
             color=#F58E43
             required
+            editable
+            segmented
             v-on:change="updateElements"
-        ></v-select>
+        ></v-overflow-btn>
 
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
@@ -42,7 +44,7 @@
             style="border-radius: 10px;"
         />
 
-        <v-select
+        <v-overflow-btn
             light
             v-model="RouteKvartalStart"
             :items="Kvartals"
@@ -51,9 +53,11 @@
             name="RouteKvartalStart"
             color=#F58E43
             required
-        ></v-select>
+            editable
+            segmented
+        ></v-overflow-btn>
 
-        <v-select
+        <v-overflow-btn
             light
             v-model="RouteKvartalFinish"
             :items="Kvartals"
@@ -62,9 +66,11 @@
             name="RouteKvartalFinish"
             color=#F58E43
             required
-        ></v-select>
+            editable
+            segmented
+        ></v-overflow-btn>
 
-        <v-select
+        <v-overflow-btn
             v-model="RouteStreets"
             :items="Streets"
             label="Улицы в маршруте"
@@ -72,6 +78,8 @@
             clearable
             light
             color=#F58E43
+            editable
+            segmented
         >
           <template v-slot:selection="{ item, index }">
 
@@ -83,7 +91,7 @@
                   (+{{ RouteStreets.length - 1 }} others)
                 </span>
           </template>
-        </v-select>
+        </v-overflow-btn>
       </v-card-text>
 
       <v-btn style="margin-left: 28%; margin-bottom: 5%"

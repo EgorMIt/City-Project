@@ -28,8 +28,8 @@
                                  v-if="openWind === 'OverlayBuilding'"
                                  @updateParent="updateDialog"/>
               </v-dialog>
-
             </v-col>
+
             <v-col>
               <v-dialog width="500px" v-model="dialog">
                 <template v-slot:activator="{ on, attrs }">
@@ -42,7 +42,6 @@
                     Добавить улицу
                   </v-btn>
                 </template>
-
                 <OverlayStreet v-if="openWind === 'OverlayStreet'"
                                @updateParent="updateDialog"/>
               </v-dialog>
@@ -54,7 +53,7 @@
               v-model="KvartalName"
               placeholder="Введите новое название"
               label="Название квартала"
-              name="BuildingName"
+              name="KvartalName"
               type="text"
               :rules="rules.clearFieldValid"
               color=#F58E43
@@ -63,26 +62,30 @@
               style="border-radius: 10px;"
           />
 
-          <v-select
+          <v-overflow-btn
               v-model="ChooseStreetForBuilding"
               light
               :items="Streets"
-              name="BuildingStreet"
+              name="ChooseStreetForBuilding"
               color=#F58E43
               label="Выберете улицу"
               required
-          ></v-select>
+              editable
+              segmented
+          ></v-overflow-btn>
 
-          <v-select
+          <v-overflow-btn
               v-model="ChooseBuilding"
               light
-              :items="Streets"
-              name="BuildingStreet"
+              :items="Buildings"
+              name="ChooseBuilding"
               color=#F58E43
               label="Выберете здание"
               required
+              editable
+              segmented
               style="margin-top: 10px"
-          ></v-select>
+          ></v-overflow-btn>
 
           <v-dialog width="500px" v-model="dialog">
             <template v-slot:activator="{ on, attrs }">
@@ -117,9 +120,9 @@
 <script>
 import axios from "axios";
 import router from "@/router";
-import OverlayBuilding from "@/components/mainPage/overlays/OverlayBuilding";
-import OverlayStreet from "@/components/mainPage/overlays/OverlayStreet";
-import OverlayBuilding2 from "@/components/mainPage/overlays/OverlayBuilding";
+import OverlayBuilding from "@/components/mainPage/elementsOverlays/OverlayBuilding";
+import OverlayStreet from "@/components/mainPage/elementsOverlays/OverlayStreet";
+import OverlayBuilding2 from "@/components/mainPage/elementsOverlays/OverlayBuilding";
 
 export default {
   name: "OverlayKvartalInfo",
@@ -150,6 +153,7 @@ export default {
     Streets: ['Street 1', 'Street 2', 'Street 3', 'Street 4', 'Street 5'],
     Comitets: ['Comitet 1', 'Comitet 2', 'Comitet 3', 'Comitet 4', 'Comitet 5'],
     Brigada: ['Brigada 1', 'Brigada 2', 'Brigada 3', 'Brigada 4', 'Brigada 5'],
+    Buildings: ['Building 1', 'Building 2', 'Building 3', 'Building 4', 'Building 5'],
 
     rules: {
       clearFieldValid: [

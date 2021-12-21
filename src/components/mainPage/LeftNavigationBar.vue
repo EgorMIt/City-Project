@@ -16,7 +16,7 @@
         </div>
 
 
-        <div style="margin-top: 60%; margin-left: 30px; margin-right: 20px">
+        <div style="margin-top: 50%; margin-left: 30px; margin-right: 20px">
           <v-switch
               v-model="modeSwitch"
               inset
@@ -26,18 +26,20 @@
           ></v-switch>
 
           <v-divider></v-divider>
-          <div v-if="modeSwitch === true">
-            <div
-                style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
-              Создание и редактирование объектов:
-            </div>
 
-            <v-dialog width="500px" v-model="dialog">
-              <template v-slot:activator="{ on, attrs }">
+
+          <v-dialog width="500px" v-model="dialog">
+            <template v-slot:activator="{ on, attrs }">
+
+              <div v-if="modeSwitch === false">
+                <div
+                    style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
+                  Создание и редактирование объектов:
+                </div>
 
                 <v-btn @click="openWind='OverlayBrigada'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                  Бригада
+                  Стр. бригада
                 </v-btn>
                 <v-btn @click="openWind='OverlayDostavka'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
@@ -49,53 +51,57 @@
                 </v-btn>
                 <v-btn @click="openWind='OverlayObsluga'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                  Обслуж. команда
+                  Обсл. команда
                 </v-btn>
                 <v-btn @click="openWind='OverlayRoute'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                  Транспортный маршрут
+                  Тр. маршрут
                 </v-btn>
-
-              </template>
-              <OverlayBuilding v-if="openWind === 'overlayBuilding'" @updateParent="updateDialog"/>
-              <OverlayStreet v-if="openWind === 'OverlayStreet'" @updateParent="updateDialog"/>
-              <OverlayKvartal v-if="openWind === 'OverlayKvartal'" @updateParent="updateDialog"/>
-              <OverlayBrigada v-if="openWind === 'OverlayBrigada'" @updateParent="updateDialog"/>
-              <OverlayDostavka v-if="openWind === 'OverlayDostavka'" @updateParent="updateDialog"/>
-              <OverlaySluzba v-if="openWind === 'OverlaySluzba'" @updateParent="updateDialog"/>
-              <OverlayObsluga v-if="openWind === 'OverlayObsluga'" @updateParent="updateDialog"/>
-              <OverlayRoute v-if="openWind === 'OverlayRoute'" @updateParent="updateDialog"/>
-            </v-dialog>
-          </div>
-
-          <div v-if="modeSwitch === false">
-            <div
-                style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
-              Доступные функции:
-            </div>
-
-            <v-dialog width="500px" v-model="dialog">
-              <template>
-
-                <v-btn width="95%"
+                <v-btn @click="openWind='OverlayComitet'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                  Функция 1
+                  Комитет сдачи
                 </v-btn>
-                <v-btn width="95%"
+              </div>
+
+              <div v-if="modeSwitch === true">
+                <div
+                    style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
+                  Доступные функции:
+                </div>
+
+                <v-btn @click="openWind='OverlayCostCount'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                  Функция 2
+                  Посчитать стоимость
                 </v-btn>
-                <v-btn width="95%"
+                <v-btn @click="openWind='OverlayFinishBuilding'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                  Функция 3
+                  Принять объекты
                 </v-btn>
-                <v-btn width="95%"
+                <v-btn @click="openWind='OverlayCityReadiness'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                  Функция 4
+                  Готовность города
                 </v-btn>
-              </template>
-            </v-dialog>
-          </div>
+                <v-btn @click="openWind='OverlayKvartalReadiness'" v-bind="attrs" v-on="on" width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Готовность квартала
+                </v-btn>
+              </div>
+            </template>
+            <OverlayBuilding v-if="openWind === 'overlayBuilding'" @updateParent="updateDialog"/>
+            <OverlayStreet v-if="openWind === 'OverlayStreet'" @updateParent="updateDialog"/>
+            <OverlayKvartal v-if="openWind === 'OverlayKvartal'" @updateParent="updateDialog"/>
+            <OverlayBrigada v-if="openWind === 'OverlayBrigada'" @updateParent="updateDialog"/>
+            <OverlayDostavka v-if="openWind === 'OverlayDostavka'" @updateParent="updateDialog"/>
+            <OverlaySluzba v-if="openWind === 'OverlaySluzba'" @updateParent="updateDialog"/>
+            <OverlayObsluga v-if="openWind === 'OverlayObsluga'" @updateParent="updateDialog"/>
+            <OverlayRoute v-if="openWind === 'OverlayRoute'" @updateParent="updateDialog"/>
+            <OverlayComitet v-if="openWind === 'OverlayComitet'" @updateParent="updateDialog"/>
+
+            <OverlayCostCount v-if="openWind === 'OverlayCostCount'" @updateParent="updateDialog"/>
+            <OverlayFinishBuilding v-if="openWind === 'OverlayFinishBuilding'" @updateParent="updateDialog"/>
+            <OverlayCityReadiness v-if="openWind === 'OverlayCityReadiness'" @updateParent="updateDialog"/>
+            <OverlayKvartalReadiness v-if="openWind === 'OverlayKvartalReadiness'" @updateParent="updateDialog"/>
+          </v-dialog>
           <v-divider style="margin-top: 5%"></v-divider>
         </div>
 
@@ -115,14 +121,19 @@
 </template>
 
 <script>
-import OverlayBuilding from "./overlays/OverlayBuilding";
-import OverlayStreet from "./overlays/OverlayStreet";
-import OverlayKvartal from "./overlays/OverlayKvartal";
-import OverlayBrigada from "./overlays/OverlayBrigada";
-import OverlayDostavka from "./overlays/OverlayDostavka";
-import OverlaySluzba from "./overlays/OverlaySluzba";
-import OverlayObsluga from "./overlays/OverlayObsluga";
-import OverlayRoute from "@/components/mainPage/overlays/OverlayRoute";
+import OverlayBuilding from "./elementsOverlays/OverlayBuilding";
+import OverlayStreet from "./elementsOverlays/OverlayStreet";
+import OverlayKvartal from "./elementsOverlays/OverlayKvartal";
+import OverlayBrigada from "./elementsOverlays/OverlayBrigada";
+import OverlayDostavka from "./elementsOverlays/OverlayDostavka";
+import OverlaySluzba from "./elementsOverlays/OverlaySluzba";
+import OverlayObsluga from "./elementsOverlays/OverlayObsluga";
+import OverlayRoute from "@/components/mainPage/elementsOverlays/OverlayRoute";
+import OverlayComitet from "@/components/mainPage/elementsOverlays/OverlayComitet";
+import OverlayCostCount from "@/components/mainPage/functionsOverlays/OverlayCostCount";
+import OverlayFinishBuilding from "@/components/mainPage/functionsOverlays/OverlayFinishBuilding";
+import OverlayCityReadiness from "@/components/mainPage/functionsOverlays/OverlayCityReadiness";
+import OverlayKvartalReadiness from "@/components/mainPage/functionsOverlays/OverlayKvartalReadiness";
 
 export default {
   name: "LeftNavigationBar",
@@ -135,7 +146,12 @@ export default {
     OverlayDostavka,
     OverlaySluzba,
     OverlayObsluga,
-    OverlayRoute
+    OverlayRoute,
+    OverlayComitet,
+    OverlayCostCount,
+    OverlayFinishBuilding,
+    OverlayCityReadiness,
+    OverlayKvartalReadiness
   },
   data: () => ({
     dialog: false,

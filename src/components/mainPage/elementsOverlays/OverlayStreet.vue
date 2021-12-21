@@ -29,13 +29,15 @@
               style="border-radius: 10px;"
           />
 
-          <v-select
+          <v-overflow-btn
               v-model="StreetToStreet"
               :items="Streets"
               label="Пересекаемые улицы"
               multiple
               clearable
               light
+              editable
+              segmented
               color=#F58E43
           >
             <template v-slot:selection="{ item, index }">
@@ -48,7 +50,7 @@
                   (+{{ StreetToStreet.length - 1 }} others)
                 </span>
             </template>
-          </v-select>
+          </v-overflow-btn>
 
         </v-card-text>
 

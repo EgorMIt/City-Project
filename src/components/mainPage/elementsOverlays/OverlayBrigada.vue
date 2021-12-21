@@ -1,12 +1,12 @@
 <template>
   <v-form v-model="valid" lazy-validation ref="form">
-    <!-- Оверлей доставки -->
+    <!-- Оверлей бригады -->
     <v-card
         color="#F7FAFC"
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
-          <br>Создать или изменить команду доставки
+          <br>Создать или изменить строительную бригаду
         </div>
       </v-card-text>
 
@@ -14,16 +14,18 @@
         <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
           Выберете элемент или создайте новый
         </div>
-        <v-select
+        <v-overflow-btn
             light
-            v-model="DostavkaNameList"
-            :items="Dostavka"
+            v-model="BrigadaNameList"
+            :items="Brigada"
             :rules="rules.clearFieldValid"
-            name="DostavkaNameList"
+            name="BrigadaNameList"
             color=#F58E43
             required
+            editable
+            segmented
             v-on:change="updateElements"
-        ></v-select>
+        ></v-overflow-btn>
 
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
@@ -31,22 +33,9 @@
 
         <v-text-field
             light
-            v-model="DostavkaName"
-            label="Название"
-            name="DostavkaName"
-            type="text"
-            :rules="rules.clearFieldValid"
-            color=#F58E43
-            background-color=#EDF2F7
-            outlined
-            style="border-radius: 10px;"
-        />
-
-        <v-text-field
-            light
-            v-model="DostavkaPrice"
-            label="Тариф за доставку"
-            name="DostavkaPrice"
+            label="Количество людей в бригаде"
+            v-model="BrigadaPeople"
+            name="BrigadaPeople"
             type="number"
             :rules="rules.numberValid"
             color=#F58E43
@@ -55,16 +44,6 @@
             style="border-radius: 10px;"
         />
 
-        <v-select
-            light
-            v-model="DostavkaMaterial"
-            :items="Materials"
-            :rules="rules.clearFieldValid"
-            name="DostavkaMaterial"
-            color=#F58E43
-            label="Выберете стройматериал"
-            required
-        ></v-select>
       </v-card-text>
 
       <v-btn style="margin-left: 28%; margin-bottom: 5%"
@@ -83,22 +62,18 @@ import axios from "axios";
 import router from "@/router";
 
 export default {
-  name: "OverlayDostavka",
+  name: "OverlayBrigada",
 
 
   data: () => ({
     absolute: true,
     valid: true,
 
-    DostavkaNameList: '',
+    BrigadaNameList: '',
 
-    DostavkaName: '',
-    DostavkaPrice: '',
-    DostavkaMaterial: '',
+    BrigadaPeople: '',
 
-
-    Materials: ['Material 1', 'Material 2', 'Material 3', 'Material 4', 'Material 5'],
-    Dostavka: ['Добавить новый элемент', 'Dostavka 1', 'Dostavka 2', 'Dostavka 3', 'Dostavka 4', 'Dostavka 5'],
+    Brigada: ['Добавить новый элемент', 'Brigada 1', 'Brigada 2', 'Brigada 3', 'Brigada 4', 'Brigada 5'],
 
     rules: {
       clearFieldValid: [
@@ -120,34 +95,28 @@ export default {
       if (this.$refs.form.validate()) {
         console.log("123213123")
         let data = {
-          DostavkaName: this.DostavkaName,
-          DostavkaPrice: this.DostavkaPrice,
-          DostavkaMaterial: this.DostavkaMaterial,
+          BrigadaPeople: this.BrigadaPeople,
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/addDostavka', data)
+        }).post('/addBrigada', data)
             .then(resp => {
-              console.log(resp.data.DostavkaName)
+              console.log(resp.data.BrigadaPeople)
               router.push({path: '/main'})
             })
 
       }
     },
     updateElements() {
-      if (this.DostavkaNameList !== this.Dostavka[0]) {
-        this.DostavkaName = "Текст"
-        this.DostavkaPrice = "123"
-        this.DostavkaMaterial = this.Materials[0]
-      } else if (this.DostavkaNameList === this.Dostavka[0]) {
-        this.DostavkaName = ''
-        this.DostavkaPrice = ''
-        this.DostavkaMaterial = ''
+      if (this.BrigadaNameList !== this.Brigada[0]) {
+        this.BrigadaPeople = "123"
+      } else if (this.BrigadaNameList === this.Brigada[0]) {
+        this.BrigadaPeople = ''
       }
     },
   },
   beforeMount() {
-    this.DostavkaNameList = this.Dostavka[0]
+    this.BrigadaNameList = this.Brigada[0]
   },
 }
 </script>
