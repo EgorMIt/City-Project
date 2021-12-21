@@ -273,9 +273,10 @@ export default {
     },
 
     getListOfStreets() {
+      let str = "/get/list?id=" + this.isChangeable
       axios.create({
         baseURL: 'http://localhost:10520/api/v1'
-      }).get('/get/list')
+      }).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {

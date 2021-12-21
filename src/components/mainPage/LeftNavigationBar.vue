@@ -28,12 +28,11 @@
           <v-divider></v-divider>
 
 
-          <v-dialog width="500px" v-model="dialog">
+          <v-dialog width="500px" v-model="dialog" v-if="modeSwitch === true">
             <template v-slot:activator="{ on, attrs }">
 
-              <div v-if="modeSwitch === false">
-                <div
-                    style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
+              <div>
+                <div style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
                   Создание и редактирование объектов:
                 </div>
 
@@ -63,7 +62,21 @@
                 </v-btn>
               </div>
 
-              <div v-if="modeSwitch === true">
+            </template>
+            <OverlayBuilding v-if="openWind === 'overlayBuilding'" @updateParent="updateDialog"/>
+            <OverlayStreet v-if="openWind === 'OverlayStreet'" @updateParent="updateDialog"/>
+            <OverlayKvartal v-if="openWind === 'OverlayKvartal'" @updateParent="updateDialog"/>
+            <OverlayBrigada v-if="openWind === 'OverlayBrigada'" @updateParent="updateDialog"/>
+            <OverlayDostavka v-if="openWind === 'OverlayDostavka'" @updateParent="updateDialog"/>
+            <OverlaySluzba v-if="openWind === 'OverlaySluzba'" @updateParent="updateDialog"/>
+            <OverlayObsluga v-if="openWind === 'OverlayObsluga'" @updateParent="updateDialog"/>
+            <OverlayRoute v-if="openWind === 'OverlayRoute'" @updateParent="updateDialog"/>
+            <OverlayComitet v-if="openWind === 'OverlayComitet'" @updateParent="updateDialog"/>
+          </v-dialog>
+
+          <v-dialog width="500px" v-model="dialog" v-if="modeSwitch === false">
+            <template v-slot:activator="{ on, attrs }">
+              <div>
                 <div
                     style="margin-top: 5%; color: black; font-size: 18px; text-align: left;  margin-bottom: 15px">
                   Доступные функции:
@@ -87,16 +100,6 @@
                 </v-btn>
               </div>
             </template>
-            <OverlayBuilding v-if="openWind === 'overlayBuilding'" @updateParent="updateDialog"/>
-            <OverlayStreet v-if="openWind === 'OverlayStreet'" @updateParent="updateDialog"/>
-            <OverlayKvartal v-if="openWind === 'OverlayKvartal'" @updateParent="updateDialog"/>
-            <OverlayBrigada v-if="openWind === 'OverlayBrigada'" @updateParent="updateDialog"/>
-            <OverlayDostavka v-if="openWind === 'OverlayDostavka'" @updateParent="updateDialog"/>
-            <OverlaySluzba v-if="openWind === 'OverlaySluzba'" @updateParent="updateDialog"/>
-            <OverlayObsluga v-if="openWind === 'OverlayObsluga'" @updateParent="updateDialog"/>
-            <OverlayRoute v-if="openWind === 'OverlayRoute'" @updateParent="updateDialog"/>
-            <OverlayComitet v-if="openWind === 'OverlayComitet'" @updateParent="updateDialog"/>
-
             <OverlayCostCount v-if="openWind === 'OverlayCostCount'" @updateParent="updateDialog"/>
             <OverlayFinishBuilding v-if="openWind === 'OverlayFinishBuilding'" @updateParent="updateDialog"/>
             <OverlayCityReadiness v-if="openWind === 'OverlayCityReadiness'" @updateParent="updateDialog"/>
@@ -156,14 +159,16 @@ export default {
   data: () => ({
     dialog: false,
     openWind: '',
-    modeSwitch: true,
+    modeSwitch: Boolean,
   }),
   methods: {
     updateDialog(data) {
       this.dialog = data.dialog
     }
   },
-
+  beforeMount() {
+    this.modeSwitch = true
+  }
 }
 </script>
 
