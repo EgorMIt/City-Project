@@ -6,7 +6,7 @@
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
-          <br>Создать или изменить комитет сдачи объектов
+          <br>Управление комитетами сдачи объектов
         </div>
       </v-card-text>
 
@@ -24,7 +24,7 @@
             required
             editable
             segmented
-            v-on:change="updateElements"
+            v-on:change="updateElements(ComitetNameList)"
         ></v-overflow-btn>
 
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
@@ -59,7 +59,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 
 export default {
   name: "OverlayComitet",
@@ -73,7 +72,7 @@ export default {
 
     ComitetRigor: '',
 
-    Comitets: ['Добавить новый элемент', 'Comitet 1', 'Comitet 2', 'Comitet 3', 'Comitet 4', 'Comitet 5'],
+    Comitets: ['Добавить новый элемент'],
 
     rules: {
       clearFieldValid: [
@@ -86,36 +85,57 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     submit() {
       if (this.$refs.form.validate()) {
-        console.log("123213123")
+        let str = "/api/app/committee/save"
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+
         let data = {
           ComitetRigor: this.ComitetRigor,
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/addComitet', data)
+        }).post(str, data)
             .then(resp => {
-              console.log(resp.data.ComitetRigor)
-              router.push({path: '/main'})
+              console.log(resp.data)
             })
-
       }
     },
-    updateElements() {
+    updateElements(ComitetNameList) {
       if (this.ComitetNameList !== this.Comitets[0]) {
-        this.ComitetRigor = "1"
+        this.getComitetByID(ComitetNameList)
       } else if (this.ComitetNameList === this.Comitets[0]) {
         this.ComitetRigor = ''
       }
     },
+    getListOfComitets() {
+      let str = "/api/app/committee/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Comitets.push(resp.data[i].id)
+            }
+          })
+    },
+    getComitetByID: function (ComitetNameList) {
+      let str = "/api/app/committee/single?type=" + ComitetNameList
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            this.ComitetRigor = resp.data
+          })
+    },
   },
   beforeMount() {
+    this.getListOfComitets()
     this.ComitetNameList = this.Comitets[0]
   },
 }

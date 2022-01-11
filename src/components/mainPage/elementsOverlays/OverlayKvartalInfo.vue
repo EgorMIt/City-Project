@@ -10,7 +10,7 @@
             <br>{{ this.KvartalNameDone }}
           </div>
 
-          <v-row style="margin-left: 3%; margin-bottom: 10px">
+          <v-row style="margin-left: 1%; margin-right: 1%; margin-bottom: 10px">
             <v-col>
               <v-dialog width="500px" v-model="dialog">
                 <template v-slot:activator="{ on, attrs }">
@@ -39,7 +39,7 @@
                          @click="openWind='OverlayStreet'"
                          v-bind="attrs" v-on="on"
                   >
-                    Добавить улицу
+                    Управление улицами
                   </v-btn>
                 </template>
                 <OverlayStreet v-if="openWind === 'OverlayStreet'"
@@ -72,6 +72,7 @@
               required
               editable
               segmented
+              v-on:change="updateListOfBuildings(ChooseStreetForBuilding)"
           ></v-overflow-btn>
 
           <v-overflow-btn
@@ -119,7 +120,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 import OverlayBuilding from "@/components/mainPage/elementsOverlays/OverlayBuilding";
 import OverlayStreet from "@/components/mainPage/elementsOverlays/OverlayStreet";
 import OverlayBuilding2 from "@/components/mainPage/elementsOverlays/OverlayBuilding";
@@ -143,17 +143,8 @@ export default {
     ChooseStreetForBuilding: '',
     ChooseBuilding: '',
 
-    BuildingName: '',
-    BuildingType: '',
-    BuildingFloors: '',
-    BuildingStreet: '',
-    BuildingComitet: '',
-    BuildingBrigada: '',
-
-    Streets: ['Street 1', 'Street 2', 'Street 3', 'Street 4', 'Street 5'],
-    Comitets: ['Comitet 1', 'Comitet 2', 'Comitet 3', 'Comitet 4', 'Comitet 5'],
-    Brigada: ['Brigada 1', 'Brigada 2', 'Brigada 3', 'Brigada 4', 'Brigada 5'],
-    Buildings: ['Building 1', 'Building 2', 'Building 3', 'Building 4', 'Building 5'],
+    Streets: [],
+    Buildings: [],
 
     rules: {
       clearFieldValid: [
@@ -166,39 +157,57 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     updateDialog(data) {
       this.dialog = data.dialog
     },
     submit() {
       if (this.$refs.form.validate()) {
-        console.log("123213123")
+        let str = "/api/app/quarter/save"
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+
         let data = {
           KvartalName: this.KvartalName,
 
-          BuildingName: this.BuildingName,
-          BuildingType: this.BuildingType,
-          BuildingFloors: this.BuildingFloors,
-          BuildingStreet: this.BuildingStreet,
-          BuildingComitet: this.BuildingComitet,
-          BuildingBrigada: this.BuildingBrigada,
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/changeBuilding', data)
+        }).post(str, data)
             .then(resp => {
-              console.log(resp.data.KvartalName)
-              router.push({path: '/main'})
+              console.log(resp.data)
             })
       }
+    },
+    getListOfStreets(KvartalName) {
+      let str = "/api/app/street/single?name=" + KvartalName
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Streets.push(resp.data[i].name)
+            }
+          })
+    },
+    updateListOfBuildings(ChooseStreetForBuilding) {
+      let str = "/api/app/street/single?name=" + ChooseStreetForBuilding
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Buildings.push(resp.data[i].name)
+            }
+          })
     },
   },
   beforeMount() {
     this.KvartalName = this.KvartalNameDone
+    this.getListOfStreets(this.KvartalNameDone)
 
   },
 }

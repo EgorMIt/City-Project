@@ -196,13 +196,7 @@ export default {
   props: {
     isChangeable: Boolean,
     KvartalNameDone: String,
-
     BuildingNameDone: String,
-    BuildingTypeDone: String,
-    BuildingFloorsDone: Number,
-    BuildingStreetDone: String,
-    BuildingComitetDone: String,
-    BuildingBrigadaDone: String,
   },
 
   data: () => ({
@@ -222,10 +216,10 @@ export default {
     BuildingMaterialCount: '',
 
     addedMaterials: [],
-    Streets: ['Street 1', 'Street 2', 'Street 3', 'Street 4', 'Street 5'],
-    Comitets: ['Comitet 1', 'Comitet 2', 'Comitet 3', 'Comitet 4', 'Comitet 5'],
-    Brigada: ['Brigada 1', 'Brigada 2', 'Brigada 3', 'Brigada 4', 'Brigada 5'],
-    Materials: ['Material 1', 'Material 2', 'Material 3', 'Material 4', 'Material 5'],
+    Streets: [],
+    Comitets: [],
+    Brigada: [],
+    Materials: [],
 
     rules: {
       clearFieldValid: [
@@ -238,26 +232,27 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     submit() {
       if (this.$refs.form.validate()) {
+        let str = "/api/app/building/save"
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+
         let data = {
-          isChangeable: this.isChangeable,
           BuildingName: this.BuildingName,
           BuildingType: this.BuildingType,
           BuildingFloors: this.BuildingFloors,
           BuildingStreet: this.BuildingStreet,
           BuildingComitet: this.BuildingComitet,
           BuildingBrigada: this.BuildingBrigada,
+
           addedMaterials: this.addedMaterials,
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/addBuilding', data)
+        }).post(str, data)
             .then(resp => {
               console.log(resp.data.BuildingName)
               router.push({path: '/main'})
@@ -272,10 +267,25 @@ export default {
       })
     },
 
-    getListOfStreets() {
-      let str = "/get/list?id=" + this.isChangeable
+    getBuildingByName(BuildingNameDone) {
+      let str = "/api/app/street/single?name=" + BuildingNameDone
       axios.create({
-        baseURL: 'http://localhost:10520/api/v1'
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            this.BuildingType = resp.data.type
+            this.BuildingFloors = resp.data.floors
+            this.BuildingStreet = resp.data.street
+            this.BuildingComitet = resp.data.comitet
+            this.BuildingBrigada = resp.data.brigada
+            this.addedMaterials = resp.data.materials
+          })
+    },
+    getListOfStreets(KvartalNameDone) {
+      let str = "/api/app/street/single?name=" + KvartalNameDone
+      axios.create({
+        baseURL: this.hostname
       }).get(str)
           .then(resp => {
             console.log(resp.data)
@@ -284,15 +294,52 @@ export default {
             }
           })
     },
+    getListOfBrigada() {
+      let str = "/api/app/construction_crew/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Brigada.push(resp.data[i].id)
+            }
+          })
+    },
+    getListOfComitets() {
+      let str = "/api/app/committee/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Comitets.push(resp.data[i].id)
+            }
+          })
+    },
+    getListOfMaterials() {
+      let str = "/api/app/material/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Materials.push(resp.data[i].type)
+            }
+          })
+    },
   },
   beforeMount() {
-    //this.getListOfStreets()
-    this.BuildingName = this.BuildingNameDone
-    this.BuildingType = this.BuildingTypeDone
-    this.BuildingFloors = this.BuildingFloorsDone
-    this.BuildingStreet = this.BuildingStreetDone
-    this.BuildingComitet = this.BuildingComitetDone
-    this.BuildingBrigada = this.BuildingBrigadaDone
+    if (this.isChangeable === true) {
+      this.BuildingName = this.BuildingNameDone
+      this.getBuildingByName(this.BuildingNameDone)
+    }
+    this.getListOfStreets()
+    this.getListOfBrigada()
+    this.getListOfComitets()
+    this.getListOfMaterials()
   },
 }
 </script>

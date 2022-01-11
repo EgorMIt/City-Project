@@ -6,7 +6,7 @@
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
-          <br>Создать или изменить городскую службу
+          <br>Управление городскими службами
         </div>
       </v-card-text>
 
@@ -24,7 +24,7 @@
             required
             editable
             segmented
-            v-on:change="updateElements"
+            v-on:change="updateElements(SluzbaNameList)"
         ></v-overflow-btn>
 
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
@@ -71,7 +71,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 
 export default {
   name: "OverlaySluzba",
@@ -85,7 +84,7 @@ export default {
     SluzbaType: '',
     SluzbaPrice: '',
 
-    Sluzba: ['Добавить новый элемент', 'Sluzba 1', 'Sluzba 2', 'Sluzba 3', 'Sluzba 4', 'Sluzba 5'],
+    Sluzba: ['Добавить новый элемент'],
 
     rules: {
       clearFieldValid: [
@@ -98,39 +97,60 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     submit() {
       if (this.$refs.form.validate()) {
-        console.log("123213123")
+        let str = "/api/app/city_service/save"
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+
         let data = {
-          SluzbaType: this.SluzbaType,
-          SluzbaPrice: this.SluzbaPrice,
+          type: this.SluzbaType,
+          price: this.SluzbaPrice,
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/addSluzba', data)
+        }).post(str, data)
             .then(resp => {
-              console.log(resp.data.SluzbaType)
-              router.push({path: '/main'})
+              console.log(resp.data)
             })
-
       }
     },
-    updateElements() {
+    updateElements(SluzbaNameList) {
       if (this.SluzbaNameList !== this.Sluzba[0]) {
-        this.SluzbaType = "Текст"
-        this.SluzbaPrice = "123"
+        this.getSluzbaByType(SluzbaNameList)
       } else if (this.SluzbaNameList === this.Sluzba[0]) {
         this.SluzbaType = ''
         this.SluzbaPrice = ''
       }
     },
+    getListOfSluzba() {
+      let str = "/api/app/city_service/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Sluzba.push(resp.data[i].type)
+            }
+          })
+    },
+    getSluzbaByType: function (SluzbaNameList) {
+      let str = "/api/app/city_service/single?type=" + SluzbaNameList
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            this.SluzbaType = resp.data.type
+            this.SluzbaPrice = resp.data.price
+          })
+    },
   },
   beforeMount() {
+    this.getListOfSluzba()
     this.SluzbaNameList = this.Sluzba[0]
   },
 }

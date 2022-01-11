@@ -6,13 +6,13 @@
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
-          <br>Создать или изменить строительную бригаду
+          <br>Управление строительными бригадами
         </div>
       </v-card-text>
 
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
-          Выберете элемент или создайте новый
+          Выберете номер бригады или создайте новую
         </div>
         <v-overflow-btn
             light
@@ -24,7 +24,7 @@
             required
             editable
             segmented
-            v-on:change="updateElements"
+            v-on:change="updateElements(BrigadaNameList)"
         ></v-overflow-btn>
 
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
@@ -59,7 +59,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 
 export default {
   name: "OverlayBrigada",
@@ -73,7 +72,7 @@ export default {
 
     BrigadaPeople: '',
 
-    Brigada: ['Добавить новый элемент', 'Brigada 1', 'Brigada 2', 'Brigada 3', 'Brigada 4', 'Brigada 5'],
+    Brigada: ['Добавить новый элемент'],
 
     rules: {
       clearFieldValid: [
@@ -86,36 +85,61 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     submit() {
       if (this.$refs.form.validate()) {
-        console.log("123213123")
+        let str = "/api/app/construction_crew/save"
+
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+
         let data = {
-          BrigadaPeople: this.BrigadaPeople,
+          size: this.BrigadaPeople,
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/addBrigada', data)
+        }).post(str, data)
             .then(resp => {
-              console.log(resp.data.BrigadaPeople)
-              router.push({path: '/main'})
+              console.log(resp.data.size)
             })
 
       }
     },
-    updateElements() {
-      if (this.BrigadaNameList !== this.Brigada[0]) {
-        this.BrigadaPeople = "123"
-      } else if (this.BrigadaNameList === this.Brigada[0]) {
+    updateElements(BrigadaNameList) {
+      if (BrigadaNameList !== this.Brigada[0]) {
+        this.getBrigadaByID(BrigadaNameList)
+      } else if (BrigadaNameList === this.Brigada[0]) {
         this.BrigadaPeople = ''
       }
     },
+
+    getListOfBrigada() {
+      let str = "/api/app/construction_crew/all"
+
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Brigada.push(resp.data[i].id)
+            }
+          })
+    },
+    getBrigadaByID: function (BrigadaNameList) {
+      let str = "/api/app/construction_crew/single?id=" + BrigadaNameList
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data.size)
+            this.BrigadaPeople = resp.data.size
+          })
+    },
   },
   beforeMount() {
+    this.getListOfBrigada()
     this.BrigadaNameList = this.Brigada[0]
   },
 }

@@ -6,7 +6,7 @@
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
-          <br>Создать или изменить команду доставки
+          <br>Управление командами доставки
         </div>
       </v-card-text>
 
@@ -24,7 +24,7 @@
             required
             editable
             segmented
-            v-on:change="updateElements"
+            v-on:change="updateElements(DostavkaNameList)"
         ></v-overflow-btn>
 
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
@@ -84,7 +84,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 
 export default {
   name: "OverlayDostavka",
@@ -101,8 +100,8 @@ export default {
     DostavkaMaterial: '',
 
 
-    Materials: ['Material 1', 'Material 2', 'Material 3', 'Material 4', 'Material 5'],
-    Dostavka: ['Добавить новый элемент', 'Dostavka 1', 'Dostavka 2', 'Dostavka 3', 'Dostavka 4', 'Dostavka 5'],
+    Materials: [],
+    Dostavka: ['Добавить новый элемент'],
 
     rules: {
       clearFieldValid: [
@@ -115,42 +114,82 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     submit() {
       if (this.$refs.form.validate()) {
-        console.log("123213123")
+        let str
+        if (this.DostavkaNameList !== this.Dostavka[0]) {
+          str = "/api/app/delivery_service/update"
+        } else {
+          str = "/api/app/delivery_service/save"
+        }
+
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+
         let data = {
-          DostavkaName: this.DostavkaName,
-          DostavkaPrice: this.DostavkaPrice,
-          DostavkaMaterial: this.DostavkaMaterial,
+          name: this.DostavkaName,
+          rate: this.DostavkaPrice,
+          materialType: this.DostavkaMaterial,
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/addDostavka', data)
+        }).post(str, data)
             .then(resp => {
-              console.log(resp.data.DostavkaName)
-              router.push({path: '/main'})
+              console.log(resp.data)
             })
-
       }
     },
-    updateElements() {
+    updateElements(DostavkaNameList) {
       if (this.DostavkaNameList !== this.Dostavka[0]) {
-        this.DostavkaName = "Текст"
-        this.DostavkaPrice = "123"
-        this.DostavkaMaterial = this.Materials[0]
+        this.getDostavkaByName(DostavkaNameList)
       } else if (this.DostavkaNameList === this.Dostavka[0]) {
         this.DostavkaName = ''
         this.DostavkaPrice = ''
         this.DostavkaMaterial = ''
       }
     },
+    getListOfDostavka() {
+      let str = "/api/app/delivery_service/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Dostavka.push(resp.data[i].name)
+            }
+          })
+    },
+    getDostavkaByName: function (DostavkaNameList) {
+      let str = "/api/app/delivery_service/single?name=" + DostavkaNameList
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            this.DostavkaName = resp.data.name
+            this.DostavkaPrice = resp.data.rate
+            this.DostavkaMaterial = resp.data.materialByMaterialId.type
+          })
+    },
+    getListOfMaterial() {
+      let str = "/api/app/material/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Materials.push(resp.data[i].type)
+            }
+          })
+    },
   },
   beforeMount() {
+    this.getListOfDostavka()
+    this.getListOfMaterial()
     this.DostavkaNameList = this.Dostavka[0]
   },
 }

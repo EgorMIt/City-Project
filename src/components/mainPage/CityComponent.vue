@@ -21,9 +21,8 @@ export default {
   components: {KvartalButton},
 
   data: () => ({
-    KvartalsList: [null, null, null, null, {KvartalName: 'Квартал один'},
-      {KvartalName: 'Квартал два'}, null],
-
+    //KvartalsList: [null, null, null, null, {KvartalName: 'Квартал один'}, {KvartalName: 'Квартал два'}, null],
+    KvartalsList: [],
     slotSize: 28,
   }),
 
@@ -41,8 +40,20 @@ export default {
           })
     },
   },
+  getKvartalsList() {
+    let str = "/api/app/quarter/map"
+    axios.create({
+      baseURL: this.hostname
+    }).get(str)
+        .then(resp => {
+          console.log(resp.data)
+          for (let i = 0; i < resp.data.length; i++) {
+            this.KvartalsList.push(resp.data[i])
+          }
+        })
+  },
   beforeMount() {
-    //this.getListOfKvartals()
+    this.getKvartalsList()
     let listSize = this.KvartalsList.length
     if (listSize < this.slotSize) {
       for (let i = 0; i < (this.slotSize - listSize); i++) {

@@ -44,7 +44,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 
 export default {
   name: "OverlayKvartal",
@@ -65,24 +64,23 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     submit() {
       if (this.$refs.form.validate()) {
-        console.log("123213123")
+        let str = "/api/app/quarter/save"
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+
         let data = {
           KvartalName: this.KvartalName,
           indexInArray: this.indexInArray,
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/addKvartal', data)
+        }).post(str, data)
             .then(resp => {
               console.log(resp.data.KvartalName)
-              router.push({path: '/main'})
             })
 
       }

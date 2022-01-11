@@ -6,7 +6,7 @@
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
-          <br>Создать или изменить транспортный маршрут
+          <br>Управление транспортными маршрутами
         </div>
       </v-card-text>
 
@@ -24,7 +24,7 @@
             required
             editable
             segmented
-            v-on:change="updateElements"
+            v-on:change="updateElements(RouteNameList)"
         ></v-overflow-btn>
 
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
@@ -107,7 +107,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 
 export default {
   name: "OverlayRoute",
@@ -116,16 +115,16 @@ export default {
     absolute: true,
     valid: true,
 
-    RouteNameList:'',
+    RouteNameList: '',
 
     RouteType: '',
     RouteKvartalStart: '',
     RouteKvartalFinish: '',
     RouteStreets: [],
 
-    Kvartals: ['Kvartal 1', 'Kvartal 2', 'Kvartal 3', 'Kvartal 4', 'Kvartal 5'],
-    Streets: ['Street 1', 'Street 2', 'Street 3', 'Street 4', 'Street 5'],
-    Routes: ['Добавить новый элемент', 'Route 1', 'Route 2', 'Route 3', 'Route 4', 'Route 5'],
+    Kvartals: [],
+    Streets: [],
+    Routes: ['Добавить новый элемент'],
 
     rules: {
       clearFieldValid: [
@@ -138,14 +137,14 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
-      this.$emit('updateParent', {
-        dialog: false,
-      })
-    },
     submit() {
       if (this.$refs.form.validate()) {
-        console.log("123213123")
+        let str = "/api/app/route/save"
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+
         let data = {
           RouteType: this.RouteType,
           RouteKvartalStart: this.RouteKvartalStart,
@@ -154,19 +153,16 @@ export default {
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/addSluzba', data)
+        }).post(str, data)
             .then(resp => {
-              console.log(resp.data.SluzbaType)
-              router.push({path: '/main'})
+              console.log(resp.data)
             })
 
       }
     },
-    updateElements() {
+    updateElements(RouteNameList) {
       if (this.RouteNameList !== this.Routes[0]) {
-        this.RouteType = "Текст"
-        this.RouteKvartalStart = this.Kvartals[0]
-        this.RouteKvartalFinish = this.Kvartals[1]
+        this.getRouteByType(RouteNameList)
       } else if (this.RouteNameList === this.Routes[0]) {
         this.RouteType = ''
         this.RouteKvartalStart = ''
@@ -174,8 +170,34 @@ export default {
         this.RouteStreets = ''
       }
     },
+    getListOfRoutes() {
+      let str = "/api/app/route/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Routes.push(resp.data[i].id)
+            }
+          })
+    },
+    getRouteByType: function (RouteNameList) {
+      let str = "/api/app/route/single?type=" + RouteNameList
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            this.RouteType = resp.data.type
+            this.RouteKvartalStart = resp.data
+            this.RouteKvartalFinish = resp.data
+            this.RouteStreets = resp.data
+          })
+    },
   },
   beforeMount() {
+    this.getListOfRoutes()
     this.RouteNameList = this.Routes[0]
   },
 }
