@@ -27,6 +27,15 @@
             v-on:change="updateElements(RouteNameList)"
         ></v-overflow-btn>
 
+        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+               color=#F16063
+               :disabled="removeButton"
+               outlined
+               @click="removeElement"
+        >
+          Удалить
+        </v-btn>
+
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
         </div>
@@ -99,7 +108,7 @@
              outlined
              @click="submit"
       >
-        Добавить и закрыть
+        Сохранить и закрыть
       </v-btn>
     </v-card>
   </v-form>
@@ -114,6 +123,7 @@ export default {
   data: () => ({
     absolute: true,
     valid: true,
+    removeButton: true,
 
     RouteNameList: '',
 
@@ -163,7 +173,9 @@ export default {
     updateElements(RouteNameList) {
       if (this.RouteNameList !== this.Routes[0]) {
         this.getRouteByType(RouteNameList)
+        this.removeButton = false
       } else if (this.RouteNameList === this.Routes[0]) {
+        this.removeButton = true
         this.RouteType = ''
         this.RouteKvartalStart = ''
         this.RouteKvartalFinish = ''
@@ -194,6 +206,19 @@ export default {
             this.RouteKvartalFinish = resp.data
             this.RouteStreets = resp.data
           })
+    },
+    removeElement() {
+      let str = "/api/app/route/remove?id=" + this.RouteNameList
+      axios.create({
+        baseURL: this.hostname
+      }).post(str)
+          .then(resp => {
+            console.log(resp.data)
+          })
+      this.Routes = ['Добавить новый элемент']
+      this.getListOfRoutes()
+      this.RouteNameList = this.Routes[0]
+      this.removeButton = true
     },
   },
   beforeMount() {

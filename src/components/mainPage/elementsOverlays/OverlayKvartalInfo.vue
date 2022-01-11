@@ -6,11 +6,11 @@
           color="#F7FAFC"
       >
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-          <div style="color: black; text-align: center; margin-bottom: 10%; font-size: 25px">
+          <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
             <br>{{ this.KvartalNameDone }}
           </div>
 
-          <v-row style="margin-left: 1%; margin-right: 1%; margin-bottom: 10px">
+          <v-row style="margin-left: 1%; margin-right: 1%; margin-bottom: 10%">
             <v-col>
               <v-dialog width="500px" v-model="dialog">
                 <template v-slot:activator="{ on, attrs }">
@@ -86,12 +86,14 @@
               editable
               segmented
               style="margin-top: 10px"
+              v-on:change="updateButton"
           ></v-overflow-btn>
 
           <v-dialog width="500px" v-model="dialog">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn style="margin-left: 16%; margin-bottom: 5%" @click="openWind='OverlayBuilding2'"
+              <v-btn style="margin-left: 18%; margin-bottom: 5%" @click="openWind='OverlayBuilding2'"
                      v-bind="attrs" v-on="on"
+                     :disabled="infoButton"
                      color=#F58E43
                      outlined
               >
@@ -105,6 +107,14 @@
           <v-divider style="margin-bottom: 10px"></v-divider>
 
         </v-card-text>
+
+        <v-btn style="margin-left: 38%; margin-bottom: 5%"
+               color=#F16063
+               outlined
+               @click="removeElement"
+        >
+          Удалить
+        </v-btn>
 
         <v-btn style="margin-left: 27%; margin-bottom: 5%"
                color=#F58E43
@@ -136,6 +146,7 @@ export default {
     valid: true,
     dialog: false,
     openWind: '',
+    infoButton: true,
 
     absolute: true,
 
@@ -202,6 +213,23 @@ export default {
             for (let i = 0; i < resp.data.length; i++) {
               this.Buildings.push(resp.data[i].name)
             }
+          })
+    },
+    updateButton() {
+      this.infoButton = this.ChooseBuilding == null;
+    },
+    removeElement() {
+      let str = "/api/app/quarter/remove?id=" + this.KvartalNameDone
+      let data2 = {
+        dialog: false
+      }
+      this.$emit('updateParent', {data2})
+
+      axios.create({
+        baseURL: this.hostname
+      }).post(str)
+          .then(resp => {
+            console.log(resp.data)
           })
     },
   },

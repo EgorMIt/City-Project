@@ -27,6 +27,15 @@
             v-on:change="updateElements(ObslugaNameList)"
         ></v-overflow-btn>
 
+        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+               color=#F16063
+               :disabled="removeButton"
+               outlined
+               @click="removeElement"
+        >
+          Удалить
+        </v-btn>
+
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
         </div>
@@ -76,7 +85,7 @@
              outlined
              @click="submit"
       >
-        Добавить и закрыть
+        Сохранить и закрыть
       </v-btn>
     </v-card>
   </v-form>
@@ -91,6 +100,7 @@ export default {
   data: () => ({
     absolute: true,
     valid: true,
+    removeButton: true,
 
     ObslugaNameList: '',
 
@@ -143,7 +153,9 @@ export default {
     updateElements(ObslugaNameList) {
       if (this.ObslugaNameList !== this.Obsluga[0]) {
         this.getObslugaByID(ObslugaNameList)
+        this.removeButton = false
       } else if (this.ObslugaNameList === this.Obsluga[0]) {
+        this.removeButton = true
         this.ObslugaPrice = ''
         this.ObslugaKvartal = ''
         this.ObslugaSluzba = ''
@@ -196,6 +208,19 @@ export default {
               this.Sluzba.push(resp.data[i].type)
             }
           })
+    },
+    removeElement() {
+      let str = "/api/app/delivery_service/remove?id=" + this.ObslugaNameList
+      axios.create({
+        baseURL: this.hostname
+      }).post(str)
+          .then(resp => {
+            console.log(resp.data)
+          })
+      this.Obsluga = ['Добавить новый элемент']
+      this.getListOfObsluga()
+      this.ObslugaNameList = this.Obsluga[0]
+      this.removeButton = true
     },
   },
   beforeMount() {

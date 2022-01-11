@@ -27,6 +27,15 @@
             v-on:change="updateElements(DostavkaNameList)"
         ></v-overflow-btn>
 
+        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+               color=#F16063
+               :disabled="removeButton"
+               outlined
+               @click="removeElement"
+        >
+          Удалить
+        </v-btn>
+
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
         </div>
@@ -76,7 +85,7 @@
              outlined
              @click="submit"
       >
-        Добавить и закрыть
+        Сохранить и закрыть
       </v-btn>
     </v-card>
   </v-form>
@@ -92,6 +101,7 @@ export default {
   data: () => ({
     absolute: true,
     valid: true,
+    removeButton: true,
 
     DostavkaNameList: '',
 
@@ -143,11 +153,13 @@ export default {
     },
     updateElements(DostavkaNameList) {
       if (this.DostavkaNameList !== this.Dostavka[0]) {
+        this.removeButton = false
         this.getDostavkaByName(DostavkaNameList)
       } else if (this.DostavkaNameList === this.Dostavka[0]) {
         this.DostavkaName = ''
         this.DostavkaPrice = ''
         this.DostavkaMaterial = ''
+        this.removeButton = true
       }
     },
     getListOfDostavka() {
@@ -185,6 +197,19 @@ export default {
               this.Materials.push(resp.data[i].type)
             }
           })
+    },
+    removeElement() {
+      let str = "/api/app/delivery_service/remove?id=" + this.DostavkaNameList
+      axios.create({
+        baseURL: this.hostname
+      }).post(str)
+          .then(resp => {
+            console.log(resp.data)
+          })
+      this.Dostavka = ['Добавить новый элемент']
+      this.getListOfDostavka()
+      this.DostavkaNameList = this.Dostavka[0]
+      this.removeButton = true
     },
   },
   beforeMount() {

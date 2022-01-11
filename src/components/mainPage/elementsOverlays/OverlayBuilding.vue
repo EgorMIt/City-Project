@@ -113,12 +113,20 @@
 
         </v-card-text>
 
+        <v-btn v-if="this.isChangeable === true" style="margin-left: 39%; margin-bottom: 5%"
+               color=#F16063
+               outlined
+               @click="removeElement"
+        >
+          Удалить
+        </v-btn>
+
         <v-btn style="margin-left: 28%; margin-bottom: 5%"
                color=#F58E43
                outlined
                @click="submit"
         >
-          Добавить и закрыть
+          Сохранить и закрыть
         </v-btn>
       </v-card>
 
@@ -328,6 +336,20 @@ export default {
             for (let i = 0; i < resp.data.length; i++) {
               this.Materials.push(resp.data[i].type)
             }
+          })
+    },
+    removeElement() {
+      let str = "/api/app/building/remove?id=" + this.BuildingNameDone
+      let data2 = {
+        dialog: false
+      }
+      this.$emit('updateParent', {data2})
+
+      axios.create({
+        baseURL: this.hostname
+      }).post(str)
+          .then(resp => {
+            console.log(resp.data)
           })
     },
   },

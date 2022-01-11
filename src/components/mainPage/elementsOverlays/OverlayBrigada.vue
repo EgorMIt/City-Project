@@ -27,6 +27,15 @@
             v-on:change="updateElements(BrigadaNameList)"
         ></v-overflow-btn>
 
+        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+               color=#F16063
+               :disabled="removeButton"
+               outlined
+               @click="removeElement"
+        >
+          Удалить
+        </v-btn>
+
         <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
         </div>
@@ -51,7 +60,7 @@
              outlined
              @click="submit"
       >
-        Добавить и закрыть
+        Сохранить и закрыть
       </v-btn>
     </v-card>
   </v-form>
@@ -67,6 +76,7 @@ export default {
   data: () => ({
     absolute: true,
     valid: true,
+    removeButton: true,
 
     BrigadaNameList: '',
 
@@ -109,11 +119,25 @@ export default {
     updateElements(BrigadaNameList) {
       if (BrigadaNameList !== this.Brigada[0]) {
         this.getBrigadaByID(BrigadaNameList)
+        this.removeButton = false
       } else if (BrigadaNameList === this.Brigada[0]) {
         this.BrigadaPeople = ''
+        this.removeButton = true
       }
     },
-
+    removeElement() {
+      let str = "/api/app/construction_crew/remove?id=" + this.BrigadaNameList
+      axios.create({
+        baseURL: this.hostname
+      }).post(str)
+          .then(resp => {
+            console.log(resp.data)
+          })
+      this.Brigada = ['Добавить новый элемент']
+      this.getListOfBrigada()
+      this.BrigadaNameList = this.Brigada[0]
+      this.removeButton = true
+    },
     getListOfBrigada() {
       let str = "/api/app/construction_crew/all"
 

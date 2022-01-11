@@ -1,82 +1,91 @@
 <template>
   <v-form v-model="valid" lazy-validation ref="form">
-      <!-- Оверлей улицы -->
-      <v-card
-          color="#F7FAFC"
-      >
-        <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-          <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
-            <br>Создать новую улицу
-          </div>
-        </v-card-text>
+    <!-- Оверлей улицы -->
+    <v-card
+        color="#F7FAFC"
+    >
+      <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
+        <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
+          <br>Создать новую улицу
+        </div>
+      </v-card-text>
 
-        <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-          <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
-            Выберете элемент или создайте новый
-          </div>
-          <v-overflow-btn
-              light
-              v-model="StreetNameList"
-              :items="Streets"
-              :rules="rules.clearFieldValid"
-              name="SluzbaName"
-              color=#F58E43
-              required
-              editable
-              segmented
-              v-on:change="updateElements(StreetNameList)"
-          ></v-overflow-btn>
+      <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
+        <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
+          Выберете элемент или создайте новый
+        </div>
+        <v-overflow-btn
+            light
+            v-model="StreetNameList"
+            :items="Streets"
+            :rules="rules.clearFieldValid"
+            name="SluzbaName"
+            color=#F58E43
+            required
+            editable
+            segmented
+            v-on:change="updateElements(StreetNameList)"
+        ></v-overflow-btn>
 
-          <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
-            Заполните необходимые поля
-          </div>
+        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+               color=#F16063
+               :disabled="removeButton"
+               outlined
+               @click="removeElement"
+        >
+          Удалить
+        </v-btn>
 
-          <v-text-field
-              light
-              v-model="StreetName"
-              label="Название улицы"
-              name="StreetName"
-              type="text"
-              :rules="rules.clearFieldValid"
-              color=#F58E43
-              background-color=#EDF2F7
-              outlined
-              style="border-radius: 10px;"
-          />
+        <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
+          Заполните необходимые поля
+        </div>
 
-          <v-overflow-btn
-              v-model="StreetToStreet"
-              :items="Streets"
-              label="Пересекаемые улицы"
-              multiple
-              clearable
-              light
-              editable
-              segmented
-              color=#F58E43
-          >
-            <template v-slot:selection="{ item, index }">
+        <v-text-field
+            light
+            v-model="StreetName"
+            label="Название улицы"
+            name="StreetName"
+            type="text"
+            :rules="rules.clearFieldValid"
+            color=#F58E43
+            background-color=#EDF2F7
+            outlined
+            style="border-radius: 10px;"
+        />
 
-              <span v-if="index === 0">{{ item }}</span>
-              <span
-                  v-if="index === 1"
-                  class="grey--text text-caption"
-              >
+        <v-overflow-btn
+            v-model="StreetToStreet"
+            :items="Streets"
+            label="Пересекаемые улицы"
+            multiple
+            clearable
+            light
+            editable
+            segmented
+            color=#F58E43
+        >
+          <template v-slot:selection="{ item, index }">
+
+            <span v-if="index === 0">{{ item }}</span>
+            <span
+                v-if="index === 1"
+                class="grey--text text-caption"
+            >
                   (+{{ StreetToStreet.length - 1 }} others)
                 </span>
-            </template>
-          </v-overflow-btn>
+          </template>
+        </v-overflow-btn>
 
-        </v-card-text>
+      </v-card-text>
 
-        <v-btn style="margin-left: 28%; margin-bottom: 5%"
-               color=#F58E43
-               outlined
-               @click="submit"
-        >
-          Добавить и закрыть
-        </v-btn>
-      </v-card>
+      <v-btn style="margin-left: 28%; margin-bottom: 5%"
+             color=#F58E43
+             outlined
+             @click="submit"
+      >
+        Сохранить и закрыть
+      </v-btn>
+    </v-card>
   </v-form>
 </template>
 
@@ -92,6 +101,7 @@ export default {
   data: () => ({
     absolute: true,
     valid: true,
+    removeButton: true,
 
     StreetNameList: '',
     StreetName: '',
@@ -136,7 +146,9 @@ export default {
     updateElements(StreetNameList) {
       if (this.StreetNameList !== this.Streets[0]) {
         this.getStreetByName(StreetNameList)
+        this.removeButton = false
       } else if (this.StreetNameList === this.Streets[0]) {
+        this.removeButton = true
         this.StreetName = ''
         this.StreetToStreet = ''
       }
@@ -164,11 +176,26 @@ export default {
             }
           })
     },
-    beforeMount() {
-      this.KvartalName = this.KvartalNameDone
+    removeElement() {
+      let str = "/api/app/street/remove?id=" + this.StreetNameList
+      axios.create({
+        baseURL: this.hostname
+      }).post(str)
+          .then(resp => {
+            console.log(resp.data)
+          })
+      this.Streets = ['Добавить новый элемент']
       this.getListOfStreets(this.KvartalNameDone)
+      this.StreetNameList = this.Streets[0]
+      this.removeButton = true
     },
-  }
+  },
+  beforeMount() {
+    this.KvartalName = this.KvartalNameDone
+    this.StreetNameList = this.Streets[0]
+    this.getListOfStreets(this.KvartalNameDone)
+  },
+
 }
 </script>
 
