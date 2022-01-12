@@ -21,6 +21,7 @@
             editable
             segmented
             required
+            v-on:change="getListOfStreets(ChooseKvartalForBuilding)"
         ></v-overflow-btn>
 
         <v-overflow-btn
@@ -33,18 +34,22 @@
             editable
             segmented
             required
+            :disabled="streetChoose"
+            v-on:change="getListOfBuildings(ChooseStreetForBuilding)"
         ></v-overflow-btn>
 
         <v-overflow-btn
             v-model="ChooseBuilding"
             light
-            :items="Streets"
+            :items="Buildings"
             name="ChooseBuilding"
             color=#F58E43
             label="Выберете здание"
             required
             editable
             segmented
+            :disabled="buildingChoose"
+            v-on:change="getFinalCost(ChooseBuilding)"
         ></v-overflow-btn>
 
         <v-divider style="margin-bottom: 30px"></v-divider>
@@ -65,7 +70,7 @@
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
              color=#F58E43
              outlined
-             @click="doSomething"
+             @click="closeDialog"
       >
         Закрыть
       </v-btn>
@@ -74,12 +79,16 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "OverlayCostCount",
 
   data: () => ({
     absolute: true,
     valid: true,
+    streetChoose: true,
+    buildingChoose: true,
 
     ChooseKvartalForBuilding: '',
     ChooseStreetForBuilding: '',
@@ -87,9 +96,9 @@ export default {
 
     FinalCost: '',
 
-    Kvartals: ['Kvartal 1', 'Kvartal 2', 'Kvartal 3', 'Kvartal 4', 'Kvartal 5'],
-    Streets: ['Street 1', 'Street 2', 'Street 3', 'Street 4', 'Street 5'],
-    Buildings: ['Building 1', 'Building 2', 'Building 3', 'Building 4', 'Building 5'],
+    Kvartals: [],
+    Streets: [],
+    Buildings: [],
 
     rules: {
       clearFieldValid: [
@@ -102,24 +111,62 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
+    closeDialog() {
       this.$emit('updateParent', {
         dialog: false,
       })
     },
-
-    updateStreets() {
-
+    getListOfKvartals() {
+      let str = "/api/app/quarter/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Kvartals.push(resp.data[i].name)
+            }
+          })
     },
-    updateBuildings() {
-
+    getListOfStreets(KvartalName) {
+      this.streetChoose = false
+      let str = "/api/app/street/single?name=" + KvartalName
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Streets.push(resp.data[i].name)
+            }
+          })
     },
-    getFinalCost() {
-
+    getListOfBuildings(ChooseStreetForBuilding) {
+      this.buildingChoose = false
+      let str = "/api/app/street/single?name=" + ChooseStreetForBuilding
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Buildings.push(resp.data[i].name)
+            }
+          })
+    },
+    getFinalCost(BuildingName) {
+      let str = "/api/app/street/single?name=" + BuildingName
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            this.FinalCost = resp.data
+          })
     },
   },
   beforeMount() {
-
+    this.getListOfKvartals()
   },
 }
 </script>

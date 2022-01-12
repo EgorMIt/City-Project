@@ -17,7 +17,7 @@
             :items="Comitets"
             name="ChooseComitetForBuilding"
             color=#F58E43
-            label="Выберете квартал"
+            label="Выберете комитет"
             editable
             segmented
             required
@@ -26,6 +26,8 @@
         <v-btn style="margin-left: 26%; margin-bottom: 5%"
                color=#F58E43
                outlined
+               :loading="loading"
+               @click="getNumberOfDoneBuildings"
         >
           Принять все здания
         </v-btn>
@@ -48,7 +50,7 @@
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
              color=#F58E43
              outlined
-             @click="doSomething"
+             @click="closeDialog"
       >
         Закрыть
       </v-btn>
@@ -57,18 +59,20 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "OverlayFinishBuilding",
 
   data: () => ({
     absolute: true,
     valid: true,
+    loading: false,
 
     ChooseComitetForBuilding: '',
 
     BuildingsFinished: 0,
-
-    Comitets: ['Comitet 1', 'Comitet 2', 'Comitet 3', 'Comitet 4', 'Comitet 5'],
+    Comitets: [],
 
     rules: {
       clearFieldValid: [
@@ -81,19 +85,41 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
+    closeDialog() {
       this.$emit('updateParent', {
         dialog: false,
       })
     },
-
-    updateBuildings() {
-
+    getListOfComitets() {
+      let str = "/api/app/committee/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Comitets.push(resp.data[i].id)
+            }
+          })
     },
-
+    async getNumberOfDoneBuildings(ComitetName) {
+      this.loading = true
+      let result
+      let str = "/api/app/street/single?name=" + ComitetName
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            result = resp.data
+          })
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.BuildingsFinished = result
+      this.loading = false
+    },
   },
   beforeMount() {
-
+    this.getListOfComitets()
   },
 }
 </script>

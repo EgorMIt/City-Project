@@ -27,12 +27,16 @@
             v-on:change="updateElements(ObslugaNameList)"
         ></v-overflow-btn>
 
-        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+        <v-btn style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
-               :disabled="removeButton"
                outlined
+               :disabled="removeButton"
+               :loading="loading"
                @click="removeElement"
         >
+          <v-icon left>
+            {{ icons.mdiDelete }}
+          </v-icon>
           Удалить
         </v-btn>
 
@@ -46,6 +50,7 @@
             label="Тариф за обслуживание"
             name="ObslugaPrice"
             type="number"
+            step=0.01
             :rules="rules.numberValid"
             color=#F58E43
             background-color=#EDF2F7
@@ -80,11 +85,12 @@
         ></v-overflow-btn>
       </v-card-text>
 
-      <v-btn style="margin-left: 28%; margin-bottom: 5%"
+      <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
              @click="submit"
       >
+        <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
         Сохранить и закрыть
       </v-btn>
     </v-card>
@@ -93,11 +99,17 @@
 
 <script>
 import axios from "axios";
+import {mdiDelete} from "@mdi/js";
 
 export default {
   name: "OverlayObsluga",
 
   data: () => ({
+    icons: {
+      mdiDelete,
+    },
+    loading: false,
+
     absolute: true,
     valid: true,
     removeButton: true,
@@ -118,7 +130,7 @@ export default {
       ],
       numberValid: [
         v => !!v || 'Поле не может быть пустым',
-        v => !!/^\d*$/.test(v) || 'Допустимы только числа',
+        v => !!/^\d*?.*\d$/.test(v) || 'Допустимы только числа',
       ],
     },
   }),
@@ -209,7 +221,8 @@ export default {
             }
           })
     },
-    removeElement() {
+    async removeElement() {
+      this.loading = true
       let str = "/api/app/delivery_service/remove?id=" + this.ObslugaNameList
       axios.create({
         baseURL: this.hostname
@@ -221,6 +234,9 @@ export default {
       this.getListOfObsluga()
       this.ObslugaNameList = this.Obsluga[0]
       this.removeButton = true
+
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.loading = false
     },
   },
   beforeMount() {

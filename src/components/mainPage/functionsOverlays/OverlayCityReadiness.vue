@@ -28,7 +28,7 @@
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
              color=#F58E43
              outlined
-             @click="doSomething"
+             @click="closeDialog"
       >
         Закрыть
       </v-btn>
@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "OverlayCityReadiness",
 
@@ -57,18 +59,24 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
+    closeDialog() {
       this.$emit('updateParent', {
         dialog: false,
       })
     },
-
-    updateBuildings() {
-
+    getCityReadiness() {
+      let str = "/api/app/committee/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            this.CityReadiness = resp.data
+          })
     },
-
   },
   beforeMount() {
+    this.getCityReadiness()
     this.CityReadiness = this.CityReadiness + "%"
   },
 }

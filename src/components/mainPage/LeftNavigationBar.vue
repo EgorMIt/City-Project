@@ -114,6 +114,9 @@
           <v-row style="margin: auto">
             <v-btn dark to="/" color=#F58E43 class="mx-auto"
                    style="border-radius: 10px; box-shadow: none !important; margin-left: 5px; margin-bottom: 20px; width: 80%">
+              <v-icon left>
+                mdi-arrow-left
+              </v-icon>
               Выйти из системы
             </v-btn>
           </v-row>

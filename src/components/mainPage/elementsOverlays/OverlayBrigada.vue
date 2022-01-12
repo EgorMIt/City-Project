@@ -27,12 +27,16 @@
             v-on:change="updateElements(BrigadaNameList)"
         ></v-overflow-btn>
 
-        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+        <v-btn style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
-               :disabled="removeButton"
                outlined
+               :disabled="removeButton"
+               :loading="loading"
                @click="removeElement"
         >
+          <v-icon left>
+            {{ icons.mdiDelete }}
+          </v-icon>
           Удалить
         </v-btn>
 
@@ -55,11 +59,12 @@
 
       </v-card-text>
 
-      <v-btn style="margin-left: 28%; margin-bottom: 5%"
+      <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
              @click="submit"
       >
+        <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
         Сохранить и закрыть
       </v-btn>
     </v-card>
@@ -68,12 +73,18 @@
 
 <script>
 import axios from "axios";
+import {mdiDelete} from "@mdi/js";
 
 export default {
   name: "OverlayBrigada",
 
 
   data: () => ({
+    icons: {
+      mdiDelete,
+    },
+    loading: false,
+
     absolute: true,
     valid: true,
     removeButton: true,
@@ -125,7 +136,8 @@ export default {
         this.removeButton = true
       }
     },
-    removeElement() {
+    async removeElement() {
+      this.loading = true
       let str = "/api/app/construction_crew/remove?id=" + this.BrigadaNameList
       axios.create({
         baseURL: this.hostname
@@ -137,6 +149,9 @@ export default {
       this.getListOfBrigada()
       this.BrigadaNameList = this.Brigada[0]
       this.removeButton = true
+
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.loading = false
     },
     getListOfBrigada() {
       let str = "/api/app/construction_crew/all"

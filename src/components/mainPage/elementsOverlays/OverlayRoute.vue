@@ -27,16 +27,20 @@
             v-on:change="updateElements(RouteNameList)"
         ></v-overflow-btn>
 
-        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+        <v-btn style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
-               :disabled="removeButton"
                outlined
+               :loading="loading"
+               :disabled="removeButton"
                @click="removeElement"
         >
+          <v-icon left>
+            {{ icons.mdiDelete }}
+          </v-icon>
           Удалить
         </v-btn>
 
-        <div style="margin-top: 10%; margin-bottom: 20px; color: black; font-weight: lighter">
+        <div style="margin-top: 5%; margin-bottom: 20px; color: black; font-weight: lighter">
           Заполните необходимые поля
         </div>
 
@@ -103,11 +107,12 @@
         </v-overflow-btn>
       </v-card-text>
 
-      <v-btn style="margin-left: 28%; margin-bottom: 5%"
+      <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
              @click="submit"
       >
+        <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
         Сохранить и закрыть
       </v-btn>
     </v-card>
@@ -116,11 +121,17 @@
 
 <script>
 import axios from "axios";
+import {mdiDelete} from "@mdi/js";
 
 export default {
   name: "OverlayRoute",
 
   data: () => ({
+    icons: {
+      mdiDelete,
+    },
+    loading: false,
+
     absolute: true,
     valid: true,
     removeButton: true,
@@ -207,7 +218,20 @@ export default {
             this.RouteStreets = resp.data
           })
     },
-    removeElement() {
+    getListOfKvartals() {
+      let str = "/api/app/quarter/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Kvartals.push(resp.data[i].name)
+            }
+          })
+    },
+    async removeElement() {
+      this.loading = true
       let str = "/api/app/route/remove?id=" + this.RouteNameList
       axios.create({
         baseURL: this.hostname
@@ -219,9 +243,13 @@ export default {
       this.getListOfRoutes()
       this.RouteNameList = this.Routes[0]
       this.removeButton = true
+
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.loading = false
     },
   },
   beforeMount() {
+    this.getListOfKvartals()
     this.getListOfRoutes()
     this.RouteNameList = this.Routes[0]
   },

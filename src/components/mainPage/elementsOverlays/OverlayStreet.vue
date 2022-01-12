@@ -27,12 +27,16 @@
             v-on:change="updateElements(StreetNameList)"
         ></v-overflow-btn>
 
-        <v-btn style="margin-left: 39%; margin-bottom: 5%"
+        <v-btn style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
-               :disabled="removeButton"
                outlined
+               :disabled="removeButton"
+               :loading="loading"
                @click="removeElement"
         >
+          <v-icon left>
+            {{ icons.mdiDelete }}
+          </v-icon>
           Удалить
         </v-btn>
 
@@ -78,11 +82,12 @@
 
       </v-card-text>
 
-      <v-btn style="margin-left: 28%; margin-bottom: 5%"
+      <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
              @click="submit"
       >
+        <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
         Сохранить и закрыть
       </v-btn>
     </v-card>
@@ -91,6 +96,7 @@
 
 <script>
 import axios from "axios";
+import {mdiDelete} from "@mdi/js";
 
 export default {
   name: "OverlayStreet",
@@ -99,6 +105,11 @@ export default {
     KvartalNameDone: String,
   },
   data: () => ({
+    icons: {
+      mdiDelete,
+    },
+    loading: false,
+
     absolute: true,
     valid: true,
     removeButton: true,
@@ -176,7 +187,8 @@ export default {
             }
           })
     },
-    removeElement() {
+    async removeElement() {
+      this.loading = true
       let str = "/api/app/street/remove?id=" + this.StreetNameList
       axios.create({
         baseURL: this.hostname
@@ -188,6 +200,9 @@ export default {
       this.getListOfStreets(this.KvartalNameDone)
       this.StreetNameList = this.Streets[0]
       this.removeButton = true
+
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.loading = false
     },
   },
   beforeMount() {
@@ -195,7 +210,6 @@ export default {
     this.StreetNameList = this.Streets[0]
     this.getListOfStreets(this.KvartalNameDone)
   },
-
 }
 </script>
 

@@ -4,7 +4,10 @@
       <template v-slot:activator="{ on, attrs }">
         <v-btn dark color=#A0AEC0 class="mx-auto" outlined @click="openWind='OverlayKvartal'"
                v-bind="attrs" v-on="on"
-               style="border-radius: 10px; box-shadow: none !important; width: 180px; height: 180px"> Свободное место
+               style="border-radius: 10px; width: 180px; height: 180px; color: #F58E43;">
+          <v-icon dark>
+            mdi-plus
+          </v-icon>
         </v-btn>
       </template>
 
@@ -13,9 +16,9 @@
 
     <v-dialog width="500px" v-model="dialog" v-if="obj != null">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn dark color=#A0AEC0 class="mx-auto" @click="openWind='OverlayKvartalInfo'"
-               v-bind="attrs" v-on="on"
-               style="border-radius: 10px; box-shadow: none !important; width: 180px; height: 180px; background-color: #F58E43">
+        <v-btn dark color=#A0AEC0 class="mx-auto" outlined @click="openWind='OverlayKvartalInfo'"
+               v-bind="attrs" v-on="on" x-large
+               style="border-radius: 10px; box-shadow: none !important; width: 180px; height: 180px; color: black; ">
           {{ obj.KvartalName }}
         </v-btn>
       </template>

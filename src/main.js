@@ -9,6 +9,9 @@ Vue.mixin({
     return {
       get hostname() {
         return "http://localhost:9000";
+      },
+      get awaitTimer() {
+        return 1000;
       }
     }
   }

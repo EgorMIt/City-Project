@@ -31,11 +31,12 @@
 
       </v-card-text>
 
-      <v-btn style="margin-left: 28%; margin-bottom: 5%"
+      <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
              @click="submit"
       >
+        <v-icon style="margin-right: 8px">mdi-plus</v-icon>
         Добавить и закрыть
       </v-btn>
     </v-card>

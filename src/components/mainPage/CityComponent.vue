@@ -1,14 +1,23 @@
 <template>
-  <v-container class="grey lighten-5" style="margin-top: 3%; margin-left: 1%; ">
-    <v-row style="background-color: white">
-      <v-col
-          v-for="(n, index) in KvartalsList"
-          :key="index"
-      >
-        <KvartalButton :obj="n" :count="index"/>
+  <v-container class="grey lighten-5" style="margin-top: 2%">
+    <v-img src="../../assets/map.png"
+           class="ml-auto mr-auto"
+           height="850px"
+           style="border-radius: 10px"
+    >
+      <v-row style="margin-left: 10px; margin-top: 10px">
 
-      </v-col>
-    </v-row>
+        <v-col
+            v-for="(n, index) in KvartalsList"
+            :key="index"
+        >
+
+          <KvartalButton :obj="n" :count="index"/>
+        </v-col>
+      </v-row>
+
+    </v-img>
+
   </v-container>
 </template>
 
@@ -57,7 +66,7 @@ export default {
     let listSize = this.KvartalsList.length
     if (listSize < this.slotSize) {
       for (let i = 0; i < (this.slotSize - listSize); i++) {
-        this.KvartalsList.push(null)
+        //this.KvartalsList.push(null)
       }
     }
   },

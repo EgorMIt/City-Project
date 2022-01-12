@@ -6,47 +6,10 @@
           color="#F7FAFC"
       >
         <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
-          <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px">
+          <div style="color: black; text-align: center; margin-bottom: 10%; font-size: 25px">
             <br>{{ this.KvartalNameDone }}
           </div>
 
-          <v-row style="margin-left: 1%; margin-right: 1%; margin-bottom: 10%">
-            <v-col>
-              <v-dialog width="500px" v-model="dialog">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn style=""
-                         color=#F58E43
-                         outlined
-                         @click="openWind='OverlayBuilding'"
-                         v-bind="attrs" v-on="on"
-                  >
-                    Добавить здание
-                  </v-btn>
-                </template>
-
-                <OverlayBuilding :KvartalName="this.KvartalNameDone" :isChangeable="false"
-                                 v-if="openWind === 'OverlayBuilding'"
-                                 @updateParent="updateDialog"/>
-              </v-dialog>
-            </v-col>
-
-            <v-col>
-              <v-dialog width="500px" v-model="dialog">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn style=""
-                         color=#F58E43
-                         outlined
-                         @click="openWind='OverlayStreet'"
-                         v-bind="attrs" v-on="on"
-                  >
-                    Управление улицами
-                  </v-btn>
-                </template>
-                <OverlayStreet v-if="openWind === 'OverlayStreet'"
-                               @updateParent="updateDialog"/>
-              </v-dialog>
-            </v-col>
-          </v-row>
 
           <v-text-field
               light
@@ -104,23 +67,75 @@
                               v-if="openWind === 'OverlayBuilding2'"
                               @updateParent="updateDialog"/>
           </v-dialog>
-          <v-divider style="margin-bottom: 10px"></v-divider>
+          <v-divider style="margin-bottom: 5%"></v-divider>
+
+          <v-row style="margin-left: 1%; margin-right: 1%; margin-bottom: 3%">
+            <v-col>
+              <v-dialog width="500px" v-model="dialog">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn style=""
+                         color=#F58E43
+                         outlined
+                         @click="openWind='OverlayBuilding'"
+                         v-bind="attrs" v-on="on"
+                         small
+                  >
+                    <v-icon dark>
+                      mdi-plus
+                    </v-icon>
+                    Добавить здание
+                  </v-btn>
+                </template>
+
+                <OverlayBuilding :KvartalName="this.KvartalNameDone" :isChangeable="false"
+                                 v-if="openWind === 'OverlayBuilding'"
+                                 @updateParent="updateDialog"/>
+              </v-dialog>
+            </v-col>
+
+            <v-col>
+              <v-dialog width="500px" v-model="dialog">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn style=""
+                         color=#F58E43
+                         outlined
+                         @click="openWind='OverlayStreet'"
+                         v-bind="attrs" v-on="on"
+                         small
+                  >
+                    <v-icon left>
+                      mdi-pencil
+                    </v-icon>
+                    Управление улицами
+                  </v-btn>
+                </template>
+                <OverlayStreet v-if="openWind === 'OverlayStreet'"
+                               @updateParent="updateDialog"/>
+              </v-dialog>
+            </v-col>
+          </v-row>
+          <v-divider style="margin-bottom: 5%"></v-divider>
 
         </v-card-text>
 
-        <v-btn style="margin-left: 38%; margin-bottom: 5%"
+        <v-btn style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
                outlined
+               :loading="loading"
                @click="removeElement"
         >
+          <v-icon left>
+            {{ icons.mdiDelete }}
+          </v-icon>
           Удалить
         </v-btn>
 
-        <v-btn style="margin-left: 27%; margin-bottom: 5%"
+        <v-btn style="margin-left: 25%; margin-bottom: 5%"
                color=#F58E43
                outlined
                @click="submit"
         >
+          <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
           Сохранить и закрыть
         </v-btn>
       </v-card>
@@ -133,6 +148,7 @@ import axios from "axios";
 import OverlayBuilding from "@/components/mainPage/elementsOverlays/OverlayBuilding";
 import OverlayStreet from "@/components/mainPage/elementsOverlays/OverlayStreet";
 import OverlayBuilding2 from "@/components/mainPage/elementsOverlays/OverlayBuilding";
+import {mdiDelete,} from '@mdi/js'
 
 export default {
   name: "OverlayKvartalInfo",
@@ -143,6 +159,11 @@ export default {
     KvartalNameDone: String,
   },
   data: () => ({
+    icons: {
+      mdiDelete,
+    },
+    loading: false,
+
     valid: true,
     dialog: false,
     openWind: '',
@@ -218,12 +239,9 @@ export default {
     updateButton() {
       this.infoButton = this.ChooseBuilding == null;
     },
-    removeElement() {
+    async removeElement() {
+      this.loading = true
       let str = "/api/app/quarter/remove?id=" + this.KvartalNameDone
-      let data2 = {
-        dialog: false
-      }
-      this.$emit('updateParent', {data2})
 
       axios.create({
         baseURL: this.hostname
@@ -231,6 +249,12 @@ export default {
           .then(resp => {
             console.log(resp.data)
           })
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      let data2 = {
+        dialog: false
+      }
+      this.$emit('updateParent', {data2})
+      this.loading = false
     },
   },
   beforeMount() {

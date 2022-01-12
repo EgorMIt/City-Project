@@ -22,6 +22,8 @@
             editable
             segmented
             required
+            v-on:change="getKvartalReadiness(ChooseKvartal)"
+
         ></v-overflow-btn>
 
         <v-text-field
@@ -40,7 +42,7 @@
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
              color=#F58E43
              outlined
-             @click="doSomething"
+             @click="closeDialog"
       >
         Закрыть
       </v-btn>
@@ -49,6 +51,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "OverlayKvartalReadiness",
 
@@ -59,7 +63,7 @@ export default {
     KvartalReadiness: 0,
     ChooseKvartal: '',
 
-    Kvartals: ['Kvartal 1', 'Kvartal 2', 'Kvartal 3', 'Kvartal 4', 'Kvartal 5'],
+    Kvartals: [],
 
     rules: {
       clearFieldValid: [
@@ -72,18 +76,36 @@ export default {
     },
   }),
   methods: {
-    doSomething() {
+    closeDialog() {
       this.$emit('updateParent', {
         dialog: false,
       })
     },
-
-    updateBuildings() {
-
+    getListOfKvartals() {
+      let str = "/api/app/quarter/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Kvartals.push(resp.data[i].name)
+            }
+          })
     },
-
+    getKvartalReadiness(KvartalName) {
+      let str = "/api/app/street/single?name=" + KvartalName
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            this.KvartalReadiness = resp.data
+          })
+    },
   },
   beforeMount() {
+    this.getListOfKvartals()
     this.KvartalReadiness = this.KvartalReadiness + "%"
   },
 }

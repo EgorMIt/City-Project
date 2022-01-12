@@ -113,19 +113,24 @@
 
         </v-card-text>
 
-        <v-btn v-if="this.isChangeable === true" style="margin-left: 39%; margin-bottom: 5%"
+        <v-btn v-if="this.isChangeable === true" style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
                outlined
+               :loading="loading"
                @click="removeElement"
         >
+          <v-icon left>
+            {{ icons.mdiDelete }}
+          </v-icon>
           Удалить
         </v-btn>
 
-        <v-btn style="margin-left: 28%; margin-bottom: 5%"
+        <v-btn style="margin-left: 25%; margin-bottom: 5%"
                color=#F58E43
                outlined
                @click="submit"
         >
+          <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
           Сохранить и закрыть
         </v-btn>
       </v-card>
@@ -197,6 +202,7 @@
 <script>
 import axios from "axios";
 import router from "@/router";
+import {mdiDelete} from "@mdi/js";
 
 export default {
   name: "OverlayBuilding",
@@ -208,6 +214,11 @@ export default {
   },
 
   data: () => ({
+    icons: {
+      mdiDelete,
+    },
+    loading: false,
+
     overlayMaterialForBuilding: false,
     valid: true,
 
@@ -338,12 +349,9 @@ export default {
             }
           })
     },
-    removeElement() {
+    async removeElement() {
+      this.loading = true
       let str = "/api/app/building/remove?id=" + this.BuildingNameDone
-      let data2 = {
-        dialog: false
-      }
-      this.$emit('updateParent', {data2})
 
       axios.create({
         baseURL: this.hostname
@@ -351,6 +359,13 @@ export default {
           .then(resp => {
             console.log(resp.data)
           })
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+
+      let data2 = {
+        dialog: false
+      }
+      this.$emit('updateParent', {data2})
+      this.loading = false
     },
   },
   beforeMount() {
