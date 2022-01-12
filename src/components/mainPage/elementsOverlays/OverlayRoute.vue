@@ -160,18 +160,33 @@ export default {
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
-        let str = "/api/app/route/save"
+        let str
+        let data
+        if (this.RouteNameList !== this.Routes[0]) {
+          str = "/api/app/route/update"
+          data = {
+            id: this.RouteNameList,
+            type: this.RouteType,
+            quarterFrom: this.RouteKvartalStart,
+            quarterTo: this.RouteKvartalFinish,
+            streets: this.RouteStreets,
+          }
+        } else {
+          str = "/api/app/route/save"
+          data = {
+            type: this.RouteType,
+            quarterFrom: this.RouteKvartalStart,
+            quarterTo: this.RouteKvartalFinish,
+            streets: this.RouteStreets,
+          }
+        }
+
         let data2 = {
           dialog: false
         }
         this.$emit('updateParent', {data2})
 
-        let data = {
-          RouteType: this.RouteType,
-          RouteKvartalStart: this.RouteKvartalStart,
-          RouteKvartalFinish: this.RouteKvartalFinish,
-          RouteStreets: this.RouteStreets,
-        }
+
         axios.create({
           baseURL: this.hostname
         }).post(str, data)
@@ -205,17 +220,29 @@ export default {
             }
           })
     },
+    getListOfStreets() {
+      let str = "/api/app/street/all"
+      axios.create({
+        baseURL: this.hostname
+      }).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Streets.push(resp.data[i].name)
+            }
+          })
+    },
     getRouteByType: function (RouteNameList) {
-      let str = "/api/app/route/single?type=" + RouteNameList
+      let str = "/api/app/route/single?id=" + RouteNameList
       axios.create({
         baseURL: this.hostname
       }).get(str)
           .then(resp => {
             console.log(resp.data)
             this.RouteType = resp.data.type
-            this.RouteKvartalStart = resp.data
-            this.RouteKvartalFinish = resp.data
-            this.RouteStreets = resp.data
+            this.RouteKvartalStart = resp.data.quarterFrom
+            this.RouteKvartalFinish = resp.data.quarterTo
+            this.RouteStreets = resp.data.streets
           })
     },
     getListOfKvartals() {
@@ -232,7 +259,7 @@ export default {
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/route/remove?id=" + this.RouteNameList
+      let str = "/api/app/route/delete?id=" + this.RouteNameList
       axios.create({
         baseURL: this.hostname
       }).post(str)
@@ -249,6 +276,7 @@ export default {
     },
   },
   beforeMount() {
+    this.getListOfStreets()
     this.getListOfKvartals()
     this.getListOfRoutes()
     this.RouteNameList = this.Routes[0]

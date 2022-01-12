@@ -105,7 +105,7 @@ export default {
     async getNumberOfDoneBuildings(ComitetName) {
       this.loading = true
       let result
-      let str = "/api/app/street/single?name=" + ComitetName
+      let str = "/api/app/committee/accept?id=" + ComitetName
       axios.create({
         baseURL: this.hostname
       }).get(str)

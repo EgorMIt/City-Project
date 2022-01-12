@@ -63,7 +63,7 @@
                 Показать информацию о доме
               </v-btn>
             </template>
-            <OverlayBuilding2 :KvartalName="this.KvartalNameDone" :isChangeable="true" :BuildingNameDone="'ПримерДома1'"
+            <OverlayBuilding2 :isChangeable="true" :KvartalNameDone="this.KvartalNameDone" :BuildingNameDone="this.ChooseBuilding"
                               v-if="openWind === 'OverlayBuilding2'"
                               @updateParent="updateDialog"/>
           </v-dialog>
@@ -87,7 +87,7 @@
                   </v-btn>
                 </template>
 
-                <OverlayBuilding :KvartalName="this.KvartalNameDone" :isChangeable="false"
+                <OverlayBuilding :KvartalNameDone="this.KvartalNameDone" :isChangeable="false"
                                  v-if="openWind === 'OverlayBuilding'"
                                  @updateParent="updateDialog"/>
               </v-dialog>
@@ -109,7 +109,7 @@
                     Управление улицами
                   </v-btn>
                 </template>
-                <OverlayStreet v-if="openWind === 'OverlayStreet'"
+                <OverlayStreet :KvartalNameDone="this.KvartalNameDone" v-if="openWind === 'OverlayStreet'"
                                @updateParent="updateDialog"/>
               </v-dialog>
             </v-col>
@@ -172,6 +172,7 @@ export default {
     absolute: true,
 
     KvartalName: '',
+    KvartalNameOld: '',
     ChooseStreetForBuilding: '',
     ChooseBuilding: '',
 
@@ -194,15 +195,16 @@ export default {
     },
     submit() {
       if (this.$refs.form.validate()) {
-        let str = "/api/app/quarter/save"
+        let str = "/api/app/quarter/update"
         let data2 = {
           dialog: false
         }
         this.$emit('updateParent', {data2})
 
         let data = {
-          KvartalName: this.KvartalName,
-
+          name: this.KvartalName,
+          oldName: this.KvartalNameOld,
+          index: this.indexInArray
         }
         axios.create({
           baseURL: this.hostname
@@ -213,7 +215,7 @@ export default {
       }
     },
     getListOfStreets(KvartalName) {
-      let str = "/api/app/street/single?name=" + KvartalName
+      let str = "/api/app/street/quarter?name=" + KvartalName
       axios.create({
         baseURL: this.hostname
       }).get(str)
@@ -225,7 +227,7 @@ export default {
           })
     },
     updateListOfBuildings(ChooseStreetForBuilding) {
-      let str = "/api/app/street/single?name=" + ChooseStreetForBuilding
+      let str = "/api/app/building/street?name=" + ChooseStreetForBuilding
       axios.create({
         baseURL: this.hostname
       }).get(str)
@@ -241,7 +243,7 @@ export default {
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/quarter/remove?id=" + this.KvartalNameDone
+      let str = "/api/app/quarter/delete?name=" + this.KvartalNameDone
 
       axios.create({
         baseURL: this.hostname
@@ -259,6 +261,7 @@ export default {
   },
   beforeMount() {
     this.KvartalName = this.KvartalNameDone
+    this.KvartalNameOld = this.KvartalNameDone
     this.getListOfStreets(this.KvartalNameDone)
 
   },

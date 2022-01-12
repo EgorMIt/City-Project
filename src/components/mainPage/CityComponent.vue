@@ -1,5 +1,5 @@
 <template>
-  <v-container class="grey lighten-5" style="margin-top: 2%">
+  <v-container class="grey lighten-5" style="margin-top: 2%" v-if="renderComponent">
     <v-img src="../../assets/map.png"
            class="ml-auto mr-auto"
            height="850px"
@@ -8,11 +8,11 @@
       <v-row style="margin-left: 10px; margin-top: 10px">
 
         <v-col
-            v-for="(n, index) in KvartalsList"
+            v-for="(n, index) in this.KvartalsList"
             :key="index"
         >
 
-          <KvartalButton :obj="n" :count="index"/>
+          <KvartalButton :count="index" :KvartalName="n"/>
         </v-col>
       </v-row>
 
@@ -30,25 +30,20 @@ export default {
   components: {KvartalButton},
 
   data: () => ({
-    KvartalsList: [null, null, null, null, {KvartalName: 'Квартал один'}, {KvartalName: 'Квартал два'}, null],
-    //KvartalsList: [],
+    //KvartalsList2: [null, null, null, null, 'Квартал один', 'Квартал два', null],
+    KvartalsList: [],
     slotSize: 28,
+    renderComponent: false,
   }),
 
   methods: {
     getListOfKvartals() {
-      this.KvartalsList = []
-      axios.create({
-        baseURL: 'http://localhost:10520/api/v1'
-      }).get('/get/list')
-          .then(resp => {
-            console.log(resp.data)
-            for (let i = 0; i < resp.data.length; i++) {
-              this.KvartalsList.push(resp.data[i].KvartalName)
-            }
-          })
-    },
-    getKvartalsList() {
+      this.KvartalsList = new Array(28)
+
+      for (let i = 0; i < this.slotSize; i++) {
+        this.KvartalsList[i] = "хуета"
+      }
+
       let str = "/api/app/quarter/map"
       axios.create({
         baseURL: this.hostname
@@ -56,17 +51,20 @@ export default {
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
-              this.KvartalsList.push(resp.data[i])
+              if (resp.data[i] != null) {
+                this.KvartalsList[i] = resp.data[i].name
+              } else this.KvartalsList[i] = null
             }
+            this.renderComponent = true
           })
     },
   },
-  beforeMount() {
-    this.getKvartalsList()
+  created() {
+    this.getListOfKvartals()
     let listSize = this.KvartalsList.length
     if (listSize < this.slotSize) {
       for (let i = 0; i < (this.slotSize - listSize); i++) {
-        //this.KvartalsList.push(null)
+        this.KvartalsList.push(null)
       }
     }
   },

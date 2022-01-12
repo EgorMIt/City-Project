@@ -212,19 +212,18 @@ export default {
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/delivery_service/remove?id=" + this.DostavkaNameList
+      let str = "/api/app/delivery_service/delete?name=" + this.DostavkaNameList
       axios.create({
         baseURL: this.hostname
       }).post(str)
           .then(resp => {
             console.log(resp.data)
           })
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.Dostavka = ['Добавить новый элемент']
       this.getListOfDostavka()
       this.DostavkaNameList = this.Dostavka[0]
       this.removeButton = true
-
-      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.loading = false
     },
   },

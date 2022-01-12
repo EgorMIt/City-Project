@@ -74,8 +74,8 @@ export default {
         this.$emit('updateParent', {data2})
 
         let data = {
-          KvartalName: this.KvartalName,
-          indexInArray: this.indexInArray,
+          name: this.KvartalName,
+          index: this.indexInArray,
         }
         axios.create({
           baseURL: this.hostname

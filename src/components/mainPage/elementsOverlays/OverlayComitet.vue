@@ -115,7 +115,7 @@ export default {
         this.$emit('updateParent', {data2})
 
         let data = {
-          ComitetRigor: this.ComitetRigor,
+          strictness: this.ComitetRigor,
         }
         axios.create({
           baseURL: this.hostname
@@ -147,18 +147,18 @@ export default {
           })
     },
     getComitetByID: function (ComitetNameList) {
-      let str = "/api/app/committee/single?type=" + ComitetNameList
+      let str = "/api/app/committee/single?id=" + ComitetNameList
       axios.create({
         baseURL: this.hostname
       }).get(str)
           .then(resp => {
             console.log(resp.data)
-            this.ComitetRigor = resp.data
+            this.ComitetRigor = resp.data.strictness
           })
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/committee/remove?id=" + this.ComitetNameList
+      let str = "/api/app/committee/delete?id=" + this.ComitetNameList
       axios.create({
         baseURL: this.hostname
       }).post(str)

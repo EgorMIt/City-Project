@@ -201,7 +201,6 @@
 
 <script>
 import axios from "axios";
-import router from "@/router";
 import {mdiDelete} from "@mdi/js";
 
 export default {
@@ -234,11 +233,15 @@ export default {
     BuildingMaterial: '',
     BuildingMaterialCount: '',
 
+    MaterialsList: [],
+    QuantityList: [],
     addedMaterials: [],
     Streets: [],
     Comitets: [],
     Brigada: [],
     Materials: [],
+    ServiceList: [],
+    readinessCoefficient: 50,
 
     rules: {
       clearFieldValid: [
@@ -253,56 +256,62 @@ export default {
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
-        let str = "/api/app/building/save"
+        let str
+        if (this.isChangeable === true) {
+          str = "/api/app/building/update"
+        } else {
+          str = "/api/app/building/save"
+        }
         let data2 = {
           dialog: false
         }
         this.$emit('updateParent', {data2})
 
         let data = {
-          BuildingName: this.BuildingName,
-          BuildingType: this.BuildingType,
-          BuildingFloors: this.BuildingFloors,
-          BuildingStreet: this.BuildingStreet,
-          BuildingComitet: this.BuildingComitet,
-          BuildingBrigada: this.BuildingBrigada,
-
-          addedMaterials: this.addedMaterials,
+          name: this.BuildingName,
+          type: this.BuildingType,
+          floorNumber: this.BuildingFloors,
+          streetName: this.BuildingStreet,
+          committeeId: this.BuildingComitet,
+          crewId: this.BuildingBrigada,
+          materialList: this.MaterialsList,
+          quantityList: this.QuantityList,
+          serviceList: this.ServiceList,
+          readinessCoefficient: this.readinessCoefficient
         }
         axios.create({
           baseURL: this.hostname
         }).post(str, data)
             .then(resp => {
               console.log(resp.data.BuildingName)
-              router.push({path: '/main'})
             })
       }
     },
     addMaterial() {
-      this.overlayMaterialForBuilding = false;
-      this.addedMaterials.push({
-        BuildingMaterial: this.BuildingMaterial,
-        BuildingMaterialCount: this.BuildingMaterialCount
-      })
+      this.overlayMaterialForBuilding = false
+      this.MaterialsList.push(this.BuildingMaterial)
+      this.QuantityList.push(this.BuildingMaterialCount)
     },
 
     getBuildingByName(BuildingNameDone) {
-      let str = "/api/app/street/single?name=" + BuildingNameDone
+      let str = "/api/app/building/single?name=" + BuildingNameDone
       axios.create({
         baseURL: this.hostname
       }).get(str)
           .then(resp => {
             console.log(resp.data)
             this.BuildingType = resp.data.type
-            this.BuildingFloors = resp.data.floors
-            this.BuildingStreet = resp.data.street
-            this.BuildingComitet = resp.data.comitet
-            this.BuildingBrigada = resp.data.brigada
-            this.addedMaterials = resp.data.materials
+            this.BuildingFloors = resp.data.floorNumber
+            this.BuildingStreet = resp.data.streetByStreetId.name
+            this.BuildingComitet = resp.data.committeeId
+            this.BuildingBrigada = resp.data.constructionCrewByCrewId.id
+            this.MaterialsList = resp.data.materialList
+            this.QuantityList = resp.data.quantityList
+            this.ServiceList = resp.data.serviceList
           })
     },
     getListOfStreets(KvartalNameDone) {
-      let str = "/api/app/street/single?name=" + KvartalNameDone
+      let str = "/api/app/street/quarter?name=" + KvartalNameDone
       axios.create({
         baseURL: this.hostname
       }).get(str)
@@ -351,7 +360,7 @@ export default {
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/building/remove?id=" + this.BuildingNameDone
+      let str = "/api/app/building/delete?name=" + this.BuildingNameDone
 
       axios.create({
         baseURL: this.hostname
@@ -373,7 +382,7 @@ export default {
       this.BuildingName = this.BuildingNameDone
       this.getBuildingByName(this.BuildingNameDone)
     }
-    this.getListOfStreets()
+    this.getListOfStreets(this.KvartalNameDone)
     this.getListOfBrigada()
     this.getListOfComitets()
     this.getListOfMaterials()

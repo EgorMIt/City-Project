@@ -94,13 +94,13 @@ export default {
           })
     },
     getKvartalReadiness(KvartalName) {
-      let str = "/api/app/street/single?name=" + KvartalName
+      let str = "/api/app/percent/quarter?name=" + KvartalName
       axios.create({
         baseURL: this.hostname
       }).get(str)
           .then(resp => {
             console.log(resp.data)
-            this.KvartalReadiness = resp.data
+            this.KvartalReadiness = resp.data.result
           })
     },
   },

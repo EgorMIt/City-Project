@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog width="500px" v-model="dialog" v-if="obj == null">
+    <v-dialog width="500px" v-model="dialog" v-if="this.KvartalName == null">
       <template v-slot:activator="{ on, attrs }">
         <v-btn dark color=#A0AEC0 class="mx-auto" outlined @click="openWind='OverlayKvartal'"
                v-bind="attrs" v-on="on"
@@ -14,16 +14,16 @@
       <OverlayKvartal :indexInArray="count" v-if="openWind === 'OverlayKvartal'" @updateParent="updateDialog"/>
     </v-dialog>
 
-    <v-dialog width="500px" v-model="dialog" v-if="obj != null">
+    <v-dialog width="500px" v-model="dialog" v-if="this.KvartalName != null">
       <template v-slot:activator="{ on, attrs }">
         <v-btn dark color=#A0AEC0 class="mx-auto" outlined @click="openWind='OverlayKvartalInfo'"
                v-bind="attrs" v-on="on" x-large
                style="border-radius: 10px; box-shadow: none !important; width: 180px; height: 180px; color: black; ">
-          {{ obj.KvartalName }}
+          {{ KvartalName }}
         </v-btn>
       </template>
 
-      <OverlayKvartalInfo :indexInArray="count" :KvartalNameDone="obj.KvartalName"
+      <OverlayKvartalInfo :indexInArray="count" :KvartalNameDone="KvartalName"
                           v-if="openWind === 'OverlayKvartalInfo'"
                           @updateParent="updateDialog"/>
     </v-dialog>
@@ -40,17 +40,24 @@ export default {
 
   props: {
     count: Number,
-    obj: {KvartalName: ''},
+    KvartalName: String,
   },
   data: () => ({
     dialog: false,
     openWind: '',
+    flag: false,
   }),
   methods: {
     updateDialog(data) {
       this.dialog = data.dialog
+    },
+    checkField() {
+      console.log(this.KvartalName)
+      return this.KvartalName == null
     }
   },
+  beforeMount() {
+  }
 }
 </script>
 

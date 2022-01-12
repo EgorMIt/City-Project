@@ -58,7 +58,7 @@
         />
 
         <v-overflow-btn
-            v-model="StreetToStreet"
+            v-model="StreetToStreetName"
             :items="Streets"
             label="Пересекаемые улицы"
             multiple
@@ -116,6 +116,8 @@ export default {
 
     StreetNameList: '',
     StreetName: '',
+    StreetNameOld: '',
+    StreetToStreetName: '',
     StreetToStreet: [],
 
     Streets: ['Добавить новый элемент'],
@@ -142,9 +144,10 @@ export default {
         this.$emit('updateParent', {data2})
 
         let data = {
-          StreetName: this.StreetName,
-          StreetToStreet: this.StreetToStreet,
-          StreetKvartal: this.KvartalNameDone,
+          name: this.StreetName,
+          oldName: this.StreetNameOld,
+          streetList: this.StreetToStreet,
+          quarterName: this.KvartalNameDone,
         }
         axios.create({
           baseURL: this.hostname
@@ -161,7 +164,7 @@ export default {
       } else if (this.StreetNameList === this.Streets[0]) {
         this.removeButton = true
         this.StreetName = ''
-        this.StreetToStreet = ''
+        this.StreetToStreetName = ''
       }
     },
     getStreetByName: function (StreetNameList) {
@@ -172,11 +175,12 @@ export default {
           .then(resp => {
             console.log(resp.data)
             this.StreetName = resp.data.name
+            this.StreetNameOld = resp.data.name
             this.StreetToStreet = resp.data
           })
     },
     getListOfStreets(KvartalName) {
-      let str = "/api/app/street/single?name=" + KvartalName
+      let str = "/api/app/street/quarter?name=" + KvartalName
       axios.create({
         baseURL: this.hostname
       }).get(str)
@@ -189,7 +193,7 @@ export default {
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/street/remove?id=" + this.StreetNameList
+      let str = "/api/app/street/delete?name=" + this.StreetNameList
       axios.create({
         baseURL: this.hostname
       }).post(str)

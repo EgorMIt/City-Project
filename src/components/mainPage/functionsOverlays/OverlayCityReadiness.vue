@@ -65,13 +65,13 @@ export default {
       })
     },
     getCityReadiness() {
-      let str = "/api/app/committee/all"
+      let str = "/api/app/percent/city"
       axios.create({
         baseURL: this.hostname
       }).get(str)
           .then(resp => {
             console.log(resp.data)
-            this.CityReadiness = resp.data
+            this.CityReadiness = resp.data.result
           })
     },
   },

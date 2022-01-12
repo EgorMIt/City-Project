@@ -138,22 +138,29 @@ export default {
     submit() {
       if (this.$refs.form.validate()) {
         let str
+        let data
         if (this.ObslugaNameList !== this.Obsluga[0]) {
           str = "/api/app/service_team/update"
+          data = {
+            id: this.ObslugaNameList,
+            rate: this.ObslugaPrice,
+            quarterName: this.ObslugaKvartal,
+            serviceType: this.ObslugaSluzba,
+          }
         } else {
           str = "/api/app/service_team/save"
+          data = {
+            rate: this.ObslugaPrice,
+            quarterName: this.ObslugaKvartal,
+            serviceType: this.ObslugaSluzba,
+          }
         }
-
         let data2 = {
           dialog: false
         }
         this.$emit('updateParent', {data2})
 
-        let data = {
-          price: this.ObslugaPrice,
-          quarter: this.ObslugaKvartal,
-          service: this.ObslugaSluzba,
-        }
+
         axios.create({
           baseURL: this.hostname
         }).post(str, data)
@@ -223,7 +230,7 @@ export default {
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/delivery_service/remove?id=" + this.ObslugaNameList
+      let str = "/api/app/service_team/delete?id=" + this.ObslugaNameList
       axios.create({
         baseURL: this.hostname
       }).post(str)

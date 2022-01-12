@@ -3,7 +3,6 @@ import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
 
-
 Vue.mixin({
   data: function() {
     return {
@@ -12,7 +11,7 @@ Vue.mixin({
       },
       get awaitTimer() {
         return 1000;
-      }
+      },
     }
   }
 })

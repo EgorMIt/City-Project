@@ -174,7 +174,7 @@ export default {
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/city_service/remove?id=" + this.SluzbaNameList
+      let str = "/api/app/city_service/delete?type=" + this.SluzbaNameList
       axios.create({
         baseURL: this.hostname
       }).post(str)

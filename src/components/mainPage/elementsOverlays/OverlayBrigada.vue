@@ -138,19 +138,19 @@ export default {
     },
     async removeElement() {
       this.loading = true
-      let str = "/api/app/construction_crew/remove?id=" + this.BrigadaNameList
+      let str = "/api/app/construction_crew/delete?id=" + this.BrigadaNameList
       axios.create({
         baseURL: this.hostname
       }).post(str)
           .then(resp => {
             console.log(resp.data)
           })
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.Brigada = ['Добавить новый элемент']
       this.getListOfBrigada()
       this.BrigadaNameList = this.Brigada[0]
       this.removeButton = true
 
-      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.loading = false
     },
     getListOfBrigada() {

@@ -129,8 +129,9 @@ export default {
           })
     },
     getListOfStreets(KvartalName) {
+      this.Streets = []
       this.streetChoose = false
-      let str = "/api/app/street/single?name=" + KvartalName
+      let str = "/api/app/street/quarter?name=" + KvartalName
       axios.create({
         baseURL: this.hostname
       }).get(str)
@@ -142,8 +143,9 @@ export default {
           })
     },
     getListOfBuildings(ChooseStreetForBuilding) {
+      this.Buildings = []
       this.buildingChoose = false
-      let str = "/api/app/street/single?name=" + ChooseStreetForBuilding
+      let str = "/api/app/building/street?name=" + ChooseStreetForBuilding
       axios.create({
         baseURL: this.hostname
       }).get(str)
@@ -155,7 +157,7 @@ export default {
           })
     },
     getFinalCost(BuildingName) {
-      let str = "/api/app/street/single?name=" + BuildingName
+      let str = "/api/app/building/cost?name=" + BuildingName
       axios.create({
         baseURL: this.hostname
       }).get(str)
