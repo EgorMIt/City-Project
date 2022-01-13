@@ -31,7 +31,7 @@
                color=#F16063
                outlined
                :disabled="removeButton"
-               :loading="loading"
+               :loading="loadingRemove"
                @click="removeElement"
         >
           <v-icon left>
@@ -75,6 +75,7 @@
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
+             :loading="loadingSave"
              @click="submit"
       >
         <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
@@ -96,7 +97,8 @@ export default {
     icons: {
       mdiDelete,
     },
-    loading: false,
+    loadingRemove: false,
+    loadingSave: false,
 
     absolute: true,
     valid: true,
@@ -119,24 +121,30 @@ export default {
     },
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        this.loadingSave = true
         let str = "/api/app/city_service/save"
-        let data2 = {
-          dialog: false
-        }
-        this.$emit('updateParent', {data2})
 
         let data = {
           type: this.SluzbaType,
           price: this.SluzbaPrice,
         }
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
+        axios.create(this.getHeader()
+        ).post(str, data)
             .then(resp => {
               console.log(resp.data)
-            })
+            }).catch(err => {
+          if(this.doRefresh(err.status)) this.submit()
+        })
+        await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+        this.updateOverlay()
+
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+        this.loadingSave = false
       }
     },
     updateElements(SluzbaNameList) {
@@ -151,48 +159,54 @@ export default {
     },
     getListOfSluzba() {
       let str = "/api/app/city_service/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Sluzba.push(resp.data[i].type)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfSluzba()
+      })
     },
     getSluzbaByType: function (SluzbaNameList) {
       let str = "/api/app/city_service/single?type=" + SluzbaNameList
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             this.SluzbaType = resp.data.type
             this.SluzbaPrice = resp.data.price
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getSluzbaByType(SluzbaNameList)
+      })
     },
     async removeElement() {
-      this.loading = true
+      this.loadingRemove = true
       let str = "/api/app/city_service/delete?type=" + this.SluzbaNameList
-      axios.create({
-        baseURL: this.hostname
-      }).post(str)
+      axios.create(this.getHeader()
+      ).post(str)
           .then(resp => {
             console.log(resp.data)
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.removeElement()
+      })
+      this.removeButton = true
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.updateOverlay()
+
+      this.loadingRemove = false
+    },
+    updateOverlay() {
       this.Sluzba = ['Добавить новый элемент']
       this.getListOfSluzba()
       this.SluzbaNameList = this.Sluzba[0]
-      this.removeButton = true
-
-      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
-      this.loading = false
-    },
+      this.updateElements(this.SluzbaNameList)
+    }
   },
   beforeMount() {
-    this.getListOfSluzba()
-    this.SluzbaNameList = this.Sluzba[0]
+    this.updateOverlay()
   },
 }
 </script>

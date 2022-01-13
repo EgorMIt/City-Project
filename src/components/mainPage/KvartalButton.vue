@@ -51,10 +51,6 @@ export default {
     updateDialog(data) {
       this.dialog = data.dialog
     },
-    checkField() {
-      console.log(this.KvartalName)
-      return this.KvartalName == null
-    }
   },
   beforeMount() {
   }

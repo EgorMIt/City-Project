@@ -18,9 +18,7 @@
             </div>
 
             <v-textarea
-                @input="$v.login.$touch()"
-                @blur="$v.login.$touch()"
-                :error-messages="loginErrors"
+                :rules="rules.clearFieldValid"
                 label="Введите имя пользователя"
                 name="Login"
                 type="text"
@@ -38,12 +36,10 @@
             </div>
 
             <v-text-field
-                @input="$v.password.$touch()"
-                @blur="$v.password.$touch()"
+                :rules="rules.clearFieldValid"
                 :append-icon="eyeFlag ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="eyeFlag ? 'text' : 'password'"
                 hint="Минимум 8 символов"
-                :error-messages="passwordErrors"
                 @click:append="eyeFlag = !eyeFlag"
                 id="password"
                 label="Введите пароль"
@@ -58,15 +54,19 @@
 
           <v-row style="margin: auto">
             <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark
+                   :loading="loadingRegister"
                    @click="submit()">
               Зарегистрироваться и вернуться ко входу
             </v-btn>
           </v-row>
-          <v-row>
-            <v-alert v-if="errorFlag" type="error">
-              {{ errorText }}
-            </v-alert>
-          </v-row>
+
+          <v-alert v-if="error" style="margin-top: 30px"
+                   colored-border
+                   type="error" outlined
+                   elevation="0"
+          >
+            Такое имя пользователя уже существует
+          </v-alert>
         </v-card-text>
       </v-col>
     </v-row>
@@ -92,42 +92,38 @@ export default {
     password: '',
     login: '',
     valid: false,
-    errorFlag: false,
-    errorText: ''
+    loadingRegister: false,
+    error: '',
+
+    rules: {
+      clearFieldValid: [
+        v => !!v || 'Поле не может быть пустым'
+      ],
+    },
   }),
-  computed: {
-    loginErrors() {
-      const errors = []
-      if (!this.$v.login.$dirty) return errors
-      !this.$v.login.required && errors.push('Поле не может быть пустым')
-      return errors
-    },
-    passwordErrors() {
-      const errors = []
-      if (!this.$v.password.$dirty) return errors
-      !this.$v.password.required && errors.push('Поле не может быть пустым')
-      return errors
-    },
-  },
 
   methods: {
     submit() {
-      this.$v.$touch()
-      if (this.valid) {
+      if (this.$refs.form.validate()) {
+        this.loadingRegister = true
         let data = {
           username: this.login,
           password: this.password
         }
         axios.create({
           baseURL: this.hostname
-        }).post('/api/auth/signup', data)
-            .then(resp => {
+        }).post('/api/auth/register', data)
+            .then(async resp => {
               console.log(resp.data.token)
-              this.errorFlag = false;
-              router.push({path: '/'})
-            }).catch(err => {
-          this.errorFlag = true;
-          this.errorText = err.response.data.message
+              await new Promise(resolve => setTimeout(resolve, 500))
+              await router.push({path: '/'})
+              this.loadingRegister = false
+            }).catch(async err => {
+          await new Promise(resolve => setTimeout(resolve, 500))
+          this.error = true
+          this.loadingRegister = false
+          console.log(err.response)
+          console.log(err.response.data.description)
         })
       }
     },

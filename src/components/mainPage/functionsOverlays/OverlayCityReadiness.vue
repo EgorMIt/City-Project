@@ -66,13 +66,17 @@ export default {
     },
     getCityReadiness() {
       let str = "/api/app/percent/city"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
-            this.CityReadiness = resp.data.result
-          })
+            if (resp.data.result != null) {
+              this.CityReadiness = resp.data.result
+              this.CityReadiness = this.CityReadiness.toFixed(2) + "%"
+            } else this.CityReadiness = "0%"
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getCityReadiness()
+      })
     },
   },
   beforeMount() {

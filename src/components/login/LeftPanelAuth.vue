@@ -1,11 +1,11 @@
 <template>
-  <v-card color=#F58E43 height="100%">
+  <v-card color=#F58E43 height="100%" style="border-radius: 0">
 
     <v-card-text class="font-weight-medium" style="font-size: 30pt; ">
 
-      <div style="margin-top: 10%; margin-left: 10%; color: black">
+      <v-btn plain style="margin-top: 10%; margin-left: 8%; color: black; font-size: 40px" to="/">
         City Project
-      </div>
+      </v-btn>
     </v-card-text>
     <v-img src="../../assets/city.jpg"
            class="ml-auto mr-auto"

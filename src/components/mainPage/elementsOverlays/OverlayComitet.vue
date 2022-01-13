@@ -31,7 +31,7 @@
                color=#F16063
                outlined
                :disabled="removeButton"
-               :loading="loading"
+               :loading="loadingRemove"
                @click="removeElement"
         >
           <v-icon left>
@@ -62,6 +62,7 @@
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
+             :loading="loadingSave"
              @click="submit"
       >
         <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
@@ -83,7 +84,8 @@ export default {
     icons: {
       mdiDelete,
     },
-    loading: false,
+    loadingRemove: false,
+    loadingSave: false,
 
     absolute: true,
     valid: true,
@@ -102,27 +104,33 @@ export default {
       numberValid: [
         v => !!v || 'Поле не может быть пустым',
         v => !!/^\d*$/.test(v) || 'Допустимы только числа',
+        v => !!/^[0-9]$/.test(v) || 'Допустимы только числа в диапазоне 0 - 9',
       ],
     },
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        this.loadingSave = true
         let str = "/api/app/committee/save"
+        let data = {
+          strictness: this.ComitetRigor,
+        }
+        axios.create(this.getHeader()
+        ).post(str, data)
+            .then(resp => {
+              console.log(resp.data)
+            }).catch(err => {
+          if(this.doRefresh(err.status)) this.submit()
+        })
+        await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+        this.updateOverlay()
+
         let data2 = {
           dialog: false
         }
         this.$emit('updateParent', {data2})
-
-        let data = {
-          strictness: this.ComitetRigor,
-        }
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
-            .then(resp => {
-              console.log(resp.data)
-            })
+        this.loadingSave = false
       }
     },
     updateElements(ComitetNameList) {
@@ -136,47 +144,53 @@ export default {
     },
     getListOfComitets() {
       let str = "/api/app/committee/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Comitets.push(resp.data[i].id)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfComitets()
+      })
     },
     getComitetByID: function (ComitetNameList) {
       let str = "/api/app/committee/single?id=" + ComitetNameList
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             this.ComitetRigor = resp.data.strictness
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getComitetByID(ComitetNameList)
+      })
     },
     async removeElement() {
-      this.loading = true
+      this.loadingRemove = true
       let str = "/api/app/committee/delete?id=" + this.ComitetNameList
-      axios.create({
-        baseURL: this.hostname
-      }).post(str)
+      axios.create(this.getHeader()
+      ).post(str)
           .then(resp => {
             console.log(resp.data)
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.removeElement()
+      })
+      this.removeButton = true
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.updateOverlay()
+
+      this.loadingRemove = false
+    },
+    updateOverlay() {
       this.Comitets = ['Добавить новый элемент']
       this.getListOfComitets()
       this.ComitetNameList = this.Comitets[0]
-      this.removeButton = true
-
-      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
-      this.loading = false
-    },
+      this.updateElements(this.ComitetNameList)
+    }
   },
   beforeMount() {
-    this.getListOfComitets()
-    this.ComitetNameList = this.Comitets[0]
+    this.updateOverlay()
   },
 }
 </script>

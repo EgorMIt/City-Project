@@ -30,7 +30,7 @@
         <v-btn style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
                outlined
-               :loading="loading"
+               :loading="loadingRemove"
                :disabled="removeButton"
                @click="removeElement"
         >
@@ -110,6 +110,7 @@
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
+             :loading="loadingSave"
              @click="submit"
       >
         <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
@@ -130,7 +131,8 @@ export default {
     icons: {
       mdiDelete,
     },
-    loading: false,
+    loadingRemove: false,
+    loadingSave: false,
 
     absolute: true,
     valid: true,
@@ -158,8 +160,9 @@ export default {
     },
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        this.loadingSave = true
         let str
         let data
         if (this.RouteNameList !== this.Routes[0]) {
@@ -180,20 +183,21 @@ export default {
             streets: this.RouteStreets,
           }
         }
+        axios.create(this.getHeader()
+        ).post(str, data)
+            .then(resp => {
+              console.log(resp.data)
+            }).catch(err => {
+          if(this.doRefresh(err.status)) this.submit()
+        })
+        await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+        this.updateOverlay()
 
         let data2 = {
           dialog: false
         }
         this.$emit('updateParent', {data2})
-
-
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
-            .then(resp => {
-              console.log(resp.data)
-            })
-
+        this.loadingSave = false
       }
     },
     updateElements(RouteNameList) {
@@ -210,76 +214,84 @@ export default {
     },
     getListOfRoutes() {
       let str = "/api/app/route/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Routes.push(resp.data[i].id)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfRoutes()
+      })
     },
     getListOfStreets() {
       let str = "/api/app/street/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Streets.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfStreets()
+      })
     },
     getRouteByType: function (RouteNameList) {
       let str = "/api/app/route/single?id=" + RouteNameList
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             this.RouteType = resp.data.type
             this.RouteKvartalStart = resp.data.quarterFrom
             this.RouteKvartalFinish = resp.data.quarterTo
             this.RouteStreets = resp.data.streets
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getRouteByType(RouteNameList)
+      })
     },
     getListOfKvartals() {
       let str = "/api/app/quarter/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Kvartals.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfKvartals()
+      })
     },
     async removeElement() {
-      this.loading = true
+      this.loadingRemove = true
       let str = "/api/app/route/delete?id=" + this.RouteNameList
-      axios.create({
-        baseURL: this.hostname
-      }).post(str)
+      axios.create(this.getHeader()
+      ).post(str)
           .then(resp => {
             console.log(resp.data)
-          })
-      this.Routes = ['Добавить новый элемент']
-      this.getListOfRoutes()
-      this.RouteNameList = this.Routes[0]
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.removeElement()
+      })
       this.removeButton = true
 
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
-      this.loading = false
+      this.updateOverlay()
+      this.loadingRemove = false
     },
+    updateOverlay() {
+      this.Routes = ['Добавить новый элемент']
+      this.getListOfStreets()
+      this.getListOfKvartals()
+      this.getListOfRoutes()
+      this.RouteNameList = this.Routes[0]
+      this.updateElements(this.RouteNameList)
+    }
   },
   beforeMount() {
-    this.getListOfStreets()
-    this.getListOfKvartals()
-    this.getListOfRoutes()
-    this.RouteNameList = this.Routes[0]
+    this.updateOverlay()
   },
 }
 </script>

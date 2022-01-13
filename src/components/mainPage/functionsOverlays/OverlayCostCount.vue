@@ -118,53 +118,57 @@ export default {
     },
     getListOfKvartals() {
       let str = "/api/app/quarter/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Kvartals.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfKvartals()
+      })
     },
     getListOfStreets(KvartalName) {
       this.Streets = []
       this.streetChoose = false
       let str = "/api/app/street/quarter?name=" + KvartalName
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Streets.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+      })
     },
     getListOfBuildings(ChooseStreetForBuilding) {
       this.Buildings = []
       this.buildingChoose = false
       let str = "/api/app/building/street?name=" + ChooseStreetForBuilding
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Buildings.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfBuildings(ChooseStreetForBuilding)
+      })
     },
     getFinalCost(BuildingName) {
       let str = "/api/app/building/cost?name=" + BuildingName
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             this.FinalCost = resp.data
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getFinalCost(BuildingName)
+      })
     },
   },
   beforeMount() {

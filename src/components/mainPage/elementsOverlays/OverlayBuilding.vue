@@ -63,6 +63,19 @@
               :rules="rules.numberValid"
               style="border-radius: 10px;"
           />
+          <v-text-field
+              light
+              v-model="readinessCoefficient"
+              label="Коэффициент готовности"
+              placeholder="Введите новое значение коэффициента"
+              name="readinessCoefficient"
+              type="number"
+              color=#F58E43
+              background-color=#EDF2F7
+              outlined
+              :rules="rules.numberValid"
+              style="border-radius: 10px;"
+          />
           <v-btn v-if="this.isChangeable === false" style="margin-left: 20%; position: absolute;"
                  color=#F58E43
                  outlined
@@ -111,12 +124,34 @@
               segmented
           ></v-overflow-btn>
 
+          <v-overflow-btn
+              v-model="ServiceList"
+              :items="Sluzba"
+              label="Подключенные службы"
+              multiple
+              clearable
+              light
+              color=#F58E43
+              editable
+              segmented
+          >
+            <template v-slot:selection="{ item, index }">
+
+              <span v-if="index === 0">{{ item }}</span>
+              <span
+                  v-if="index === 1"
+                  class="grey--text text-caption"
+              >
+                  (+{{ ServiceList.length - 1 }} others)
+                </span>
+            </template>
+          </v-overflow-btn>
         </v-card-text>
 
         <v-btn v-if="this.isChangeable === true" style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
                outlined
-               :loading="loading"
+               :loading="loadingRemove"
                @click="removeElement"
         >
           <v-icon left>
@@ -128,6 +163,7 @@
         <v-btn style="margin-left: 25%; margin-bottom: 5%"
                color=#F58E43
                outlined
+               :loading="loadingSave"
                @click="submit"
         >
           <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
@@ -216,7 +252,8 @@ export default {
     icons: {
       mdiDelete,
     },
-    loading: false,
+    loadingRemove: false,
+    loadingSave: false,
 
     overlayMaterialForBuilding: false,
     valid: true,
@@ -235,13 +272,13 @@ export default {
 
     MaterialsList: [],
     QuantityList: [],
-    addedMaterials: [],
     Streets: [],
     Comitets: [],
     Brigada: [],
     Materials: [],
+    Sluzba: [],
     ServiceList: [],
-    readinessCoefficient: 50,
+    readinessCoefficient: '',
 
     rules: {
       clearFieldValid: [
@@ -254,19 +291,15 @@ export default {
     },
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        this.loadingSave = true
         let str
         if (this.isChangeable === true) {
           str = "/api/app/building/update"
         } else {
           str = "/api/app/building/save"
         }
-        let data2 = {
-          dialog: false
-        }
-        this.$emit('updateParent', {data2})
-
         let data = {
           name: this.BuildingName,
           type: this.BuildingType,
@@ -279,25 +312,34 @@ export default {
           serviceList: this.ServiceList,
           readinessCoefficient: this.readinessCoefficient
         }
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
+        axios.create(this.getHeader()
+        ).post(str, data)
             .then(resp => {
               console.log(resp.data.BuildingName)
-            })
+            }).catch(err => {
+          if(this.doRefresh(err.status)) this.submit()
+        })
+        await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+        this.loadingSave = false
+
       }
     },
     addMaterial() {
+      if (this.BuildingMaterial !== '') {
+        this.MaterialsList.push(this.BuildingMaterial)
+        this.QuantityList.push(this.BuildingMaterialCount)
+      }
       this.overlayMaterialForBuilding = false
-      this.MaterialsList.push(this.BuildingMaterial)
-      this.QuantityList.push(this.BuildingMaterialCount)
     },
 
     getBuildingByName(BuildingNameDone) {
       let str = "/api/app/building/single?name=" + BuildingNameDone
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             this.BuildingType = resp.data.type
@@ -308,73 +350,94 @@ export default {
             this.MaterialsList = resp.data.materialList
             this.QuantityList = resp.data.quantityList
             this.ServiceList = resp.data.serviceList
-          })
+            this.readinessCoefficient = resp.data.readinessCoefficient
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getBuildingByName(BuildingNameDone)
+      })
     },
     getListOfStreets(KvartalNameDone) {
       let str = "/api/app/street/quarter?name=" + KvartalNameDone
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Streets.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalNameDone)
+      })
     },
     getListOfBrigada() {
       let str = "/api/app/construction_crew/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Brigada.push(resp.data[i].id)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfBrigada()
+      })
     },
     getListOfComitets() {
       let str = "/api/app/committee/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Comitets.push(resp.data[i].id)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfComitets()
+      })
+    },
+    getListOfSluzba(KvartalName) {
+      let str = "/api/app/city_service/quarter?name=" + KvartalName
+      axios.create(this.getHeader()
+      ).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Sluzba.push(resp.data[i].type)
+            }
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfSluzba(KvartalName)
+      })
     },
     getListOfMaterials() {
       let str = "/api/app/material/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Materials.push(resp.data[i].type)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfMaterials()
+      })
     },
     async removeElement() {
-      this.loading = true
+      this.loadingRemove = true
       let str = "/api/app/building/delete?name=" + this.BuildingNameDone
 
-      axios.create({
-        baseURL: this.hostname
-      }).post(str)
+      axios.create(this.getHeader()
+      ).post(str)
           .then(resp => {
             console.log(resp.data)
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.removeElement()
+      })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
 
       let data2 = {
         dialog: false
       }
       this.$emit('updateParent', {data2})
-      this.loading = false
+      this.loadingRemove = false
     },
   },
   beforeMount() {
@@ -386,6 +449,7 @@ export default {
     this.getListOfBrigada()
     this.getListOfComitets()
     this.getListOfMaterials()
+    this.getListOfSluzba(this.KvartalNameDone)
   },
 }
 </script>

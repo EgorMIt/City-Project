@@ -31,7 +31,7 @@
                color=#F16063
                outlined
                :disabled="removeButton"
-               :loading="loading"
+               :loading="loadingRemove"
                @click="removeElement"
         >
           <v-icon left>
@@ -59,13 +59,14 @@
 
         <v-overflow-btn
             v-model="StreetToStreetName"
-            :items="Streets"
+            :items="StreetsForChoose"
             label="Пересекаемые улицы"
             multiple
             clearable
             light
             editable
             segmented
+            :rules="rules.clearFieldValid"
             color=#F58E43
         >
           <template v-slot:selection="{ item, index }">
@@ -85,6 +86,7 @@
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
+             :loading="loadingSave"
              @click="submit"
       >
         <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
@@ -108,7 +110,8 @@ export default {
     icons: {
       mdiDelete,
     },
-    loading: false,
+    loadingRemove: false,
+    loadingSave: false,
 
     absolute: true,
     valid: true,
@@ -121,44 +124,53 @@ export default {
     StreetToStreet: [],
 
     Streets: ['Добавить новый элемент'],
+    StreetsForChoose: [],
 
     rules: {
       clearFieldValid: [
         v => !!v || 'Поле не может быть пустым'
       ],
+      checkStreet: [
+        v => v === this.StreetNameList || 'Улица не может пересекать сама себя'
+      ],
     },
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        this.loadingSave = true
         let str
         if (this.StreetNameList !== this.Streets[0]) {
           str = "/api/app/street/update"
         } else {
           str = "/api/app/street/save"
         }
+        let data = {
+          name: this.StreetName,
+          oldName: this.StreetNameOld,
+          streetList: this.StreetToStreetName,
+          quarterName: this.KvartalNameDone,
+        }
+        axios.create(this.getHeader()
+        ).post(str, data)
+            .then(resp => {
+              console.log(resp.data)
+            }).catch(err => {
+          if(this.doRefresh(err.status)) this.submit()
+        })
+        await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+        this.updateOverlay()
 
         let data2 = {
           dialog: false
         }
         this.$emit('updateParent', {data2})
-
-        let data = {
-          name: this.StreetName,
-          oldName: this.StreetNameOld,
-          streetList: this.StreetToStreet,
-          quarterName: this.KvartalNameDone,
-        }
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
-            .then(resp => {
-              console.log(resp.data)
-            })
+        this.loadingSave = false
       }
     },
     updateElements(StreetNameList) {
       if (this.StreetNameList !== this.Streets[0]) {
+        //this.StreetsForChoose.slice(this.StreetsForChoose.indexOf(this.StreetNameList))
         this.getStreetByName(StreetNameList)
         this.removeButton = false
       } else if (this.StreetNameList === this.Streets[0]) {
@@ -169,50 +181,57 @@ export default {
     },
     getStreetByName: function (StreetNameList) {
       let str = "/api/app/street/single?name=" + StreetNameList
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             this.StreetName = resp.data.name
             this.StreetNameOld = resp.data.name
-            this.StreetToStreet = resp.data
-          })
+            this.StreetToStreetName = resp.data.streetList
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getStreetByName(StreetNameList)
+      })
     },
     getListOfStreets(KvartalName) {
       let str = "/api/app/street/quarter?name=" + KvartalName
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Streets.push(resp.data[i].name)
+              this.StreetsForChoose.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+      })
     },
     async removeElement() {
-      this.loading = true
+      this.loadingRemove = true
       let str = "/api/app/street/delete?name=" + this.StreetNameList
-      axios.create({
-        baseURL: this.hostname
-      }).post(str)
+      axios.create(this.getHeader()
+      ).post(str)
           .then(resp => {
             console.log(resp.data)
-          })
-      this.Streets = ['Добавить новый элемент']
-      this.getListOfStreets(this.KvartalNameDone)
-      this.StreetNameList = this.Streets[0]
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.removeElement()
+      })
       this.removeButton = true
 
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
-      this.loading = false
+      this.updateOverlay()
+      this.loadingRemove = false
     },
+    updateOverlay() {
+      this.Streets = ['Добавить новый элемент']
+      this.KvartalName = this.KvartalNameDone
+      this.StreetNameList = this.Streets[0]
+      this.updateElements(this.StreetNameList)
+      this.getListOfStreets(this.KvartalNameDone)
+    }
   },
   beforeMount() {
-    this.KvartalName = this.KvartalNameDone
-    this.StreetNameList = this.Streets[0]
-    this.getListOfStreets(this.KvartalNameDone)
+    this.updateOverlay()
   },
 }
 </script>

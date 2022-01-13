@@ -27,7 +27,7 @@
                color=#F58E43
                outlined
                :loading="loading"
-               @click="getNumberOfDoneBuildings"
+               @click="getNumberOfDoneBuildings(ChooseComitetForBuilding)"
         >
           Принять все здания
         </v-btn>
@@ -92,27 +92,29 @@ export default {
     },
     getListOfComitets() {
       let str = "/api/app/committee/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Comitets.push(resp.data[i].id)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfComitets()
+      })
     },
-    async getNumberOfDoneBuildings(ComitetName) {
+    async getNumberOfDoneBuildings(ChooseComitetForBuilding) {
       this.loading = true
       let result
-      let str = "/api/app/committee/accept?id=" + ComitetName
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      let str = "/api/app/committee/accept?id=" + ChooseComitetForBuilding
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             result = resp.data
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getNumberOfDoneBuildings(ChooseComitetForBuilding)
+      })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.BuildingsFinished = result
       this.loading = false

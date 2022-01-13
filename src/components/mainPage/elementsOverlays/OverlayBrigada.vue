@@ -31,7 +31,7 @@
                color=#F16063
                outlined
                :disabled="removeButton"
-               :loading="loading"
+               :loading="loadingRemove"
                @click="removeElement"
         >
           <v-icon left>
@@ -62,6 +62,7 @@
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
+             :loading="loadingSave"
              @click="submit"
       >
         <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
@@ -83,7 +84,8 @@ export default {
     icons: {
       mdiDelete,
     },
-    loading: false,
+    loadingRemove: false,
+    loadingSave: false,
 
     absolute: true,
     valid: true,
@@ -106,25 +108,28 @@ export default {
     },
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        this.loadingSave = true
         let str = "/api/app/construction_crew/save"
+        let data = {
+          size: this.BrigadaPeople,
+        }
+        axios.create(this.getHeader()
+        ).post(str, data)
+            .then(resp => {
+              console.log(resp.data)
+            }).catch(err => {
+          if(this.doRefresh(err.status)) this.submit()
+        })
+        await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+        this.updateOverlay()
 
         let data2 = {
           dialog: false
         }
         this.$emit('updateParent', {data2})
-
-        let data = {
-          size: this.BrigadaPeople,
-        }
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
-            .then(resp => {
-              console.log(resp.data.size)
-            })
-
+        this.loadingSave = false
       }
     },
     updateElements(BrigadaNameList) {
@@ -137,50 +142,56 @@ export default {
       }
     },
     async removeElement() {
-      this.loading = true
+      this.loadingRemove = true
       let str = "/api/app/construction_crew/delete?id=" + this.BrigadaNameList
-      axios.create({
-        baseURL: this.hostname
-      }).post(str)
+      axios.create(
+        this.getHeader()
+      ).post(str)
           .then(resp => {
             console.log(resp.data)
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.removeElement()
+      })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
-      this.Brigada = ['Добавить новый элемент']
-      this.getListOfBrigada()
-      this.BrigadaNameList = this.Brigada[0]
+      this.updateOverlay()
       this.removeButton = true
-
-      this.loading = false
+      this.loadingRemove = false
     },
     getListOfBrigada() {
       let str = "/api/app/construction_crew/all"
 
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Brigada.push(resp.data[i].id)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfBrigada()
+      })
     },
     getBrigadaByID: function (BrigadaNameList) {
       let str = "/api/app/construction_crew/single?id=" + BrigadaNameList
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data.size)
             this.BrigadaPeople = resp.data.size
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getBrigadaByID(BrigadaNameList)
+      })
     },
+    updateOverlay() {
+      this.Brigada = ['Добавить новый элемент']
+      this.BrigadaNameList = this.Brigada[0]
+      this.getListOfBrigada()
+      this.updateElements(this.BrigadaNameList)
+    }
   },
   beforeMount() {
-    this.getListOfBrigada()
-    this.BrigadaNameList = this.Brigada[0]
-  },
+    this.updateOverlay()
+  }
 }
 </script>
 

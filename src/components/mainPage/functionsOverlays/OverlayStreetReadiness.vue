@@ -1,12 +1,12 @@
 <template>
   <v-form v-model="valid" lazy-validation ref="form">
-    <!-- Оверлей готовности квартала -->
+    <!-- Оверлей готовности улицы -->
     <v-card
         color="#F7FAFC"
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
-          <br>Готовность одного квартала
+          <br>Готовность одной улицы
         </div>
       </v-card-text>
 
@@ -22,15 +22,28 @@
             editable
             segmented
             required
-            v-on:change="getKvartalReadiness(ChooseKvartal)"
+            v-on:change="getListOfStreets(ChooseKvartal)"
+        ></v-overflow-btn>
 
+        <v-overflow-btn
+            v-model="ChooseStreet"
+            light
+            :items="Streets"
+            name="ChooseStreet"
+            color=#F58E43
+            label="Выберете улицу"
+            editable
+            segmented
+            required
+            :disabled="streetChoose"
+            v-on:change="getStreetReadiness(ChooseStreet)"
         ></v-overflow-btn>
 
         <v-text-field
             light
             label="Квартал готов на:"
-            :value=this.KvartalReadiness
-            name="KvartalReadiness"
+            :value=this.StreetReadiness
+            name="StreetReadiness"
             readonly
             color=#F58E43
             background-color=#EDF2F7
@@ -54,16 +67,19 @@
 import axios from "axios";
 
 export default {
-  name: "OverlayKvartalReadiness",
+  name: "OverlayStreetReadiness",
 
   data: () => ({
     absolute: true,
     valid: true,
+    streetChoose: true,
 
-    KvartalReadiness: 0,
+    StreetReadiness: 0,
     ChooseKvartal: '',
+    ChooseStreet: '',
 
     Kvartals: [],
+    Streets: [],
 
     rules: {
       clearFieldValid: [
@@ -94,24 +110,39 @@ export default {
         if(this.doRefresh(err.status)) this.getListOfKvartals()
       })
     },
-    getKvartalReadiness(KvartalName) {
-      let str = "/api/app/percent/quarter?name=" + KvartalName
+    getListOfStreets(KvartalName) {
+      this.Streets = []
+      this.streetChoose = false
+      let str = "/api/app/street/quarter?name=" + KvartalName
+      axios.create(this.getHeader()
+      ).get(str)
+          .then(resp => {
+            console.log(resp.data)
+            for (let i = 0; i < resp.data.length; i++) {
+              this.Streets.push(resp.data[i].name)
+            }
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+      })
+    },
+    getStreetReadiness(StreetName) {
+      let str = "/api/app/percent/street?name=" + StreetName
       axios.create(this.getHeader()
       ).get(str)
           .then(resp => {
             console.log(resp.data)
             if (resp.data.result != null) {
-              this.KvartalReadiness = resp.data.result
-              this.KvartalReadiness = this.KvartalReadiness.toFixed(2) + "%"
-            } else this.KvartalReadiness = "0%"
+              this.StreetReadiness = resp.data.result
+              this.StreetReadiness = this.StreetReadiness.toFixed(2) + "%"
+            } else this.StreetReadiness = "0%"
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getKvartalReadiness(KvartalName)
+        if(this.doRefresh(err.status)) this.getStreetReadiness(StreetName)
       })
     },
   },
   beforeMount() {
     this.getListOfKvartals()
-    this.KvartalReadiness = this.KvartalReadiness + "%"
+    this.StreetReadiness = this.StreetReadiness + "%"
   },
 }
 </script>

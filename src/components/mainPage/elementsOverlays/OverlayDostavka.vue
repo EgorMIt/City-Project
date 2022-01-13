@@ -31,7 +31,7 @@
                color=#F16063
                outlined
                :disabled="removeButton"
-               :loading="loading"
+               :loading="loadingRemove"
                @click="removeElement"
         >
           <v-icon left>
@@ -88,6 +88,7 @@
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
              color=#F58E43
              outlined
+             :loading="loadingSave"
              @click="submit"
       >
         <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
@@ -109,7 +110,8 @@ export default {
     icons: {
       mdiDelete,
     },
-    loading: false,
+    loadingRemove: false,
+    loadingSave: false,
 
     absolute: true,
     valid: true,
@@ -136,31 +138,36 @@ export default {
     },
   }),
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        this.loadingSave = true
         let str
         if (this.DostavkaNameList !== this.Dostavka[0]) {
           str = "/api/app/delivery_service/update"
         } else {
           str = "/api/app/delivery_service/save"
         }
-
-        let data2 = {
-          dialog: false
-        }
-        this.$emit('updateParent', {data2})
-
         let data = {
           name: this.DostavkaName,
           rate: this.DostavkaPrice,
           materialType: this.DostavkaMaterial,
         }
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
+        axios.create(this.getHeader()
+        ).post(str, data)
             .then(resp => {
               console.log(resp.data)
-            })
+            }).catch(err => {
+          if(this.doRefresh(err.status)) this.submit()
+        })
+        await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+        this.updateOverlay()
+
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
+        this.loadingSave = false
+
       }
     },
     updateElements(DostavkaNameList) {
@@ -176,61 +183,68 @@ export default {
     },
     getListOfDostavka() {
       let str = "/api/app/delivery_service/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Dostavka.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfDostavka()
+      })
     },
     getDostavkaByName: function (DostavkaNameList) {
       let str = "/api/app/delivery_service/single?name=" + DostavkaNameList
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             this.DostavkaName = resp.data.name
             this.DostavkaPrice = resp.data.rate
             this.DostavkaMaterial = resp.data.materialByMaterialId.type
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getDostavkaByName(DostavkaNameList)
+      })
     },
     getListOfMaterial() {
       let str = "/api/app/material/all"
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Materials.push(resp.data[i].type)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfMaterial()
+      })
     },
     async removeElement() {
-      this.loading = true
+      this.loadingRemove = true
       let str = "/api/app/delivery_service/delete?name=" + this.DostavkaNameList
-      axios.create({
-        baseURL: this.hostname
-      }).post(str)
+      axios.create(this.getHeader()
+      ).post(str)
           .then(resp => {
             console.log(resp.data)
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.removeElement()
+      })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.updateOverlay()
+      this.removeButton = true
+      this.loadingRemove = false
+    },
+    updateOverlay() {
       this.Dostavka = ['Добавить новый элемент']
       this.getListOfDostavka()
+      this.getListOfMaterial()
       this.DostavkaNameList = this.Dostavka[0]
-      this.removeButton = true
-      this.loading = false
-    },
+      this.updateElements(this.DostavkaNameList)
+    }
   },
   beforeMount() {
-    this.getListOfDostavka()
-    this.getListOfMaterial()
-    this.DostavkaNameList = this.Dostavka[0]
+    this.updateOverlay()
   },
 }
 </script>

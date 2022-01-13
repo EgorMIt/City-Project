@@ -10,13 +10,13 @@
           permanent
       >
 
-        <div
-            style="margin-top: 20%; color: black; font-size: 30px; font-weight: bold; text-align: center">
-          City Project
-        </div>
+        <v-btn height="100px" plain style="margin-top: 20%; color: black; font-size: 40px; font-weight: bold; text-align: center; margin-left: 45px" @click="updatePage">
+          <pre>City<br>Project</pre>
+        </v-btn>
 
 
-        <div style="margin-top: 50%; margin-left: 30px; margin-right: 20px">
+        <div style="margin-top: 20%; margin-left: 30px; margin-right: 20px">
+          <v-divider></v-divider>
           <v-switch
               v-model="modeSwitch"
               inset
@@ -25,7 +25,6 @@
               style="margin-left: 14%"
           ></v-switch>
 
-          <v-divider></v-divider>
 
 
           <v-dialog width="500px" v-model="dialog" v-if="modeSwitch === true">
@@ -52,13 +51,17 @@
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
                   Обсл. команда
                 </v-btn>
+                <v-btn @click="openWind='OverlayComitet'" v-bind="attrs" v-on="on" width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Комитет сдачи
+                </v-btn>
                 <v-btn @click="openWind='OverlayRoute'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
                   Тр. маршрут
                 </v-btn>
-                <v-btn @click="openWind='OverlayComitet'" v-bind="attrs" v-on="on" width="95%"
+                <v-btn @click="openWind='OverlayMaterial'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
-                  Комитет сдачи
+                  Стройматериал
                 </v-btn>
               </div>
 
@@ -70,8 +73,9 @@
             <OverlayDostavka v-if="openWind === 'OverlayDostavka'" @updateParent="updateDialog"/>
             <OverlaySluzba v-if="openWind === 'OverlaySluzba'" @updateParent="updateDialog"/>
             <OverlayObsluga v-if="openWind === 'OverlayObsluga'" @updateParent="updateDialog"/>
-            <OverlayRoute v-if="openWind === 'OverlayRoute'" @updateParent="updateDialog"/>
             <OverlayComitet v-if="openWind === 'OverlayComitet'" @updateParent="updateDialog"/>
+            <OverlayRoute v-if="openWind === 'OverlayRoute'" @updateParent="updateDialog"/>
+            <OverlayMaterial v-if="openWind === 'OverlayMaterial'" @updateParent="updateDialog"/>
           </v-dialog>
 
           <v-dialog width="500px" v-model="dialog" v-if="modeSwitch === false">
@@ -90,6 +94,7 @@
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
                   Принять объекты
                 </v-btn>
+                <div style="margin-top: 10%"></div>
                 <v-btn @click="openWind='OverlayCityReadiness'" v-bind="attrs" v-on="on" width="95%"
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
                   Готовность города
@@ -98,12 +103,17 @@
                        style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
                   Готовность квартала
                 </v-btn>
+                <v-btn @click="openWind='OverlayStreetReadiness'" v-bind="attrs" v-on="on" width="95%"
+                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                  Готовность улицы
+                </v-btn>
               </div>
             </template>
             <OverlayCostCount v-if="openWind === 'OverlayCostCount'" @updateParent="updateDialog"/>
             <OverlayFinishBuilding v-if="openWind === 'OverlayFinishBuilding'" @updateParent="updateDialog"/>
             <OverlayCityReadiness v-if="openWind === 'OverlayCityReadiness'" @updateParent="updateDialog"/>
             <OverlayKvartalReadiness v-if="openWind === 'OverlayKvartalReadiness'" @updateParent="updateDialog"/>
+            <OverlayStreetReadiness v-if="openWind === 'OverlayStreetReadiness'" @updateParent="updateDialog"/>
           </v-dialog>
           <v-divider style="margin-top: 5%"></v-divider>
         </div>
@@ -112,7 +122,7 @@
         <template v-slot:append>
           <v-divider style="margin-bottom: 20px"></v-divider>
           <v-row style="margin: auto">
-            <v-btn dark to="/" color=#F58E43 class="mx-auto"
+            <v-btn dark @click="logOut" color=#F58E43 class="mx-auto"
                    style="border-radius: 10px; box-shadow: none !important; margin-left: 5px; margin-bottom: 20px; width: 80%">
               <v-icon left>
                 mdi-arrow-left
@@ -140,6 +150,9 @@ import OverlayCostCount from "@/components/mainPage/functionsOverlays/OverlayCos
 import OverlayFinishBuilding from "@/components/mainPage/functionsOverlays/OverlayFinishBuilding";
 import OverlayCityReadiness from "@/components/mainPage/functionsOverlays/OverlayCityReadiness";
 import OverlayKvartalReadiness from "@/components/mainPage/functionsOverlays/OverlayKvartalReadiness";
+import OverlayMaterial from "@/components/mainPage/elementsOverlays/OverlayMaterial";
+import OverlayStreetReadiness from "@/components/mainPage/functionsOverlays/OverlayStreetReadiness";
+import router from "@/router";
 
 export default {
   name: "LeftNavigationBar",
@@ -154,10 +167,12 @@ export default {
     OverlayObsluga,
     OverlayRoute,
     OverlayComitet,
+    OverlayMaterial,
     OverlayCostCount,
     OverlayFinishBuilding,
     OverlayCityReadiness,
-    OverlayKvartalReadiness
+    OverlayKvartalReadiness,
+    OverlayStreetReadiness,
   },
   data: () => ({
     dialog: false,
@@ -167,6 +182,14 @@ export default {
   methods: {
     updateDialog(data) {
       this.dialog = data.dialog
+    },
+    logOut() {
+      localStorage.token = ''
+      localStorage.refreshToken = ''
+      router.push({path: '/'})
+    },
+    updatePage() {
+      this.$router.go()
     }
   },
   beforeMount() {

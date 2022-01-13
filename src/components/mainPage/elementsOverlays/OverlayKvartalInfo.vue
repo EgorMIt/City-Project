@@ -49,6 +49,7 @@
               editable
               segmented
               style="margin-top: 10px"
+              :disabled="buildingChoose"
               v-on:change="updateButton"
           ></v-overflow-btn>
 
@@ -121,7 +122,7 @@
         <v-btn style="margin-left: 37%; margin-bottom: 5%"
                color=#F16063
                outlined
-               :loading="loading"
+               :loading="loadingRemove"
                @click="removeElement"
         >
           <v-icon left>
@@ -133,6 +134,7 @@
         <v-btn style="margin-left: 25%; margin-bottom: 5%"
                color=#F58E43
                outlined
+               :loading="loadingSave"
                @click="submit"
         >
           <v-icon style="margin-right: 8px">mdi-cloud-upload</v-icon>
@@ -162,12 +164,14 @@ export default {
     icons: {
       mdiDelete,
     },
-    loading: false,
+    loadingRemove: false,
+    loadingSave: false,
 
     valid: true,
     dialog: false,
     openWind: '',
     infoButton: true,
+    buildingChoose: true,
 
     absolute: true,
 
@@ -193,70 +197,82 @@ export default {
     updateDialog(data) {
       this.dialog = data.dialog
     },
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
+        this.loadingSave = true
         let str = "/api/app/quarter/update"
-        let data2 = {
-          dialog: false
-        }
-        this.$emit('updateParent', {data2})
+
 
         let data = {
           name: this.KvartalName,
           oldName: this.KvartalNameOld,
           index: this.indexInArray
         }
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
+        axios.create(this.getHeader()
+        ).post(str, data)
             .then(resp => {
               console.log(resp.data)
-            })
+            }).catch(err => {
+          if(this.doRefresh(err.status)) this.submit()
+        })
+        await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+
+        this.$store.commit('changeElement', {index: this.indexInArray, newName: this.KvartalName})
+        let data2 = {
+          dialog: false,
+        }
+        this.$emit('updateParent', {data2})
+        this.loadingSave = false
       }
     },
     getListOfStreets(KvartalName) {
       let str = "/api/app/street/quarter?name=" + KvartalName
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Streets.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+      })
     },
     updateListOfBuildings(ChooseStreetForBuilding) {
+      this.buildingChoose = false
+      this.Buildings = []
       let str = "/api/app/building/street?name=" + ChooseStreetForBuilding
-      axios.create({
-        baseURL: this.hostname
-      }).get(str)
+      axios.create(this.getHeader()
+      ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
               this.Buildings.push(resp.data[i].name)
             }
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.updateListOfBuildings(ChooseStreetForBuilding)
+      })
     },
     updateButton() {
       this.infoButton = this.ChooseBuilding == null;
     },
     async removeElement() {
-      this.loading = true
+      this.loadingRemove = true
       let str = "/api/app/quarter/delete?name=" + this.KvartalNameDone
 
-      axios.create({
-        baseURL: this.hostname
-      }).post(str)
+      axios.create(this.getHeader()
+      ).post(str)
           .then(resp => {
             console.log(resp.data)
-          })
+          }).catch(err => {
+        if(this.doRefresh(err.status)) this.removeElement()
+      })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       let data2 = {
         dialog: false
       }
       this.$emit('updateParent', {data2})
-      this.loading = false
+      this.loadingRemove = false
     },
   },
   beforeMount() {

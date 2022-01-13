@@ -1,12 +1,12 @@
 <template>
   <v-form v-model="valid" lazy-validation ref="form">
-    <!-- Оверлей обслуживающей команды -->
+    <!-- Оверлей материала -->
     <v-card
         color="#F7FAFC"
     >
       <v-card-text class="font-weight-medium" style="font-size: 15pt; ">
         <div style="color: black; text-align: center; margin-bottom: 5%; font-size: 25px; line-height: 1">
-          <br>Управление обслуживающими командами
+          <br>Управление стройматериалами
         </div>
       </v-card-text>
 
@@ -16,15 +16,15 @@
         </div>
         <v-overflow-btn
             light
-            v-model="ObslugaNameList"
-            :items="Obsluga"
+            v-model="MaterialNameList"
+            :items="Materials"
             :rules="rules.clearFieldValid"
-            name="ObslugaName"
+            name="MaterialNameList"
             color=#F58E43
             required
             editable
             segmented
-            v-on:change="updateElements(ObslugaNameList)"
+            v-on:change="updateElements(MaterialNameList)"
         ></v-overflow-btn>
 
         <v-btn style="margin-left: 37%; margin-bottom: 5%"
@@ -46,9 +46,22 @@
 
         <v-text-field
             light
-            v-model="ObslugaPrice"
-            label="Тариф за обслуживание"
-            name="ObslugaPrice"
+            v-model="MaterialType"
+            label="Тип материала"
+            name="MaterialType"
+            type="text"
+            :rules="rules.clearFieldValid"
+            color=#F58E43
+            background-color=#EDF2F7
+            outlined
+            style="border-radius: 10px;"
+        />
+
+        <v-text-field
+            light
+            v-model="MaterialPrice"
+            label="Цена"
+            name="MaterialPrice"
             type="number"
             step=0.01
             :rules="rules.numberValid"
@@ -58,31 +71,18 @@
             style="border-radius: 10px;"
         />
 
-        <v-overflow-btn
+        <v-text-field
             light
-            v-model="ObslugaKvartal"
-            :items="Kvartals"
-            :rules="rules.clearFieldValid"
-            name="ObslugaKvartal"
+            v-model="MaterialInStorage"
+            label="Количество на складе"
+            name="MaterialInStorage"
+            type="number"
+            :rules="rules.numberValid"
             color=#F58E43
-            label="Выберете квартал"
-            required
-            editable
-            segmented
-        ></v-overflow-btn>
-
-        <v-overflow-btn
-            light
-            v-model="ObslugaSluzba"
-            :items="Sluzba"
-            :rules="rules.clearFieldValid"
-            name="ObslugaSluzba"
-            color=#F58E43
-            label="Выберете городскую службу"
-            required
-            editable
-            segmented
-        ></v-overflow-btn>
+            background-color=#EDF2F7
+            outlined
+            style="border-radius: 10px;"
+        />
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
@@ -103,7 +103,8 @@ import axios from "axios";
 import {mdiDelete} from "@mdi/js";
 
 export default {
-  name: "OverlayObsluga",
+  name: "OverlayMaterial",
+
 
   data: () => ({
     icons: {
@@ -116,15 +117,12 @@ export default {
     valid: true,
     removeButton: true,
 
-    ObslugaNameList: '',
+    MaterialNameList: '',
+    MaterialType: '',
+    MaterialPrice: '',
+    MaterialInStorage: '',
 
-    ObslugaPrice: '',
-    ObslugaKvartal: '',
-    ObslugaSluzba: '',
-
-    Obsluga: ['Добавить новый элемент'],
-    Kvartals: [],
-    Sluzba: [],
+    Materials: ['Добавить новый элемент'],
 
     rules: {
       clearFieldValid: [
@@ -141,22 +139,15 @@ export default {
       if (this.$refs.form.validate()) {
         this.loadingSave = true
         let str
-        let data
-        if (this.ObslugaNameList !== this.Obsluga[0]) {
-          str = "/api/app/service_team/update"
-          data = {
-            id: this.ObslugaNameList,
-            rate: this.ObslugaPrice,
-            quarterName: this.ObslugaKvartal,
-            serviceType: this.ObslugaSluzba,
-          }
+        if (this.MaterialNameList !== this.Materials[0]) {
+          str = "/api/app/material/update"
         } else {
-          str = "/api/app/service_team/save"
-          data = {
-            rate: this.ObslugaPrice,
-            quarterName: this.ObslugaKvartal,
-            serviceType: this.ObslugaSluzba,
-          }
+          str = "/api/app/material/save"
+        }
+        let data = {
+          type: this.MaterialType,
+          price: this.MaterialPrice,
+          quantity: this.MaterialInStorage,
         }
         axios.create(this.getHeader()
         ).post(str, data)
@@ -175,72 +166,46 @@ export default {
         this.loadingSave = false
       }
     },
-    updateElements(ObslugaNameList) {
-      if (this.ObslugaNameList !== this.Obsluga[0]) {
-        this.getObslugaByID(ObslugaNameList)
+    updateElements(MaterialNameList) {
+      if (this.MaterialNameList !== this.Materials[0]) {
         this.removeButton = false
-      } else if (this.ObslugaNameList === this.Obsluga[0]) {
+        this.getMaterialByType(MaterialNameList)
+      } else if (this.MaterialNameList === this.Materials[0]) {
         this.removeButton = true
-        this.ObslugaPrice = ''
-        this.ObslugaKvartal = ''
-        this.ObslugaSluzba = ''
+        this.MaterialType = ''
+        this.MaterialPrice = ''
+        this.MaterialInStorage = ''
       }
     },
-    getListOfObsluga() {
-      let str = "/api/app/service_team/all"
+    getListOfMaterials() {
+      let str = "/api/app/material/all"
       axios.create(this.getHeader()
       ).get(str)
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
-              this.Obsluga.push(resp.data[i].id)
+              this.Materials.push(resp.data[i].type)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfObsluga()
+        if(this.doRefresh(err.status)) this.getListOfMaterials()
       })
     },
-    getObslugaByID: function (ObslugaNameList) {
-      let str = "/api/app/service_team/single?id=" + ObslugaNameList
+    getMaterialByType: function (MaterialNameList) {
+      let str = "/api/app/material/single?type=" + MaterialNameList
       axios.create(this.getHeader()
       ).get(str)
           .then(resp => {
             console.log(resp.data)
-            this.ObslugaPrice = resp.data.rate
-            this.ObslugaKvartal = resp.data.quarterByQuarterId.name
-            this.ObslugaSluzba = resp.data.cityServiceByServiceId.type
+            this.MaterialType = resp.data.type
+            this.MaterialPrice = resp.data.price
+            this.MaterialInStorage = resp.data.quantity
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getObslugaByID(ObslugaNameList)
-      })
-    },
-    getListOfKvartals() {
-      let str = "/api/app/quarter/all"
-      axios.create(this.getHeader()
-      ).get(str)
-          .then(resp => {
-            console.log(resp.data)
-            for (let i = 0; i < resp.data.length; i++) {
-              this.Kvartals.push(resp.data[i].name)
-            }
-          }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfKvartals()
-      })
-    },
-    getListOfSluzba() {
-      let str = "/api/app/city_service/all"
-      axios.create(this.getHeader()
-      ).get(str)
-          .then(resp => {
-            console.log(resp.data)
-            for (let i = 0; i < resp.data.length; i++) {
-              this.Sluzba.push(resp.data[i].type)
-            }
-          }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfSluzba()
+        if(this.doRefresh(err.status)) this.getMaterialByType(MaterialNameList)
       })
     },
     async removeElement() {
       this.loadingRemove = true
-      let str = "/api/app/service_team/delete?id=" + this.ObslugaNameList
+      let str = "/api/app/material/delete?type=" + this.MaterialNameList
       axios.create(this.getHeader()
       ).post(str)
           .then(resp => {
@@ -255,12 +220,10 @@ export default {
       this.loadingRemove = false
     },
     updateOverlay() {
-      this.Obsluga = ['Добавить новый элемент']
-      this.getListOfKvartals()
-      this.getListOfSluzba()
-      this.getListOfObsluga()
-      this.ObslugaNameList = this.Obsluga[0]
-      this.updateElements(this.ObslugaNameList)
+      this.Materials = ['Добавить новый элемент']
+      this.getListOfMaterials()
+      this.MaterialNameList = this.Materials[0]
+      this.updateElements(this.MaterialNameList)
     }
   },
   beforeMount() {
