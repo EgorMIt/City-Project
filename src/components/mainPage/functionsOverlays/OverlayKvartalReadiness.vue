@@ -62,7 +62,6 @@ export default {
 
     KvartalReadiness: 0,
     ChooseKvartal: '',
-
     Kvartals: [],
 
     rules: {
@@ -81,6 +80,7 @@ export default {
         dialog: false,
       })
     },
+
     getListOfKvartals() {
       let str = "/api/app/quarter/all"
       axios.create(this.getHeader()
@@ -91,9 +91,10 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.status)) this.getListOfKvartals()
       })
     },
+
     getKvartalReadiness(KvartalName) {
       let str = "/api/app/percent/quarter?name=" + KvartalName
       axios.create(this.getHeader()
@@ -105,7 +106,7 @@ export default {
               this.KvartalReadiness = this.KvartalReadiness.toFixed(2) + "%"
             } else this.KvartalReadiness = "0%"
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getKvartalReadiness(KvartalName)
+        if (this.doRefresh(err.status)) this.getKvartalReadiness(KvartalName)
       })
     },
   },

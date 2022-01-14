@@ -105,7 +105,6 @@ import {mdiDelete} from "@mdi/js";
 export default {
   name: "OverlayMaterial",
 
-
   data: () => ({
     icons: {
       mdiDelete,
@@ -121,7 +120,6 @@ export default {
     MaterialType: '',
     MaterialPrice: '',
     MaterialInStorage: '',
-
     Materials: ['Добавить новый элемент'],
 
     rules: {
@@ -154,7 +152,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -166,6 +164,7 @@ export default {
         this.loadingSave = false
       }
     },
+
     updateElements(MaterialNameList) {
       if (this.MaterialNameList !== this.Materials[0]) {
         this.removeButton = false
@@ -177,6 +176,7 @@ export default {
         this.MaterialInStorage = ''
       }
     },
+
     getListOfMaterials() {
       let str = "/api/app/material/all"
       axios.create(this.getHeader()
@@ -187,9 +187,10 @@ export default {
               this.Materials.push(resp.data[i].type)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfMaterials()
+        if (this.doRefresh(err.status)) this.getListOfMaterials()
       })
     },
+
     getMaterialByType: function (MaterialNameList) {
       let str = "/api/app/material/single?type=" + MaterialNameList
       axios.create(this.getHeader()
@@ -200,9 +201,10 @@ export default {
             this.MaterialPrice = resp.data.price
             this.MaterialInStorage = resp.data.quantity
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getMaterialByType(MaterialNameList)
+        if (this.doRefresh(err.status)) this.getMaterialByType(MaterialNameList)
       })
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/material/delete?type=" + this.MaterialNameList
@@ -211,7 +213,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       this.removeButton = true
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
@@ -219,6 +221,7 @@ export default {
 
       this.loadingRemove = false
     },
+
     updateOverlay() {
       this.Materials = ['Добавить новый элемент']
       this.getListOfMaterials()

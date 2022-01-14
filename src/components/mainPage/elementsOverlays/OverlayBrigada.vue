@@ -79,7 +79,6 @@ import {mdiDelete} from "@mdi/js";
 export default {
   name: "OverlayBrigada",
 
-
   data: () => ({
     icons: {
       mdiDelete,
@@ -92,7 +91,6 @@ export default {
     removeButton: true,
 
     BrigadaNameList: '',
-
     BrigadaPeople: '',
 
     Brigada: ['Добавить новый элемент'],
@@ -120,7 +118,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -132,6 +130,7 @@ export default {
         this.loadingSave = false
       }
     },
+
     updateElements(BrigadaNameList) {
       if (BrigadaNameList !== this.Brigada[0]) {
         this.getBrigadaByID(BrigadaNameList)
@@ -141,22 +140,24 @@ export default {
         this.removeButton = true
       }
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/construction_crew/delete?id=" + this.BrigadaNameList
       axios.create(
-        this.getHeader()
+          this.getHeader()
       ).post(str)
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.updateOverlay()
       this.removeButton = true
       this.loadingRemove = false
     },
+
     getListOfBrigada() {
       let str = "/api/app/construction_crew/all"
 
@@ -168,9 +169,10 @@ export default {
               this.Brigada.push(resp.data[i].id)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfBrigada()
+        if (this.doRefresh(err.status)) this.getListOfBrigada()
       })
     },
+
     getBrigadaByID: function (BrigadaNameList) {
       let str = "/api/app/construction_crew/single?id=" + BrigadaNameList
       axios.create(this.getHeader()
@@ -179,9 +181,10 @@ export default {
             console.log(resp.data.size)
             this.BrigadaPeople = resp.data.size
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getBrigadaByID(BrigadaNameList)
+        if (this.doRefresh(err.status)) this.getBrigadaByID(BrigadaNameList)
       })
     },
+
     updateOverlay() {
       this.Brigada = ['Добавить новый элемент']
       this.BrigadaNameList = this.Brigada[0]

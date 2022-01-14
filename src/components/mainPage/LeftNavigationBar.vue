@@ -10,7 +10,9 @@
           permanent
       >
 
-        <v-btn height="100px" plain style="margin-top: 20%; color: black; font-size: 40px; font-weight: bold; text-align: center; margin-left: 45px" @click="updatePage">
+        <v-btn height="100px" plain
+               style="margin-top: 20%; color: black; font-size: 40px; font-weight: bold; text-align: center; margin-left: 45px"
+               @click="updatePage">
           <pre>City<br>Project</pre>
         </v-btn>
 
@@ -26,7 +28,6 @@
           ></v-switch>
 
 
-
           <v-dialog width="500px" v-model="dialog" v-if="modeSwitch === true">
             <template v-slot:activator="{ on, attrs }">
 
@@ -36,31 +37,31 @@
                 </div>
 
                 <v-btn @click="openWind='OverlayBrigada'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Стр. бригада
                 </v-btn>
                 <v-btn @click="openWind='OverlayDostavka'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Команда доставки
                 </v-btn>
                 <v-btn @click="openWind='OverlaySluzba'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Городская служба
                 </v-btn>
                 <v-btn @click="openWind='OverlayObsluga'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Обсл. команда
                 </v-btn>
                 <v-btn @click="openWind='OverlayComitet'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Комитет сдачи
                 </v-btn>
                 <v-btn @click="openWind='OverlayRoute'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Тр. маршрут
                 </v-btn>
                 <v-btn @click="openWind='OverlayMaterial'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Стройматериал
                 </v-btn>
               </div>
@@ -87,24 +88,24 @@
                 </div>
 
                 <v-btn @click="openWind='OverlayCostCount'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Посчитать стоимость
                 </v-btn>
                 <v-btn @click="openWind='OverlayFinishBuilding'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Принять объекты
                 </v-btn>
                 <div style="margin-top: 10%"></div>
                 <v-btn @click="openWind='OverlayCityReadiness'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Готовность города
                 </v-btn>
                 <v-btn @click="openWind='OverlayKvartalReadiness'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Готовность квартала
                 </v-btn>
                 <v-btn @click="openWind='OverlayStreetReadiness'" v-bind="attrs" v-on="on" width="95%"
-                       style="border-radius: 10px; margin-bottom: 15px; color: #A0AEC0" outlined>
+                       class="navigationButton" outlined>
                   Готовность улицы
                 </v-btn>
               </div>
@@ -117,7 +118,6 @@
           </v-dialog>
           <v-divider style="margin-top: 5%"></v-divider>
         </div>
-
 
         <template v-slot:append>
           <v-divider style="margin-bottom: 20px"></v-divider>
@@ -183,11 +183,13 @@ export default {
     updateDialog(data) {
       this.dialog = data.dialog
     },
+
     logOut() {
       localStorage.token = ''
       localStorage.refreshToken = ''
       router.push({path: '/'})
     },
+
     updatePage() {
       this.$router.go()
     }
@@ -199,5 +201,9 @@ export default {
 </script>
 
 <style scoped>
-
+.navigationButton {
+  border-radius: 10px;
+  margin-bottom: 15px;
+  color: #A0AEC0
+}
 </style>

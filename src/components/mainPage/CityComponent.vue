@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-container class="grey lighten-5" style="margin-top: 2%" v-if="renderComponent">
-
       <v-img src="../../assets/map.png"
              class="ml-auto mr-auto"
              height="850px"
@@ -15,11 +14,11 @@
       </v-img>
     </v-container>
 
-    <v-card v-if="!renderComponent" height="230px" width="300px" style="margin-top: 20%; margin-left: 40%">
-      <div style="text-align: center; font-size: 30px">
-        <br>Отсутствует покдлючение к серверу
-      </div>
-    </v-card>
+    <v-btn disabled v-if="!renderComponent" height="100px" plain
+           style="margin-top: 25%; color: black; font-size: 40px; font-weight: bold; text-align: center; margin-left: 23%"
+    >
+      <pre>Отсутствует покдлючение к серверу</pre>
+    </v-btn>
   </div>
 </template>
 
@@ -53,12 +52,12 @@ export default {
             this.$store.commit('clearAll')
             this.$store.commit('updateKvartalsList', this.KvartalsList)
           }).catch(err => {
+        this.renderComponent = false
         if (this.doRefresh(err.status)) this.getListOfKvartals()
       })
     },
   },
   created() {
-    if (localStorage.token !== '') this.renderComponent = true
     this.getListOfKvartals()
   },
 }

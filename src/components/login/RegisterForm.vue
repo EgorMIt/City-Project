@@ -36,7 +36,7 @@
             </div>
 
             <v-text-field
-                :rules="rules.clearFieldValid"
+                :rules="rules.passwordValid"
                 :append-icon="eyeFlag ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="eyeFlag ? 'text' : 'password'"
                 hint="Минимум 8 символов"
@@ -67,6 +67,14 @@
           >
             Такое имя пользователя уже существует
           </v-alert>
+
+          <v-alert v-if="errorNetwork" style="margin-top: 30px"
+                   colored-border
+                   type="error" outlined
+                   elevation="0"
+          >
+            Отсутствует подключение к серверу
+          </v-alert>
         </v-card-text>
       </v-col>
     </v-row>
@@ -94,10 +102,15 @@ export default {
     valid: false,
     loadingRegister: false,
     error: '',
+    errorNetwork: '',
 
     rules: {
       clearFieldValid: [
         v => !!v || 'Поле не может быть пустым'
+      ],
+      passwordValid: [
+        v => !!v || 'Поле не может быть пустым',
+        v => !!/^\d{8,}$/.test(v) || 'Минимум 8 символов',
       ],
     },
   }),
@@ -119,11 +132,13 @@ export default {
               await router.push({path: '/'})
               this.loadingRegister = false
             }).catch(async err => {
-          await new Promise(resolve => setTimeout(resolve, 500))
-          this.error = true
           this.loadingRegister = false
-          console.log(err.response)
-          console.log(err.response.data.description)
+          if (err.message === 'Network Error') {
+            this.errorNetwork = true
+          } else {
+            await new Promise(resolve => setTimeout(resolve, 500))
+            this.error = true
+          }
         })
       }
     },

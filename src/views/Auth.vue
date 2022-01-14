@@ -3,7 +3,7 @@
     <v-col md="4" >
       <LeftPanelAuth/>
     </v-col>
-    <v-col>
+    <v-col cols="max">
       <AuthForm/>
     </v-col>
   </v-row>
@@ -18,3 +18,9 @@ export default {
   components: {AuthForm, LeftPanelAuth}
 }
 </script>
+
+<style>
+::-webkit-scrollbar {
+  width: 0;
+}
+</style>

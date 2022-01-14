@@ -11,7 +11,7 @@
            class="ml-auto mr-auto"
            width="70%"
            height="70%"
-           style="border-radius:40px; margin-top: 10%"
+           style="border-radius:20px; margin-top: 10%"
     />
   </v-card>
 </template>

@@ -18,3 +18,9 @@ export default {
   components: {RegisterForm, LeftPanelAuth}
 }
 </script>
+
+<style>
+::-webkit-scrollbar {
+  width: 0;
+}
+</style>

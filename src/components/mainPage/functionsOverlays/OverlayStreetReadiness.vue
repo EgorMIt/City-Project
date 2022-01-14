@@ -97,6 +97,7 @@ export default {
         dialog: false,
       })
     },
+
     getListOfKvartals() {
       let str = "/api/app/quarter/all"
       axios.create(this.getHeader()
@@ -107,9 +108,10 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.status)) this.getListOfKvartals()
       })
     },
+
     getListOfStreets(KvartalName) {
       this.Streets = []
       this.streetChoose = false
@@ -122,9 +124,10 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
       })
     },
+
     getStreetReadiness(StreetName) {
       let str = "/api/app/percent/street?name=" + StreetName
       axios.create(this.getHeader()
@@ -136,7 +139,7 @@ export default {
               this.StreetReadiness = this.StreetReadiness.toFixed(2) + "%"
             } else this.StreetReadiness = "0%"
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getStreetReadiness(StreetName)
+        if (this.doRefresh(err.status)) this.getStreetReadiness(StreetName)
       })
     },
   },

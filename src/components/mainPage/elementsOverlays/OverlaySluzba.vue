@@ -92,7 +92,6 @@ import {mdiDelete} from "@mdi/js";
 export default {
   name: "OverlaySluzba",
 
-
   data: () => ({
     icons: {
       mdiDelete,
@@ -107,7 +106,6 @@ export default {
     SluzbaNameList: '',
     SluzbaType: '',
     SluzbaPrice: '',
-
     Sluzba: ['Добавить новый элемент'],
 
     rules: {
@@ -135,7 +133,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -147,6 +145,7 @@ export default {
         this.loadingSave = false
       }
     },
+
     updateElements(SluzbaNameList) {
       if (this.SluzbaNameList !== this.Sluzba[0]) {
         this.removeButton = false
@@ -157,6 +156,7 @@ export default {
         this.SluzbaPrice = ''
       }
     },
+
     getListOfSluzba() {
       let str = "/api/app/city_service/all"
       axios.create(this.getHeader()
@@ -167,9 +167,10 @@ export default {
               this.Sluzba.push(resp.data[i].type)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfSluzba()
+        if (this.doRefresh(err.status)) this.getListOfSluzba()
       })
     },
+
     getSluzbaByType: function (SluzbaNameList) {
       let str = "/api/app/city_service/single?type=" + SluzbaNameList
       axios.create(this.getHeader()
@@ -179,9 +180,10 @@ export default {
             this.SluzbaType = resp.data.type
             this.SluzbaPrice = resp.data.price
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getSluzbaByType(SluzbaNameList)
+        if (this.doRefresh(err.status)) this.getSluzbaByType(SluzbaNameList)
       })
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/city_service/delete?type=" + this.SluzbaNameList
@@ -190,7 +192,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       this.removeButton = true
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
@@ -198,6 +200,7 @@ export default {
 
       this.loadingRemove = false
     },
+
     updateOverlay() {
       this.Sluzba = ['Добавить новый элемент']
       this.getListOfSluzba()

@@ -105,7 +105,6 @@ import {mdiDelete} from "@mdi/js";
 export default {
   name: "OverlayDostavka",
 
-
   data: () => ({
     icons: {
       mdiDelete,
@@ -118,11 +117,9 @@ export default {
     removeButton: true,
 
     DostavkaNameList: '',
-
     DostavkaName: '',
     DostavkaPrice: '',
     DostavkaMaterial: '',
-
 
     Materials: [],
     Dostavka: ['Добавить новый элемент'],
@@ -157,7 +154,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -170,6 +167,7 @@ export default {
 
       }
     },
+
     updateElements(DostavkaNameList) {
       if (this.DostavkaNameList !== this.Dostavka[0]) {
         this.removeButton = false
@@ -181,6 +179,7 @@ export default {
         this.removeButton = true
       }
     },
+
     getListOfDostavka() {
       let str = "/api/app/delivery_service/all"
       axios.create(this.getHeader()
@@ -191,9 +190,10 @@ export default {
               this.Dostavka.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfDostavka()
+        if (this.doRefresh(err.status)) this.getListOfDostavka()
       })
     },
+
     getDostavkaByName: function (DostavkaNameList) {
       let str = "/api/app/delivery_service/single?name=" + DostavkaNameList
       axios.create(this.getHeader()
@@ -204,9 +204,10 @@ export default {
             this.DostavkaPrice = resp.data.rate
             this.DostavkaMaterial = resp.data.materialByMaterialId.type
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getDostavkaByName(DostavkaNameList)
+        if (this.doRefresh(err.status)) this.getDostavkaByName(DostavkaNameList)
       })
     },
+
     getListOfMaterial() {
       let str = "/api/app/material/all"
       axios.create(this.getHeader()
@@ -217,9 +218,10 @@ export default {
               this.Materials.push(resp.data[i].type)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfMaterial()
+        if (this.doRefresh(err.status)) this.getListOfMaterial()
       })
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/delivery_service/delete?name=" + this.DostavkaNameList
@@ -228,13 +230,14 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.updateOverlay()
       this.removeButton = true
       this.loadingRemove = false
     },
+
     updateOverlay() {
       this.Dostavka = ['Добавить новый элемент']
       this.getListOfDostavka()

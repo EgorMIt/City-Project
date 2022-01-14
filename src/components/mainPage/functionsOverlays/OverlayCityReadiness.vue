@@ -64,6 +64,7 @@ export default {
         dialog: false,
       })
     },
+
     getCityReadiness() {
       let str = "/api/app/percent/city"
       axios.create(this.getHeader()
@@ -75,7 +76,7 @@ export default {
               this.CityReadiness = this.CityReadiness.toFixed(2) + "%"
             } else this.CityReadiness = "0%"
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getCityReadiness()
+        if (this.doRefresh(err.status)) this.getCityReadiness()
       })
     },
   },

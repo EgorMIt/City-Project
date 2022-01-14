@@ -188,7 +188,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -200,6 +200,7 @@ export default {
         this.loadingSave = false
       }
     },
+
     updateElements(RouteNameList) {
       if (this.RouteNameList !== this.Routes[0]) {
         this.getRouteByType(RouteNameList)
@@ -212,6 +213,7 @@ export default {
         this.RouteStreets = ''
       }
     },
+
     getListOfRoutes() {
       let str = "/api/app/route/all"
       axios.create(this.getHeader()
@@ -222,9 +224,10 @@ export default {
               this.Routes.push(resp.data[i].id)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfRoutes()
+        if (this.doRefresh(err.status)) this.getListOfRoutes()
       })
     },
+
     getListOfStreets() {
       let str = "/api/app/street/all"
       axios.create(this.getHeader()
@@ -235,9 +238,10 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfStreets()
+        if (this.doRefresh(err.status)) this.getListOfStreets()
       })
     },
+
     getRouteByType: function (RouteNameList) {
       let str = "/api/app/route/single?id=" + RouteNameList
       axios.create(this.getHeader()
@@ -249,9 +253,10 @@ export default {
             this.RouteKvartalFinish = resp.data.quarterTo
             this.RouteStreets = resp.data.streets
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getRouteByType(RouteNameList)
+        if (this.doRefresh(err.status)) this.getRouteByType(RouteNameList)
       })
     },
+
     getListOfKvartals() {
       let str = "/api/app/quarter/all"
       axios.create(this.getHeader()
@@ -262,9 +267,10 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.status)) this.getListOfKvartals()
       })
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/route/delete?id=" + this.RouteNameList
@@ -273,7 +279,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       this.removeButton = true
 
@@ -281,6 +287,7 @@ export default {
       this.updateOverlay()
       this.loadingRemove = false
     },
+
     updateOverlay() {
       this.Routes = ['Добавить новый элемент']
       this.getListOfStreets()

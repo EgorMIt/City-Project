@@ -68,10 +68,6 @@ export default {
     submit() {
       if (this.$refs.form.validate()) {
         let str = "/api/app/quarter/save"
-        let data2 = {
-          dialog: false
-        }
-        this.$emit('updateParent', {data2})
 
         let data = {
           name: this.KvartalName,
@@ -83,7 +79,10 @@ export default {
             .then(resp => {
               console.log(resp.data.KvartalName)
             })
-
+        let data2 = {
+          dialog: false
+        }
+        this.$emit('updateParent', {data2})
       }
     },
   }

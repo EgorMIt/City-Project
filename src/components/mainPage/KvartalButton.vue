@@ -14,6 +14,7 @@
       <OverlayKvartal :indexInArray="count" v-if="openWind === 'OverlayKvartal'" @updateParent="updateDialog"/>
     </v-dialog>
 
+
     <v-dialog width="500px" v-model="dialog" v-if="this.KvartalName != null">
       <template v-slot:activator="{ on, attrs }">
         <v-btn dark color=#A0AEC0 class="mx-auto" outlined @click="openWind='OverlayKvartalInfo'"

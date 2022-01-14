@@ -18,6 +18,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+::-webkit-scrollbar {
+  width: 0;
+}
 </style>

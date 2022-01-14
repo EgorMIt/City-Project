@@ -14,6 +14,7 @@
         <div style="margin-top: 5px; margin-bottom: 20px; color: black; font-weight: lighter">
           Выберете элемент или создайте новый
         </div>
+
         <v-overflow-btn
             light
             v-model="ObslugaNameList"
@@ -163,7 +164,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -175,6 +176,7 @@ export default {
         this.loadingSave = false
       }
     },
+
     updateElements(ObslugaNameList) {
       if (this.ObslugaNameList !== this.Obsluga[0]) {
         this.getObslugaByID(ObslugaNameList)
@@ -186,6 +188,7 @@ export default {
         this.ObslugaSluzba = ''
       }
     },
+
     getListOfObsluga() {
       let str = "/api/app/service_team/all"
       axios.create(this.getHeader()
@@ -196,9 +199,10 @@ export default {
               this.Obsluga.push(resp.data[i].id)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfObsluga()
+        if (this.doRefresh(err.status)) this.getListOfObsluga()
       })
     },
+
     getObslugaByID: function (ObslugaNameList) {
       let str = "/api/app/service_team/single?id=" + ObslugaNameList
       axios.create(this.getHeader()
@@ -209,9 +213,10 @@ export default {
             this.ObslugaKvartal = resp.data.quarterByQuarterId.name
             this.ObslugaSluzba = resp.data.cityServiceByServiceId.type
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getObslugaByID(ObslugaNameList)
+        if (this.doRefresh(err.status)) this.getObslugaByID(ObslugaNameList)
       })
     },
+
     getListOfKvartals() {
       let str = "/api/app/quarter/all"
       axios.create(this.getHeader()
@@ -222,9 +227,10 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.status)) this.getListOfKvartals()
       })
     },
+
     getListOfSluzba() {
       let str = "/api/app/city_service/all"
       axios.create(this.getHeader()
@@ -235,9 +241,10 @@ export default {
               this.Sluzba.push(resp.data[i].type)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfSluzba()
+        if (this.doRefresh(err.status)) this.getListOfSluzba()
       })
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/service_team/delete?id=" + this.ObslugaNameList
@@ -246,7 +253,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       this.removeButton = true
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
@@ -254,6 +261,7 @@ export default {
 
       this.loadingRemove = false
     },
+
     updateOverlay() {
       this.Obsluga = ['Добавить новый элемент']
       this.getListOfKvartals()

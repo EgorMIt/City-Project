@@ -70,7 +70,6 @@ export default {
     loading: false,
 
     ChooseComitetForBuilding: '',
-
     BuildingsFinished: 0,
     Comitets: [],
 
@@ -90,6 +89,7 @@ export default {
         dialog: false,
       })
     },
+
     getListOfComitets() {
       let str = "/api/app/committee/all"
       axios.create(this.getHeader()
@@ -100,9 +100,10 @@ export default {
               this.Comitets.push(resp.data[i].id)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfComitets()
+        if (this.doRefresh(err.status)) this.getListOfComitets()
       })
     },
+
     async getNumberOfDoneBuildings(ChooseComitetForBuilding) {
       this.loading = true
       let result
@@ -113,7 +114,7 @@ export default {
             console.log(resp.data)
             result = resp.data
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getNumberOfDoneBuildings(ChooseComitetForBuilding)
+        if (this.doRefresh(err.status)) this.getNumberOfDoneBuildings(ChooseComitetForBuilding)
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.BuildingsFinished = result

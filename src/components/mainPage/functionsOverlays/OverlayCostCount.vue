@@ -93,7 +93,6 @@ export default {
     ChooseKvartalForBuilding: '',
     ChooseStreetForBuilding: '',
     ChooseBuilding: '',
-
     FinalCost: '',
 
     Kvartals: [],
@@ -116,6 +115,7 @@ export default {
         dialog: false,
       })
     },
+
     getListOfKvartals() {
       let str = "/api/app/quarter/all"
       axios.create(this.getHeader()
@@ -126,9 +126,10 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.status)) this.getListOfKvartals()
       })
     },
+
     getListOfStreets(KvartalName) {
       this.Streets = []
       this.streetChoose = false
@@ -141,9 +142,10 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
       })
     },
+
     getListOfBuildings(ChooseStreetForBuilding) {
       this.Buildings = []
       this.buildingChoose = false
@@ -156,9 +158,10 @@ export default {
               this.Buildings.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfBuildings(ChooseStreetForBuilding)
+        if (this.doRefresh(err.status)) this.getListOfBuildings(ChooseStreetForBuilding)
       })
     },
+
     getFinalCost(BuildingName) {
       let str = "/api/app/building/cost?name=" + BuildingName
       axios.create(this.getHeader()
@@ -167,7 +170,7 @@ export default {
             console.log(resp.data)
             this.FinalCost = resp.data
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getFinalCost(BuildingName)
+        if (this.doRefresh(err.status)) this.getFinalCost(BuildingName)
       })
     },
   },

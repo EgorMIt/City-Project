@@ -56,24 +56,32 @@
           </v-form>
 
 
-          <v-btn x-large style="box-shadow: none !important; border-radius: 10px; margin-bottom: 20px" color=#F58E43
+          <v-btn x-large class="authButton" color=#F58E43
                  width="100%" dark
                  :loading="loadingLogin"
                  @click="submit()">
             Войти в систему
           </v-btn>
 
-          <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark
+          <v-btn x-large class="authButton" color=#F58E43 width="100%" dark
                  to="/register">
             Зарегистрироваться
           </v-btn>
 
-          <v-alert v-if="error" style="margin-top: 30px"
-              colored-border
-              type="error" outlined
-              elevation="0"
+          <v-alert v-if="error" style="margin-top: 10px"
+                   colored-border
+                   type="error" outlined
+                   elevation="0"
           >
             Неверные данные для входа
+          </v-alert>
+
+          <v-alert v-if="errorNetwork" style="margin-top: 10px"
+                   colored-border
+                   type="error" outlined
+                   elevation="0"
+          >
+            Отсутствует подключение к серверу
           </v-alert>
         </v-card-text>
       </v-col>
@@ -82,16 +90,13 @@
 </template>
 
 <script>
-//import VueCookies from "vue-cookies";
 import axios from "axios";
 import router from "../../router";
-import {validationMixin} from "vuelidate";
 import {required} from "vuelidate/lib/validators";
 
 export default {
   name: "AuthForm",
 
-  mixins: [validationMixin],
   validations: {
     password: {required},
     login: {required},
@@ -101,10 +106,9 @@ export default {
     password: '',
     login: '',
     valid: false,
-    errorFlag: false,
-    errorText: '',
     loadingLogin: false,
     error: false,
+    errorNetwork: false,
 
     rules: {
       clearFieldValid: [
@@ -131,13 +135,14 @@ export default {
               await router.push({path: '/main'})
               this.loadingLogin = false
             }).catch(async err => {
-          await new Promise(resolve => setTimeout(resolve, 500))
-          this.error = true
           this.loadingLogin = false
-          console.log(err.response)
-          console.log(err.response.data.description)
+          if (err.message === 'Network Error') {
+            this.errorNetwork = true
+          } else {
+            await new Promise(resolve => setTimeout(resolve, 500))
+            this.error = true
+          }
         })
-
       }
     },
     oneMoreTime() {
@@ -150,5 +155,9 @@ export default {
 </script>
 
 <style scoped>
-
+.authButton {
+  box-shadow: none !important;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
 </style>

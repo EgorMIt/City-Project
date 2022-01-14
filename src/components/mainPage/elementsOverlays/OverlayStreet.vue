@@ -80,7 +80,6 @@
                 </span>
           </template>
         </v-overflow-btn>
-
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
@@ -121,8 +120,8 @@ export default {
     StreetName: '',
     StreetNameOld: '',
     StreetToStreetName: '',
-    StreetToStreet: [],
 
+    StreetToStreet: [],
     Streets: ['Добавить новый элемент'],
     StreetsForChoose: [],
 
@@ -156,7 +155,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -168,6 +167,7 @@ export default {
         this.loadingSave = false
       }
     },
+
     updateElements(StreetNameList) {
       if (this.StreetNameList !== this.Streets[0]) {
         //this.StreetsForChoose.slice(this.StreetsForChoose.indexOf(this.StreetNameList))
@@ -179,6 +179,7 @@ export default {
         this.StreetToStreetName = ''
       }
     },
+
     getStreetByName: function (StreetNameList) {
       let str = "/api/app/street/single?name=" + StreetNameList
       axios.create(this.getHeader()
@@ -189,9 +190,10 @@ export default {
             this.StreetNameOld = resp.data.name
             this.StreetToStreetName = resp.data.streetList
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getStreetByName(StreetNameList)
+        if (this.doRefresh(err.status)) this.getStreetByName(StreetNameList)
       })
     },
+
     getListOfStreets(KvartalName) {
       let str = "/api/app/street/quarter?name=" + KvartalName
       axios.create(this.getHeader()
@@ -203,9 +205,10 @@ export default {
               this.StreetsForChoose.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
       })
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/street/delete?name=" + this.StreetNameList
@@ -214,7 +217,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       this.removeButton = true
 
@@ -222,6 +225,7 @@ export default {
       this.updateOverlay()
       this.loadingRemove = false
     },
+
     updateOverlay() {
       this.Streets = ['Добавить новый элемент']
       this.KvartalName = this.KvartalNameDone

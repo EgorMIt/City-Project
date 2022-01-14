@@ -10,7 +10,6 @@
             <br>{{ this.KvartalNameDone }}
           </div>
 
-
           <v-text-field
               light
               v-model="KvartalName"
@@ -64,7 +63,8 @@
                 Показать информацию о доме
               </v-btn>
             </template>
-            <OverlayBuilding2 :isChangeable="true" :KvartalNameDone="this.KvartalNameDone" :BuildingNameDone="this.ChooseBuilding"
+            <OverlayBuilding2 :isChangeable="true" :KvartalNameDone="this.KvartalNameDone"
+                              :BuildingNameDone="this.ChooseBuilding"
                               v-if="openWind === 'OverlayBuilding2'"
                               @updateParent="updateDialog"/>
           </v-dialog>
@@ -116,7 +116,6 @@
             </v-col>
           </v-row>
           <v-divider style="margin-bottom: 5%"></v-divider>
-
         </v-card-text>
 
         <v-btn style="margin-left: 37%; margin-bottom: 5%"
@@ -197,6 +196,7 @@ export default {
     updateDialog(data) {
       this.dialog = data.dialog
     },
+
     async submit() {
       if (this.$refs.form.validate()) {
         this.loadingSave = true
@@ -213,7 +213,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
 
@@ -225,6 +225,7 @@ export default {
         this.loadingSave = false
       }
     },
+
     getListOfStreets(KvartalName) {
       let str = "/api/app/street/quarter?name=" + KvartalName
       axios.create(this.getHeader()
@@ -235,9 +236,10 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
       })
     },
+
     updateListOfBuildings(ChooseStreetForBuilding) {
       this.buildingChoose = false
       this.Buildings = []
@@ -250,12 +252,14 @@ export default {
               this.Buildings.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.updateListOfBuildings(ChooseStreetForBuilding)
+        if (this.doRefresh(err.status)) this.updateListOfBuildings(ChooseStreetForBuilding)
       })
     },
+
     updateButton() {
       this.infoButton = this.ChooseBuilding == null;
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/quarter/delete?name=" + this.KvartalNameDone
@@ -265,7 +269,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       let data2 = {

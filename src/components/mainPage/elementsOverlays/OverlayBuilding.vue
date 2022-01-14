@@ -37,6 +37,7 @@
               outlined
               style="border-radius: 10px;"
           />
+
           <v-text-field
               v-model="BuildingType"
               light
@@ -50,6 +51,7 @@
               outlined
               style="border-radius: 10px;"
           />
+
           <v-text-field
               light
               v-model="BuildingFloors"
@@ -63,6 +65,7 @@
               :rules="rules.numberValid"
               style="border-radius: 10px;"
           />
+
           <v-text-field
               light
               v-model="readinessCoefficient"
@@ -76,6 +79,7 @@
               :rules="rules.numberValid"
               style="border-radius: 10px;"
           />
+
           <v-btn v-if="this.isChangeable === false" style="margin-left: 20%; position: absolute;"
                  color=#F58E43
                  outlined
@@ -136,7 +140,6 @@
               segmented
           >
             <template v-slot:selection="{ item, index }">
-
               <span v-if="index === 0">{{ item }}</span>
               <span
                   v-if="index === 1"
@@ -219,7 +222,6 @@
                 outlined
                 style="border-radius: 10px; margin-top: 20px"
             />
-
           </v-card-text>
 
           <v-btn style="margin-left: 25%; position: absolute; bottom: 5%"
@@ -247,17 +249,14 @@ export default {
     KvartalNameDone: String,
     BuildingNameDone: String,
   },
-
   data: () => ({
     icons: {
       mdiDelete,
     },
     loadingRemove: false,
     loadingSave: false,
-
     overlayMaterialForBuilding: false,
     valid: true,
-
     absolute: true,
 
     BuildingName: '',
@@ -317,7 +316,7 @@ export default {
             .then(resp => {
               console.log(resp.data.BuildingName)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         let data2 = {
@@ -325,9 +324,9 @@ export default {
         }
         this.$emit('updateParent', {data2})
         this.loadingSave = false
-
       }
     },
+
     addMaterial() {
       if (this.BuildingMaterial !== '') {
         this.MaterialsList.push(this.BuildingMaterial)
@@ -352,9 +351,10 @@ export default {
             this.ServiceList = resp.data.serviceList
             this.readinessCoefficient = resp.data.readinessCoefficient
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getBuildingByName(BuildingNameDone)
+        if (this.doRefresh(err.status)) this.getBuildingByName(BuildingNameDone)
       })
     },
+
     getListOfStreets(KvartalNameDone) {
       let str = "/api/app/street/quarter?name=" + KvartalNameDone
       axios.create(this.getHeader()
@@ -365,9 +365,10 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfStreets(KvartalNameDone)
+        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalNameDone)
       })
     },
+
     getListOfBrigada() {
       let str = "/api/app/construction_crew/all"
       axios.create(this.getHeader()
@@ -378,9 +379,10 @@ export default {
               this.Brigada.push(resp.data[i].id)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfBrigada()
+        if (this.doRefresh(err.status)) this.getListOfBrigada()
       })
     },
+
     getListOfComitets() {
       let str = "/api/app/committee/all"
       axios.create(this.getHeader()
@@ -391,9 +393,10 @@ export default {
               this.Comitets.push(resp.data[i].id)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfComitets()
+        if (this.doRefresh(err.status)) this.getListOfComitets()
       })
     },
+
     getListOfSluzba(KvartalName) {
       let str = "/api/app/city_service/quarter?name=" + KvartalName
       axios.create(this.getHeader()
@@ -404,9 +407,10 @@ export default {
               this.Sluzba.push(resp.data[i].type)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfSluzba(KvartalName)
+        if (this.doRefresh(err.status)) this.getListOfSluzba(KvartalName)
       })
     },
+
     getListOfMaterials() {
       let str = "/api/app/material/all"
       axios.create(this.getHeader()
@@ -417,9 +421,10 @@ export default {
               this.Materials.push(resp.data[i].type)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfMaterials()
+        if (this.doRefresh(err.status)) this.getListOfMaterials()
       })
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/building/delete?name=" + this.BuildingNameDone
@@ -429,7 +434,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
 

@@ -56,7 +56,6 @@
             outlined
             style="border-radius: 10px;"
         />
-
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
@@ -79,7 +78,6 @@ import {mdiDelete} from "@mdi/js";
 export default {
   name: "OverlayComitet",
 
-
   data: () => ({
     icons: {
       mdiDelete,
@@ -92,9 +90,7 @@ export default {
     removeButton: true,
 
     ComitetNameList: '',
-
     ComitetRigor: '',
-
     Comitets: ['Добавить новый элемент'],
 
     rules: {
@@ -121,7 +117,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if(this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -133,6 +129,7 @@ export default {
         this.loadingSave = false
       }
     },
+
     updateElements(ComitetNameList) {
       if (this.ComitetNameList !== this.Comitets[0]) {
         this.getComitetByID(ComitetNameList)
@@ -142,6 +139,7 @@ export default {
         this.removeButton = true
       }
     },
+
     getListOfComitets() {
       let str = "/api/app/committee/all"
       axios.create(this.getHeader()
@@ -152,9 +150,10 @@ export default {
               this.Comitets.push(resp.data[i].id)
             }
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getListOfComitets()
+        if (this.doRefresh(err.status)) this.getListOfComitets()
       })
     },
+
     getComitetByID: function (ComitetNameList) {
       let str = "/api/app/committee/single?id=" + ComitetNameList
       axios.create(this.getHeader()
@@ -163,9 +162,10 @@ export default {
             console.log(resp.data)
             this.ComitetRigor = resp.data.strictness
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.getComitetByID(ComitetNameList)
+        if (this.doRefresh(err.status)) this.getComitetByID(ComitetNameList)
       })
     },
+
     async removeElement() {
       this.loadingRemove = true
       let str = "/api/app/committee/delete?id=" + this.ComitetNameList
@@ -174,7 +174,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if(this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.status)) this.removeElement()
       })
       this.removeButton = true
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
@@ -182,6 +182,7 @@ export default {
 
       this.loadingRemove = false
     },
+
     updateOverlay() {
       this.Comitets = ['Добавить новый элемент']
       this.getListOfComitets()
