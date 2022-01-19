@@ -32,7 +32,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              @click="submit"
       >
@@ -73,12 +73,13 @@ export default {
           name: this.KvartalName,
           index: this.indexInArray,
         }
-        axios.create({
-          baseURL: this.hostname
-        }).post(str, data)
+        axios.create(this.getHeader()
+        ).post(str, data)
             .then(resp => {
               console.log(resp.data.KvartalName)
-            })
+            }).catch(err => {
+          if (this.doRefresh(err.response.status)) this.submit()
+        })
         let data2 = {
           dialog: false
         }

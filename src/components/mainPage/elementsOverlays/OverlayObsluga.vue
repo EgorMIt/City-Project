@@ -21,7 +21,6 @@
             :items="Obsluga"
             :rules="rules.clearFieldValid"
             name="ObslugaName"
-            color=#F58E43
             required
             editable
             segmented
@@ -53,7 +52,7 @@
             type="number"
             step=0.01
             :rules="rules.numberValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -65,7 +64,6 @@
             :items="Kvartals"
             :rules="rules.clearFieldValid"
             name="ObslugaKvartal"
-            color=#F58E43
             label="Выберете квартал"
             required
             editable
@@ -78,7 +76,6 @@
             :items="Sluzba"
             :rules="rules.clearFieldValid"
             name="ObslugaSluzba"
-            color=#F58E43
             label="Выберете городскую службу"
             required
             editable
@@ -87,7 +84,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -164,7 +161,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -179,6 +176,7 @@ export default {
 
     updateElements(ObslugaNameList) {
       if (this.ObslugaNameList !== this.Obsluga[0]) {
+        ObslugaNameList = ObslugaNameList.split(" ").pop()
         this.getObslugaByID(ObslugaNameList)
         this.removeButton = false
       } else if (this.ObslugaNameList === this.Obsluga[0]) {
@@ -196,10 +194,10 @@ export default {
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
-              this.Obsluga.push(resp.data[i].id)
+              this.Obsluga.push('Обс. команда номер: ' + resp.data[i].id)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfObsluga()
+        if (this.doRefresh(err.response.status)) this.getListOfObsluga()
       })
     },
 
@@ -213,7 +211,7 @@ export default {
             this.ObslugaKvartal = resp.data.quarterByQuarterId.name
             this.ObslugaSluzba = resp.data.cityServiceByServiceId.type
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getObslugaByID(ObslugaNameList)
+        if (this.doRefresh(err.response.status)) this.getObslugaByID(ObslugaNameList)
       })
     },
 
@@ -227,7 +225,7 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.response.status)) this.getListOfKvartals()
       })
     },
 
@@ -241,19 +239,19 @@ export default {
               this.Sluzba.push(resp.data[i].type)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfSluzba()
+        if (this.doRefresh(err.response.status)) this.getListOfSluzba()
       })
     },
 
     async removeElement() {
       this.loadingRemove = true
-      let str = "/api/app/service_team/delete?id=" + this.ObslugaNameList
+      let str = "/api/app/service_team/delete?id=" + this.ObslugaNameList.split(" ").pop()
       axios.create(this.getHeader()
       ).post(str)
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.response.status)) this.removeElement()
       })
       this.removeButton = true
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))

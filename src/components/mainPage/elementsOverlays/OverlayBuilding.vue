@@ -32,7 +32,7 @@
               name="BuildingName"
               type="text"
               :rules="rules.clearFieldValid"
-              color=#F58E43
+              :color=localColor
               background-color=#EDF2F7
               outlined
               style="border-radius: 10px;"
@@ -46,7 +46,7 @@
               name="BuildingType"
               type="text"
               :rules="rules.clearFieldValid"
-              color=#F58E43
+              :color=localColor
               background-color=#EDF2F7
               outlined
               style="border-radius: 10px;"
@@ -59,7 +59,7 @@
               placeholder="Введите новое значение этажности"
               name="BuildingFloors"
               type="number"
-              color=#F58E43
+              :color=localColor
               background-color=#EDF2F7
               outlined
               :rules="rules.numberValid"
@@ -73,7 +73,7 @@
               placeholder="Введите новое значение коэффициента"
               name="readinessCoefficient"
               type="number"
-              color=#F58E43
+              :color=localColor
               background-color=#EDF2F7
               outlined
               :rules="rules.numberValid"
@@ -81,7 +81,7 @@
           />
 
           <v-btn v-if="this.isChangeable === false" style="margin-left: 20%; position: absolute;"
-                 color=#F58E43
+                 :color=localColor
                  outlined
                  @click="overlayMaterialForBuilding = !overlayMaterialForBuilding"
           >
@@ -94,7 +94,7 @@
               :items="Streets"
               :rules="rules.clearFieldValid"
               name="BuildingStreet"
-              color=#F58E43
+              :color=localColor
               label="Выберете улицу"
               required
               editable
@@ -108,7 +108,7 @@
               :items="Comitets"
               :rules="rules.clearFieldValid"
               name="BuildingComitet"
-              color=#F58E43
+              :color=localColor
               label="Выберете комитет"
               required
               editable
@@ -120,7 +120,7 @@
               v-model="BuildingBrigada"
               :items="Brigada"
               :rules="rules.clearFieldValid"
-              color=#F58E43
+              :color=localColor
               name="BuildingBrigada"
               label="Выберете бригаду"
               required
@@ -164,7 +164,7 @@
         </v-btn>
 
         <v-btn style="margin-left: 25%; margin-bottom: 5%"
-               color=#F58E43
+               :color=localColor
                outlined
                :loading="loadingSave"
                @click="submit"
@@ -203,7 +203,7 @@
                 :items="Materials"
                 :rules="rules.clearFieldValid"
                 name="BuildingMaterial"
-                color=#F58E43
+                :color=localColor
                 label="Выберете стройматериал"
                 editable
                 segmented
@@ -217,7 +217,7 @@
                 name="BuildingMaterialCount"
                 type="number"
                 :rules="rules.numberValid"
-                color=#F58E43
+                :color=localColor
                 background-color=#EDF2F7
                 outlined
                 style="border-radius: 10px; margin-top: 20px"
@@ -225,7 +225,7 @@
           </v-card-text>
 
           <v-btn style="margin-left: 25%; position: absolute; bottom: 5%"
-                 color=#F58E43
+                 :color=localColor
                  outlined
                  @click="addMaterial"
           >
@@ -258,6 +258,7 @@ export default {
     overlayMaterialForBuilding: false,
     valid: true,
     absolute: true,
+    localColor: '',
 
     BuildingName: '',
     BuildingType: '',
@@ -304,8 +305,8 @@ export default {
           type: this.BuildingType,
           floorNumber: this.BuildingFloors,
           streetName: this.BuildingStreet,
-          committeeId: this.BuildingComitet,
-          crewId: this.BuildingBrigada,
+          committeeId: this.BuildingComitet.split(" ").pop(),
+          crewId: this.BuildingBrigada.split(" ").pop(),
           materialList: this.MaterialsList,
           quantityList: this.QuantityList,
           serviceList: this.ServiceList,
@@ -316,7 +317,7 @@ export default {
             .then(resp => {
               console.log(resp.data.BuildingName)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         let data2 = {
@@ -351,7 +352,7 @@ export default {
             this.ServiceList = resp.data.serviceList
             this.readinessCoefficient = resp.data.readinessCoefficient
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getBuildingByName(BuildingNameDone)
+        if (this.doRefresh(err.response.status)) this.getBuildingByName(BuildingNameDone)
       })
     },
 
@@ -365,7 +366,7 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalNameDone)
+        if (this.doRefresh(err.response.status)) this.getListOfStreets(KvartalNameDone)
       })
     },
 
@@ -376,10 +377,10 @@ export default {
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
-              this.Brigada.push(resp.data[i].id)
+              this.Brigada.push('Номер бригады: ' + resp.data[i].id)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfBrigada()
+        if (this.doRefresh(err.response.status)) this.getListOfBrigada()
       })
     },
 
@@ -390,10 +391,10 @@ export default {
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
-              this.Comitets.push(resp.data[i].id)
+              this.Comitets.push('Номер комитета: ' + resp.data[i].id)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfComitets()
+        if (this.doRefresh(err.response.status)) this.getListOfComitets()
       })
     },
 
@@ -407,7 +408,7 @@ export default {
               this.Sluzba.push(resp.data[i].type)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfSluzba(KvartalName)
+        if (this.doRefresh(err.response.status)) this.getListOfSluzba(KvartalName)
       })
     },
 
@@ -421,7 +422,7 @@ export default {
               this.Materials.push(resp.data[i].type)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfMaterials()
+        if (this.doRefresh(err.response.status)) this.getListOfMaterials()
       })
     },
 
@@ -434,7 +435,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.response.status)) this.removeElement()
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
 
@@ -446,6 +447,7 @@ export default {
     },
   },
   beforeMount() {
+    this.localColor = this.primaryColor
     if (this.isChangeable === true) {
       this.BuildingName = this.BuildingNameDone
       this.getBuildingByName(this.BuildingNameDone)

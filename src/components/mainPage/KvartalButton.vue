@@ -2,9 +2,9 @@
   <div>
     <v-dialog width="500px" v-model="dialog" v-if="this.KvartalName == null">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn dark color=#A0AEC0 class="mx-auto" outlined @click="openWind='OverlayKvartal'"
+        <v-btn dark :color=localColor class="mx-auto" outlined @click="openWind='OverlayKvartal'"
                v-bind="attrs" v-on="on"
-               style="border-radius: 10px; width: 180px; height: 180px; color: #F58E43;">
+               style="border-radius: 10px; width: 180px; height: 180px;">
           <v-icon dark>
             mdi-plus
           </v-icon>
@@ -47,6 +47,7 @@ export default {
     dialog: false,
     openWind: '',
     flag: false,
+    localColor: '',
   }),
   methods: {
     updateDialog(data) {
@@ -54,6 +55,7 @@ export default {
     },
   },
   beforeMount() {
+    this.localColor = this.primaryColor
   }
 }
 </script>

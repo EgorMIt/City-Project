@@ -1,5 +1,5 @@
 <template>
-  <v-card color=#F58E43 height="100%" style="border-radius: 0">
+  <v-card :color=localColor height="100%" style="border-radius: 0">
 
     <v-card-text class="font-weight-medium" style="font-size: 30pt; ">
 
@@ -19,6 +19,13 @@
 <script>
 export default {
   name: "LeftPanelAuth",
+
+  data: () => ({
+    localColor: '',
+  }),
+  beforeMount() {
+    this.localColor = this.primaryColor
+  }
 }
 </script>
 

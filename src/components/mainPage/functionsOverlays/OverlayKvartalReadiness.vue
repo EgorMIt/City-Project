@@ -17,7 +17,6 @@
             light
             :items="Kvartals"
             name="ChooseKvartal"
-            color=#F58E43
             label="Выберете квартал"
             editable
             segmented
@@ -32,7 +31,7 @@
             :value=this.KvartalReadiness
             name="KvartalReadiness"
             readonly
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px; margin-top: 10%"
@@ -40,7 +39,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              @click="closeDialog"
       >
@@ -91,7 +90,7 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.response.status)) this.getListOfKvartals()
       })
     },
 
@@ -106,7 +105,7 @@ export default {
               this.KvartalReadiness = this.KvartalReadiness.toFixed(2) + "%"
             } else this.KvartalReadiness = "0%"
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getKvartalReadiness(KvartalName)
+        if (this.doRefresh(err.response.status)) this.getKvartalReadiness(KvartalName)
       })
     },
   },

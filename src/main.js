@@ -9,7 +9,7 @@ Vue.mixin({
     methods: {
         doRefresh(status) {
             let data = {
-                refresh_token: localStorage.refreshToken
+                refreshToken: localStorage.refreshToken
             }
             if (status === 403) {
                 let flag = false
@@ -45,6 +45,9 @@ Vue.mixin({
             },
             get awaitTimer() {
                 return 1000;
+            },
+            get primaryColor() {
+                return '#F58E43'
             },
         }
     }

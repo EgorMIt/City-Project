@@ -20,7 +20,6 @@
             :items="Streets"
             :rules="rules.clearFieldValid"
             name="SluzbaName"
-            color=#F58E43
             required
             editable
             segmented
@@ -51,7 +50,7 @@
             name="StreetName"
             type="text"
             :rules="rules.clearFieldValid"
-            color=#F58E43
+            :color=localColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -67,7 +66,6 @@
             editable
             segmented
             :rules="rules.clearFieldValid"
-            color=#F58E43
         >
           <template v-slot:selection="{ item, index }">
 
@@ -83,7 +81,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             color=#F58E43
+             :color=localColor
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -111,6 +109,7 @@ export default {
     },
     loadingRemove: false,
     loadingSave: false,
+    localColor: '',
 
     absolute: true,
     valid: true,
@@ -155,7 +154,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -190,7 +189,7 @@ export default {
             this.StreetNameOld = resp.data.name
             this.StreetToStreetName = resp.data.streetList
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getStreetByName(StreetNameList)
+        if (this.doRefresh(err.response.status)) this.getStreetByName(StreetNameList)
       })
     },
 
@@ -205,7 +204,7 @@ export default {
               this.StreetsForChoose.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+        if (this.doRefresh(err.response.status)) this.getListOfStreets(KvartalName)
       })
     },
 
@@ -217,7 +216,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.response.status)) this.removeElement()
       })
       this.removeButton = true
 
@@ -235,6 +234,7 @@ export default {
     }
   },
   beforeMount() {
+    this.localColor = this.primaryColor
     this.updateOverlay()
   },
 }

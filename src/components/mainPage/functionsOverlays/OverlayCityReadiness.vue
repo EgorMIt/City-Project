@@ -18,7 +18,7 @@
             :value=this.CityReadiness
             name="CityReadiness"
             readonly
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -26,7 +26,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              @click="closeDialog"
       >
@@ -76,7 +76,7 @@ export default {
               this.CityReadiness = this.CityReadiness.toFixed(2) + "%"
             } else this.CityReadiness = "0%"
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getCityReadiness()
+        if (this.doRefresh(err.response.status)) this.getCityReadiness()
       })
     },
   },

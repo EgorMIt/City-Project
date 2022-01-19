@@ -53,7 +53,7 @@
           </v-form>
 
           <v-row style="margin: auto">
-            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" color=#F58E43 width="100%" dark
+            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" :color=this.primaryColor width="100%" dark
                    :loading="loadingRegister"
                    @click="submit()">
               Зарегистрироваться и вернуться ко входу
@@ -110,7 +110,7 @@ export default {
       ],
       passwordValid: [
         v => !!v || 'Поле не может быть пустым',
-        v => !!/^\d{8,}$/.test(v) || 'Минимум 8 символов',
+        v => !!/^\d{4,}$/.test(v) || 'Минимум 4 символа',
       ],
     },
   }),
@@ -127,7 +127,7 @@ export default {
           baseURL: this.hostname
         }).post('/api/auth/register', data)
             .then(async resp => {
-              console.log(resp.data.token)
+              console.log(resp)
               await new Promise(resolve => setTimeout(resolve, 500))
               await router.push({path: '/'})
               this.loadingRegister = false

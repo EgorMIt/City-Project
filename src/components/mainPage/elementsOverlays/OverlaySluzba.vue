@@ -20,7 +20,6 @@
             :items="Sluzba"
             :rules="rules.clearFieldValid"
             name="SluzbaName"
-            color=#F58E43
             required
             editable
             segmented
@@ -51,7 +50,7 @@
             name="SluzbaType"
             type="text"
             :rules="rules.clearFieldValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -65,7 +64,7 @@
             type="number"
             step=0.01
             :rules="rules.numberValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -73,7 +72,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -133,7 +132,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -167,7 +166,7 @@ export default {
               this.Sluzba.push(resp.data[i].type)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfSluzba()
+        if (this.doRefresh(err.response.status)) this.getListOfSluzba()
       })
     },
 
@@ -180,7 +179,7 @@ export default {
             this.SluzbaType = resp.data.type
             this.SluzbaPrice = resp.data.price
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getSluzbaByType(SluzbaNameList)
+        if (this.doRefresh(err.response.status)) this.getSluzbaByType(SluzbaNameList)
       })
     },
 
@@ -192,7 +191,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.response.status)) this.removeElement()
       })
       this.removeButton = true
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))

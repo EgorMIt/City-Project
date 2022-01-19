@@ -16,7 +16,6 @@
             light
             :items="Kvartals"
             name="ChooseKvartalForBuilding"
-            color=#F58E43
             label="Выберете квартал"
             editable
             segmented
@@ -29,7 +28,6 @@
             light
             :items="Streets"
             name="ChooseStreetForBuilding"
-            color=#F58E43
             label="Выберете улицу"
             editable
             segmented
@@ -43,7 +41,6 @@
             light
             :items="Buildings"
             name="ChooseBuilding"
-            color=#F58E43
             label="Выберете здание"
             required
             editable
@@ -60,7 +57,7 @@
             :value=this.FinalCost
             name="FinalCost"
             readonly
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -68,7 +65,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              @click="closeDialog"
       >
@@ -126,7 +123,7 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.response.status)) this.getListOfKvartals()
       })
     },
 
@@ -142,7 +139,7 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+        if (this.doRefresh(err.response.status)) this.getListOfStreets(KvartalName)
       })
     },
 
@@ -158,7 +155,7 @@ export default {
               this.Buildings.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfBuildings(ChooseStreetForBuilding)
+        if (this.doRefresh(err.response.status)) this.getListOfBuildings(ChooseStreetForBuilding)
       })
     },
 
@@ -170,7 +167,7 @@ export default {
             console.log(resp.data)
             this.FinalCost = resp.data
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getFinalCost(BuildingName)
+        if (this.doRefresh(err.response.status)) this.getFinalCost(BuildingName)
       })
     },
   },

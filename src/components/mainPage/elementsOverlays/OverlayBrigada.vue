@@ -20,7 +20,6 @@
             :items="Brigada"
             :rules="rules.clearFieldValid"
             name="BrigadaNameList"
-            color=#F58E43
             required
             editable
             segmented
@@ -51,7 +50,7 @@
             name="BrigadaPeople"
             type="number"
             :rules="rules.numberValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -60,7 +59,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -118,7 +117,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -133,29 +132,13 @@ export default {
 
     updateElements(BrigadaNameList) {
       if (BrigadaNameList !== this.Brigada[0]) {
+        BrigadaNameList = BrigadaNameList.split(" ").pop()
         this.getBrigadaByID(BrigadaNameList)
         this.removeButton = false
       } else if (BrigadaNameList === this.Brigada[0]) {
         this.BrigadaPeople = ''
         this.removeButton = true
       }
-    },
-
-    async removeElement() {
-      this.loadingRemove = true
-      let str = "/api/app/construction_crew/delete?id=" + this.BrigadaNameList
-      axios.create(
-          this.getHeader()
-      ).post(str)
-          .then(resp => {
-            console.log(resp.data)
-          }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
-      })
-      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
-      this.updateOverlay()
-      this.removeButton = true
-      this.loadingRemove = false
     },
 
     getListOfBrigada() {
@@ -166,11 +149,28 @@ export default {
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
-              this.Brigada.push(resp.data[i].id)
+              this.Brigada.push('Бригада номер: ' + resp.data[i].id)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfBrigada()
+        if (this.doRefresh(err.response.status)) this.getListOfBrigada()
       })
+    },
+
+    async removeElement() {
+      this.loadingRemove = true
+      let str = "/api/app/construction_crew/delete?id=" + this.BrigadaNameList.split(" ").pop()
+      axios.create(
+          this.getHeader()
+      ).post(str)
+          .then(resp => {
+            console.log(resp.data)
+          }).catch(err => {
+        if (this.doRefresh(err.response.status)) this.removeElement()
+      })
+      await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
+      this.updateOverlay()
+      this.removeButton = true
+      this.loadingRemove = false
     },
 
     getBrigadaByID: function (BrigadaNameList) {
@@ -181,7 +181,7 @@ export default {
             console.log(resp.data.size)
             this.BrigadaPeople = resp.data.size
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getBrigadaByID(BrigadaNameList)
+        if (this.doRefresh(err.response.status)) this.getBrigadaByID(BrigadaNameList)
       })
     },
 

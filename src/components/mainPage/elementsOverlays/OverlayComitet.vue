@@ -20,7 +20,6 @@
             :items="Comitets"
             :rules="rules.clearFieldValid"
             name="ComitetNameList"
-            color=#F58E43
             required
             editable
             segmented
@@ -51,7 +50,7 @@
             name="ComitetRigor"
             type="number"
             :rules="rules.numberValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -59,7 +58,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -117,7 +116,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -132,6 +131,7 @@ export default {
 
     updateElements(ComitetNameList) {
       if (this.ComitetNameList !== this.Comitets[0]) {
+        ComitetNameList = ComitetNameList.split(" ").pop()
         this.getComitetByID(ComitetNameList)
         this.removeButton = false
       } else if (this.ComitetNameList === this.Comitets[0]) {
@@ -147,10 +147,10 @@ export default {
           .then(resp => {
             console.log(resp.data)
             for (let i = 0; i < resp.data.length; i++) {
-              this.Comitets.push(resp.data[i].id)
+              this.Comitets.push('Комитет номер: ' + resp.data[i].id)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfComitets()
+        if (this.doRefresh(err.response.status)) this.getListOfComitets()
       })
     },
 
@@ -162,19 +162,19 @@ export default {
             console.log(resp.data)
             this.ComitetRigor = resp.data.strictness
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getComitetByID(ComitetNameList)
+        if (this.doRefresh(err.response.status)) this.getComitetByID(ComitetNameList)
       })
     },
 
     async removeElement() {
       this.loadingRemove = true
-      let str = "/api/app/committee/delete?id=" + this.ComitetNameList
+      let str = "/api/app/committee/delete?id=" + this.ComitetNameList.split(" ").pop()
       axios.create(this.getHeader()
       ).post(str)
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.response.status)) this.removeElement()
       })
       this.removeButton = true
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))

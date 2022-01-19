@@ -53,7 +53,7 @@ export default {
             this.$store.commit('updateKvartalsList', this.KvartalsList)
           }).catch(err => {
         this.renderComponent = false
-        if (this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.response.status)) this.getListOfKvartals()
       })
     },
   },

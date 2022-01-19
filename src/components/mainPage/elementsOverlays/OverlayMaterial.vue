@@ -20,7 +20,6 @@
             :items="Materials"
             :rules="rules.clearFieldValid"
             name="MaterialNameList"
-            color=#F58E43
             required
             editable
             segmented
@@ -51,7 +50,7 @@
             name="MaterialType"
             type="text"
             :rules="rules.clearFieldValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -65,7 +64,7 @@
             type="number"
             step=0.01
             :rules="rules.numberValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -78,7 +77,7 @@
             name="MaterialInStorage"
             type="number"
             :rules="rules.numberValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -86,7 +85,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -152,7 +151,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -187,7 +186,7 @@ export default {
               this.Materials.push(resp.data[i].type)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfMaterials()
+        if (this.doRefresh(err.response.status)) this.getListOfMaterials()
       })
     },
 
@@ -201,7 +200,7 @@ export default {
             this.MaterialPrice = resp.data.price
             this.MaterialInStorage = resp.data.quantity
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getMaterialByType(MaterialNameList)
+        if (this.doRefresh(err.response.status)) this.getMaterialByType(MaterialNameList)
       })
     },
 
@@ -213,7 +212,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.response.status)) this.removeElement()
       })
       this.removeButton = true
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))

@@ -16,14 +16,17 @@
           <pre>City<br>Project</pre>
         </v-btn>
 
+        <div style="text-align: center; font-size: 20px; margin-top: 5%;">
+          {{ this.login }}
+        </div>
 
-        <div style="margin-top: 20%; margin-left: 30px; margin-right: 20px">
+        <div style="margin-top: 15%; margin-left: 30px; margin-right: 20px">
           <v-divider></v-divider>
           <v-switch
               v-model="modeSwitch"
               inset
               :label="modeSwitch ? 'Элементы' : 'Функции'"
-              color="#F58E43"
+              :color=localColor
               style="margin-left: 14%"
           ></v-switch>
 
@@ -122,7 +125,10 @@
         <template v-slot:append>
           <v-divider style="margin-bottom: 20px"></v-divider>
           <v-row style="margin: auto">
-            <v-btn dark @click="logOut" color=#F58E43 class="mx-auto"
+            <v-btn dark
+                   @click="logOut"
+                   :color=localColor
+                   class="mx-auto"
                    style="border-radius: 10px; box-shadow: none !important; margin-left: 5px; margin-bottom: 20px; width: 80%">
               <v-icon left>
                 mdi-arrow-left
@@ -178,6 +184,8 @@ export default {
     dialog: false,
     openWind: '',
     modeSwitch: Boolean,
+    login: '',
+    localColor: '',
   }),
   methods: {
     updateDialog(data) {
@@ -187,6 +195,7 @@ export default {
     logOut() {
       localStorage.token = ''
       localStorage.refreshToken = ''
+      localStorage.login = ''
       router.push({path: '/'})
     },
 
@@ -196,6 +205,8 @@ export default {
   },
   beforeMount() {
     this.modeSwitch = true
+    this.login = localStorage.login
+    this.localColor = this.primaryColor
   }
 }
 </script>

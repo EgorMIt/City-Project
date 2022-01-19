@@ -42,7 +42,6 @@
                 :rules="rules.clearFieldValid"
                 :append-icon="eyeFlag ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="eyeFlag ? 'text' : 'password'"
-                hint="Минимум 8 символов"
                 @click:append="eyeFlag = !eyeFlag"
                 id="password"
                 label="Введите пароль"
@@ -56,14 +55,14 @@
           </v-form>
 
 
-          <v-btn x-large class="authButton" color=#F58E43
+          <v-btn x-large class="authButton" :color=this.primaryColor
                  width="100%" dark
                  :loading="loadingLogin"
                  @click="submit()">
             Войти в систему
           </v-btn>
 
-          <v-btn x-large class="authButton" color=#F58E43 width="100%" dark
+          <v-btn x-large class="authButton" :color=this.primaryColor width="100%" dark
                  to="/register">
             Зарегистрироваться
           </v-btn>
@@ -128,9 +127,9 @@ export default {
           baseURL: this.hostname
         }).post('/api/auth/login', data)
             .then(async resp => {
-              console.log(resp.data.token)
               localStorage.token = resp.data.token
               localStorage.refreshToken = resp.data.refreshToken
+              localStorage.login = this.login
               await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
               await router.push({path: '/main'})
               this.loadingLogin = false

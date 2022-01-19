@@ -17,7 +17,6 @@
             light
             :items="Kvartals"
             name="ChooseKvartal"
-            color=#F58E43
             label="Выберете квартал"
             editable
             segmented
@@ -30,7 +29,6 @@
             light
             :items="Streets"
             name="ChooseStreet"
-            color=#F58E43
             label="Выберете улицу"
             editable
             segmented
@@ -45,7 +43,7 @@
             :value=this.StreetReadiness
             name="StreetReadiness"
             readonly
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px; margin-top: 10%"
@@ -53,7 +51,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              @click="closeDialog"
       >
@@ -108,7 +106,7 @@ export default {
               this.Kvartals.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfKvartals()
+        if (this.doRefresh(err.response.status)) this.getListOfKvartals()
       })
     },
 
@@ -124,7 +122,7 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+        if (this.doRefresh(err.response.status)) this.getListOfStreets(KvartalName)
       })
     },
 
@@ -139,7 +137,7 @@ export default {
               this.StreetReadiness = this.StreetReadiness.toFixed(2) + "%"
             } else this.StreetReadiness = "0%"
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getStreetReadiness(StreetName)
+        if (this.doRefresh(err.response.status)) this.getStreetReadiness(StreetName)
       })
     },
   },

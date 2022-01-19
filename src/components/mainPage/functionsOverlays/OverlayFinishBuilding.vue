@@ -16,7 +16,6 @@
             light
             :items="Comitets"
             name="ChooseComitetForBuilding"
-            color=#F58E43
             label="Выберете комитет"
             editable
             segmented
@@ -24,7 +23,7 @@
         ></v-overflow-btn>
 
         <v-btn style="margin-left: 26%; margin-bottom: 5%"
-               color=#F58E43
+               :color=this.primaryColor
                outlined
                :loading="loading"
                @click="getNumberOfDoneBuildings(ChooseComitetForBuilding)"
@@ -40,7 +39,7 @@
             :value=this.BuildingsFinished
             name="BuildingsFinished"
             readonly
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -48,7 +47,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              @click="closeDialog"
       >
@@ -100,7 +99,7 @@ export default {
               this.Comitets.push(resp.data[i].id)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfComitets()
+        if (this.doRefresh(err.response.status)) this.getListOfComitets()
       })
     },
 
@@ -114,7 +113,7 @@ export default {
             console.log(resp.data)
             result = resp.data
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getNumberOfDoneBuildings(ChooseComitetForBuilding)
+        if (this.doRefresh(err.response.status)) this.getNumberOfDoneBuildings(ChooseComitetForBuilding)
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.BuildingsFinished = result

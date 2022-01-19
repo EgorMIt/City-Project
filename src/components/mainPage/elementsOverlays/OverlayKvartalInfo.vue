@@ -57,7 +57,7 @@
               <v-btn style="margin-left: 18%; margin-bottom: 5%" @click="openWind='OverlayBuilding2'"
                      v-bind="attrs" v-on="on"
                      :disabled="infoButton"
-                     color=#F58E43
+                     :color=localColor
                      outlined
               >
                 Показать информацию о доме
@@ -75,7 +75,7 @@
               <v-dialog width="500px" v-model="dialog">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn style=""
-                         color=#F58E43
+                         :color=localColor
                          outlined
                          @click="openWind='OverlayBuilding'"
                          v-bind="attrs" v-on="on"
@@ -98,7 +98,7 @@
               <v-dialog width="500px" v-model="dialog">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn style=""
-                         color=#F58E43
+                         :color=localColor
                          outlined
                          @click="openWind='OverlayStreet'"
                          v-bind="attrs" v-on="on"
@@ -131,7 +131,7 @@
         </v-btn>
 
         <v-btn style="margin-left: 25%; margin-bottom: 5%"
-               color=#F58E43
+               :color=this.primaryColor
                outlined
                :loading="loadingSave"
                @click="submit"
@@ -165,6 +165,7 @@ export default {
     },
     loadingRemove: false,
     loadingSave: false,
+    localColor: '',
 
     valid: true,
     dialog: false,
@@ -213,7 +214,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
 
@@ -236,7 +237,7 @@ export default {
               this.Streets.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfStreets(KvartalName)
+        if (this.doRefresh(err.response.status)) this.getListOfStreets(KvartalName)
       })
     },
 
@@ -252,7 +253,7 @@ export default {
               this.Buildings.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.updateListOfBuildings(ChooseStreetForBuilding)
+        if (this.doRefresh(err.response.status)) this.updateListOfBuildings(ChooseStreetForBuilding)
       })
     },
 
@@ -269,7 +270,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.response.status)) this.removeElement()
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       let data2 = {
@@ -283,7 +284,7 @@ export default {
     this.KvartalName = this.KvartalNameDone
     this.KvartalNameOld = this.KvartalNameDone
     this.getListOfStreets(this.KvartalNameDone)
-
+    this.localColor=this.primaryColor
   },
 }
 </script>

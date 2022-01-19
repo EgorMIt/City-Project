@@ -51,7 +51,7 @@
             name="DostavkaName"
             type="text"
             :rules="rules.clearFieldValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -65,7 +65,7 @@
             type="number"
             step=0.01
             :rules="rules.numberValid"
-            color=#F58E43
+            :color=this.primaryColor
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -77,7 +77,6 @@
             :items="Materials"
             :rules="rules.clearFieldValid"
             name="DostavkaMaterial"
-            color=#F58E43
             label="Выберете стройматериал"
             required
             editable
@@ -86,7 +85,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             color=#F58E43
+             :color=this.primaryColor
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -154,7 +153,7 @@ export default {
             .then(resp => {
               console.log(resp.data)
             }).catch(err => {
-          if (this.doRefresh(err.status)) this.submit()
+          if (this.doRefresh(err.response.status)) this.submit()
         })
         await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
         this.updateOverlay()
@@ -190,7 +189,7 @@ export default {
               this.Dostavka.push(resp.data[i].name)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfDostavka()
+        if (this.doRefresh(err.response.status)) this.getListOfDostavka()
       })
     },
 
@@ -204,7 +203,7 @@ export default {
             this.DostavkaPrice = resp.data.rate
             this.DostavkaMaterial = resp.data.materialByMaterialId.type
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getDostavkaByName(DostavkaNameList)
+        if (this.doRefresh(err.response.status)) this.getDostavkaByName(DostavkaNameList)
       })
     },
 
@@ -218,7 +217,7 @@ export default {
               this.Materials.push(resp.data[i].type)
             }
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.getListOfMaterial()
+        if (this.doRefresh(err.response.status)) this.getListOfMaterial()
       })
     },
 
@@ -230,7 +229,7 @@ export default {
           .then(resp => {
             console.log(resp.data)
           }).catch(err => {
-        if (this.doRefresh(err.status)) this.removeElement()
+        if (this.doRefresh(err.response.status)) this.removeElement()
       })
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.updateOverlay()
