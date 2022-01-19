@@ -1,14 +1,15 @@
 <template>
   <div>
-    <v-container class="grey lighten-5" style="margin-top: 2%" v-if="renderComponent">
+    <v-container class="grey lighten-5" style="margin-top: 2%">
       <v-img src="../../assets/map.png"
              class="ml-auto mr-auto"
              height="850px"
              style="border-radius: 10px"
       >
-        <v-row style="margin-left: 10px; margin-top: 10px">
+
+        <v-row style="margin-left: 10px; margin-top: 10px" v-if="renderComponent">
           <v-col v-for="(n, index) in this.$store.getters.allKvartals" :key="index">
-            <KvartalButton :count="index" :KvartalName="n"/>
+            <KvartalButton :count="index" :KvartalName="n" @updateParent="updateDialog"/>
           </v-col>
         </v-row>
       </v-img>
@@ -55,6 +56,11 @@ export default {
         this.renderComponent = false
         if (this.doRefresh(err.response.status)) this.getListOfKvartals()
       })
+    },
+
+    updateDialog() {
+      this.renderComponent = false
+      this.getListOfKvartals()
     },
   },
   created() {

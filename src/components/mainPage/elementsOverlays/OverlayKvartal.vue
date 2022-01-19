@@ -76,14 +76,18 @@ export default {
         axios.create(this.getHeader()
         ).post(str, data)
             .then(resp => {
+              let data2 = {
+                dialog: false
+              }
+              this.$emit('updateParent', {data2})
               console.log(resp.data.KvartalName)
             }).catch(err => {
           if (this.doRefresh(err.response.status)) this.submit()
         })
-        let data2 = {
-          dialog: false
-        }
-        this.$emit('updateParent', {data2})
+        // let data2 = {
+        //   dialog: false
+        // }
+        // this.$emit('updateParent', {data2})
       }
     },
   }

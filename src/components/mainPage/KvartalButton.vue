@@ -52,6 +52,7 @@ export default {
   methods: {
     updateDialog(data) {
       this.dialog = data.dialog
+      this.$emit('updateParent')
     },
   },
   beforeMount() {

@@ -41,7 +41,7 @@ Vue.mixin({
     data: function () {
         return {
             get hostname() {
-                return "http://localhost:9000";
+                return "http://localhost:10520";
             },
             get awaitTimer() {
                 return 1000;
