@@ -50,7 +50,7 @@
             name="SluzbaType"
             type="text"
             :rules="rules.clearFieldValid"
-            :color=this.primaryColor
+            :color=changeColor()
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -104,7 +104,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             :color=this.primaryColor
+             :color=changeColor()
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -292,7 +292,11 @@ export default {
       this.getListOfRoutes()
       this.RouteNameList = this.Routes[0]
       this.updateElements(this.RouteNameList)
-    }
+    },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
+    },
   },
   beforeMount() {
     this.updateOverlay()

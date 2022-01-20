@@ -32,7 +32,7 @@
               name="BuildingName"
               type="text"
               :rules="rules.clearFieldValid"
-              :color=localColor
+              :color=changeColor()
               background-color=#EDF2F7
               outlined
               style="border-radius: 10px;"
@@ -46,7 +46,7 @@
               name="BuildingType"
               type="text"
               :rules="rules.clearFieldValid"
-              :color=localColor
+              :color=changeColor()
               background-color=#EDF2F7
               outlined
               style="border-radius: 10px;"
@@ -59,7 +59,7 @@
               placeholder="Введите новое значение этажности"
               name="BuildingFloors"
               type="number"
-              :color=localColor
+              :color=changeColor()
               background-color=#EDF2F7
               outlined
               :rules="rules.numberValid"
@@ -73,7 +73,7 @@
               placeholder="Введите новое значение коэффициента"
               name="readinessCoefficient"
               type="number"
-              :color=localColor
+              :color=changeColor()
               background-color=#EDF2F7
               outlined
               :rules="rules.numberValid"
@@ -81,7 +81,7 @@
           />
 
           <v-btn v-if="this.isChangeable === false" style="margin-left: 20%; position: absolute;"
-                 :color=localColor
+                 :color=changeColor()
                  outlined
                  @click="overlayMaterialForBuilding = !overlayMaterialForBuilding"
           >
@@ -94,7 +94,7 @@
               :items="Streets"
               :rules="rules.clearFieldValid"
               name="BuildingStreet"
-              :color=localColor
+              :color=changeColor()
               label="Выберете улицу"
               required
               editable
@@ -108,7 +108,7 @@
               :items="Comitets"
               :rules="rules.clearFieldValid"
               name="BuildingComitet"
-              :color=localColor
+              :color=changeColor()
               label="Выберете комитет"
               required
               editable
@@ -120,7 +120,7 @@
               v-model="BuildingBrigada"
               :items="Brigada"
               :rules="rules.clearFieldValid"
-              :color=localColor
+              :color=changeColor()
               name="BuildingBrigada"
               label="Выберете бригаду"
               required
@@ -164,7 +164,7 @@
         </v-btn>
 
         <v-btn style="margin-left: 25%; margin-bottom: 5%"
-               :color=localColor
+               :color=changeColor()
                outlined
                :loading="loadingSave"
                @click="submit"
@@ -203,7 +203,7 @@
                 :items="Materials"
                 :rules="rules.clearFieldValid"
                 name="BuildingMaterial"
-                :color=localColor
+                :color=changeColor()
                 label="Выберете стройматериал"
                 editable
                 segmented
@@ -217,7 +217,7 @@
                 name="BuildingMaterialCount"
                 type="number"
                 :rules="rules.numberValid"
-                :color=localColor
+                :color=changeColor()
                 background-color=#EDF2F7
                 outlined
                 style="border-radius: 10px; margin-top: 20px"
@@ -225,7 +225,7 @@
           </v-card-text>
 
           <v-btn style="margin-left: 25%; position: absolute; bottom: 5%"
-                 :color=localColor
+                 :color=changeColor()
                  outlined
                  @click="addMaterial"
           >
@@ -258,7 +258,6 @@ export default {
     overlayMaterialForBuilding: false,
     valid: true,
     absolute: true,
-    localColor: '',
 
     BuildingName: '',
     BuildingType: '',
@@ -445,9 +444,12 @@ export default {
       this.$emit('updateParent', {data2})
       this.loadingRemove = false
     },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
+    },
   },
   beforeMount() {
-    this.localColor = this.primaryColor
     if (this.isChangeable === true) {
       this.BuildingName = this.BuildingNameDone
       this.getBuildingByName(this.BuildingNameDone)

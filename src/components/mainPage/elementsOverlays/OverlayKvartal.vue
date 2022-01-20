@@ -32,7 +32,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             :color=this.primaryColor
+             :color=changeColor()
              outlined
              @click="submit"
       >
@@ -84,11 +84,11 @@ export default {
             }).catch(err => {
           if (this.doRefresh(err.response.status)) this.submit()
         })
-        // let data2 = {
-        //   dialog: false
-        // }
-        // this.$emit('updateParent', {data2})
       }
+    },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
     },
   }
 }

@@ -53,7 +53,7 @@
           </v-form>
 
           <v-row style="margin: auto">
-            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" :color=this.primaryColor width="100%" dark
+            <v-btn x-large style="box-shadow: none !important; border-radius: 10px" :color=changeColor() width="100%" dark
                    :loading="loadingRegister"
                    @click="submit()">
               Зарегистрироваться и вернуться ко входу
@@ -141,6 +141,10 @@ export default {
           }
         })
       }
+    },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
     },
   }
 }

@@ -57,7 +57,7 @@
               <v-btn style="margin-left: 18%; margin-bottom: 5%" @click="openWind='OverlayBuilding2'"
                      v-bind="attrs" v-on="on"
                      :disabled="infoButton"
-                     :color=localColor
+                     :color=changeColor()
                      outlined
               >
                 Показать информацию о доме
@@ -75,7 +75,7 @@
               <v-dialog width="500px" v-model="dialog">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn style=""
-                         :color=localColor
+                         :color=changeColor()
                          outlined
                          @click="openWind='OverlayBuilding'"
                          v-bind="attrs" v-on="on"
@@ -98,7 +98,7 @@
               <v-dialog width="500px" v-model="dialog">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn style=""
-                         :color=localColor
+                         :color=changeColor()
                          outlined
                          @click="openWind='OverlayStreet'"
                          v-bind="attrs" v-on="on"
@@ -131,7 +131,7 @@
         </v-btn>
 
         <v-btn style="margin-left: 25%; margin-bottom: 5%"
-               :color=this.primaryColor
+               :color=changeColor()
                outlined
                :loading="loadingSave"
                @click="submit"
@@ -165,7 +165,6 @@ export default {
     },
     loadingRemove: false,
     loadingSave: false,
-    localColor: '',
 
     valid: true,
     dialog: false,
@@ -279,12 +278,15 @@ export default {
       this.$emit('updateParent', {data2})
       this.loadingRemove = false
     },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
+    },
   },
   beforeMount() {
     this.KvartalName = this.KvartalNameDone
     this.KvartalNameOld = this.KvartalNameDone
     this.getListOfStreets(this.KvartalNameDone)
-    this.localColor=this.primaryColor
   },
 }
 </script>

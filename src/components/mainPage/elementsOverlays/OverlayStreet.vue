@@ -50,7 +50,7 @@
             name="StreetName"
             type="text"
             :rules="rules.clearFieldValid"
-            :color=localColor
+            :color=changeColor()
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -81,7 +81,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             :color=localColor
+             :color=changeColor()
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -109,7 +109,6 @@ export default {
     },
     loadingRemove: false,
     loadingSave: false,
-    localColor: '',
 
     absolute: true,
     valid: true,
@@ -231,10 +230,13 @@ export default {
       this.StreetNameList = this.Streets[0]
       this.updateElements(this.StreetNameList)
       this.getListOfStreets(this.KvartalNameDone)
-    }
+    },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
+    },
   },
   beforeMount() {
-    this.localColor = this.primaryColor
     this.updateOverlay()
   },
 }

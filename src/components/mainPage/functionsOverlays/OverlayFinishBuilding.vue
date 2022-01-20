@@ -23,7 +23,7 @@
         ></v-overflow-btn>
 
         <v-btn style="margin-left: 26%; margin-bottom: 5%"
-               :color=this.primaryColor
+               :color=changeColor()
                outlined
                :loading="loading"
                @click="getNumberOfDoneBuildings(ChooseComitetForBuilding)"
@@ -39,7 +39,7 @@
             :value=this.BuildingsFinished
             name="BuildingsFinished"
             readonly
-            :color=this.primaryColor
+            :color=changeColor()
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -47,7 +47,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
-             :color=this.primaryColor
+             :color=changeColor()
              outlined
              @click="closeDialog"
       >
@@ -118,6 +118,10 @@ export default {
       await new Promise(resolve => setTimeout(resolve, this.awaitTimer))
       this.BuildingsFinished = result
       this.loading = false
+    },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
     },
   },
   beforeMount() {

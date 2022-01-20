@@ -26,7 +26,7 @@
               v-model="modeSwitch"
               inset
               :label="modeSwitch ? 'Элементы' : 'Функции'"
-              :color=localColor
+              :color=changeColor()
               style="margin-left: 14%"
           ></v-switch>
 
@@ -123,11 +123,18 @@
         </div>
 
         <template v-slot:append>
+          <v-slider style="width: 200px; margin-left: 17%"
+              :color=changeColor()
+              v-model="colorSlider"
+              max="4"
+              min="1"
+              v-on:change="switchColors(colorSlider)"
+          ></v-slider>
           <v-divider style="margin-bottom: 20px"></v-divider>
           <v-row style="margin: auto">
             <v-btn dark
                    @click="logOut"
-                   :color=localColor
+                   :color=changeColor()
                    class="mx-auto"
                    style="border-radius: 10px; box-shadow: none !important; margin-left: 5px; margin-bottom: 20px; width: 80%">
               <v-icon left>
@@ -185,7 +192,7 @@ export default {
     openWind: '',
     modeSwitch: Boolean,
     login: '',
-    localColor: '',
+    colorSlider: '',
   }),
   methods: {
     updateDialog(data) {
@@ -201,12 +208,33 @@ export default {
 
     updatePage() {
       this.$router.go()
+    },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
+    },
+
+    switchColors(colorSlider) {
+      switch (colorSlider) {
+        case 1:
+          this.$store.commit('setPrimaryColor', 1)
+          break;
+        case 2:
+          this.$store.commit('setPrimaryColor', 2)
+          break;
+        case 3:
+          this.$store.commit('setPrimaryColor', 3)
+          break;
+        case 4:
+          this.$store.commit('setPrimaryColor', 4)
+          break;
+      }
     }
   },
   beforeMount() {
+    this.colorSlider = this.$store.getters.getPrimaryColor
     this.modeSwitch = true
     this.login = localStorage.login
-    this.localColor = this.primaryColor
   }
 }
 </script>

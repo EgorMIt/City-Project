@@ -46,8 +46,17 @@ Vue.mixin({
             get awaitTimer() {
                 return 1000;
             },
-            get primaryColor() {
-                return '#F58E43'
+            primaryColor(colorIndex) {
+                switch (colorIndex) {
+                    case 1:
+                        return '#F58E43'
+                    case 2:
+                        return '#3754DB'
+                    case 3:
+                        return '#505780'
+                    case 4:
+                        return '#cf1ed5'
+                }
             },
         }
     }

@@ -18,7 +18,7 @@
             :value=this.CityReadiness
             name="CityReadiness"
             readonly
-            :color=this.primaryColor
+            :color=changeColor()
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -26,7 +26,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 38%; margin-bottom: 5%"
-             :color=this.primaryColor
+             :color=changeColor()
              outlined
              @click="closeDialog"
       >
@@ -78,6 +78,10 @@ export default {
           }).catch(err => {
         if (this.doRefresh(err.response.status)) this.getCityReadiness()
       })
+    },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
     },
   },
   beforeMount() {

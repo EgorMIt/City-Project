@@ -1,5 +1,5 @@
 <template>
-  <v-card :color=localColor height="100%" style="border-radius: 0">
+  <v-card :color=changeColor() height="100%" style="border-radius: 0">
 
     <v-card-text class="font-weight-medium" style="font-size: 30pt; ">
 
@@ -20,11 +20,12 @@
 export default {
   name: "LeftPanelAuth",
 
-  data: () => ({
-    localColor: '',
-  }),
+  methods: {
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
+    },
+  },
   beforeMount() {
-    this.localColor = this.primaryColor
   }
 }
 </script>

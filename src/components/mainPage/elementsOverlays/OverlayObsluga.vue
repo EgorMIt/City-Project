@@ -52,7 +52,7 @@
             type="number"
             step=0.01
             :rules="rules.numberValid"
-            :color=this.primaryColor
+            :color=changeColor()
             background-color=#EDF2F7
             outlined
             style="border-radius: 10px;"
@@ -84,7 +84,7 @@
       </v-card-text>
 
       <v-btn style="margin-left: 25%; margin-bottom: 5%"
-             :color=this.primaryColor
+             :color=changeColor()
              outlined
              :loading="loadingSave"
              @click="submit"
@@ -267,7 +267,11 @@ export default {
       this.getListOfObsluga()
       this.ObslugaNameList = this.Obsluga[0]
       this.updateElements(this.ObslugaNameList)
-    }
+    },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
+    },
   },
   beforeMount() {
     this.updateOverlay()

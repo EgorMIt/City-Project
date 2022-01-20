@@ -2,7 +2,7 @@
   <div>
     <v-dialog width="500px" v-model="dialog" v-if="this.KvartalName == null">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn dark :color=localColor class="mx-auto" outlined @click="openWind='OverlayKvartal'"
+        <v-btn dark :color=changeColor() class="mx-auto" outlined @click="openWind='OverlayKvartal'"
                v-bind="attrs" v-on="on"
                style="border-radius: 10px; width: 180px; height: 180px;">
           <v-icon dark>
@@ -47,16 +47,18 @@ export default {
     dialog: false,
     openWind: '',
     flag: false,
-    localColor: '',
   }),
   methods: {
     updateDialog(data) {
       this.dialog = data.dialog
       this.$emit('updateParent')
     },
+
+    changeColor() {
+      return this.primaryColor(this.$store.getters.getPrimaryColor)
+    },
   },
   beforeMount() {
-    this.localColor = this.primaryColor
   }
 }
 </script>
